@@ -1,0 +1,16 @@
+Package: tfautograph
+Title: Autograph R functions for tensorflow
+Version: 0.0.0.9000
+Authors@R: person("Tomasz", "Kalinowski", email = "kalinowskit@gmail.com", role = c("aut", "cre"))
+Description: Translate R functions into tensorflow graphs.
+Depends: R (>= 3.6.0)
+Imports:
+    tensorflow,
+    reticulate,
+    rlang
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    testthat (>= 2.1.0)
