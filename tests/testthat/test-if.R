@@ -168,3 +168,23 @@ test_that("if as last expression", {
   expect_result(ag_fn, as_tensor(-1L), -2L)
 })
 
+test_that("nested if statement", {
+  fn <- function(n) {
+    a <- 0L
+    if (n > 0L) {
+      if (n > 1L) {
+        a <- -n
+      } else {
+        a <- 0L
+      }
+    } else
+      a <- 2L * n
+
+    a
+  }
+  ag_fn <- autograph(fn)
+
+  expect_result(ag_fn, as_tensor(1L), 0)
+  expect_result(ag_fn, as_tensor(2L), -2)
+  expect_result(ag_fn, as_tensor(-1L), -2L)
+})
