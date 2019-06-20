@@ -155,3 +155,16 @@ test_that("if unbalanced composite", {
   expect_result(ag_fn, list(list(b=2L), as_tensor(FALSE)), list(2L, 5L))
 })
 
+test_that("if as last expression", {
+  fn <- function(n) {
+    if (n > 0L)
+      -n
+    else
+      2L * n
+  }
+  ag_fn <- autograph(fn)
+
+  expect_result(ag_fn, as_tensor(1L), -1)
+  expect_result(ag_fn, as_tensor(-1L), -2L)
+})
+
