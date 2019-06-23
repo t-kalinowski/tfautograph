@@ -1,5 +1,9 @@
+if(interactive()) {
+  devtools::load_all()
+  source("tests/testthat/utils.R")
+} else
+  source("utils.R")
 
-source("utils.R")
 
 # these tests are all modeled after:
 # tensorflow/python/autograph/converters/control_flow_test.py
