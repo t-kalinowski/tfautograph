@@ -1,4 +1,6 @@
-
+Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 2)
+Sys.setenv(CUDA_VISIBLE_DEVICES = 0)
+# Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 
 tf <- tensorflow::tf
@@ -8,7 +10,7 @@ as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
 .SESS <- NULL
 grab <- function(x) {
   if(is.null(.SESS))
-    .SESS <<- tf$Session()
+    .SESS <<- tf$compat$v1$Session()
   .SESS$run(x)
 }
 
@@ -27,3 +29,13 @@ seq_len0 <- function(x) 0L:(x - 1L)
 `subtract<-` <- function(x, value) x - value
 `multiply<-` <- function(x, value) x * value
 `divide<-`   <- function(x, value) x / value
+
+expect_ag_equivalent <- function(fn, input) {
+  if (!is.list(input))
+    input <- list(input)
+  ag_fn <- autograph(fn)
+  ag_input <- lapply(input, as_tensor)
+  expect_equal(grab(do.call(ag_fn, ag_input)),
+               do.call(fn, input))
+}
+

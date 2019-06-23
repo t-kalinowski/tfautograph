@@ -3,6 +3,12 @@
 #' @importFrom tensorflow tf
 #' @importFrom rlang env_bury
 autograph <- function(fn) {
-  fn <- env_bury(fn, `if` = tf_if, `while` = tf_while, `for` = tf_for)
-  fn
+  env_bury(
+    fn,
+    `if`    = ag_if,
+    `while` = ag_while,
+    `for`   = ag_for,
+    `break` = ag_break,
+    `next`  = ag_next
+  )
 }

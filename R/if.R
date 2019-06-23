@@ -1,6 +1,7 @@
 
 #' @importFrom reticulate dict
-tf_if <- function(cond, true, false = NULL) {
+#' @importFrom rlang %||%
+ag_if <- function(cond, true, false = NULL) {
   true <- substitute(true)
   false <- substitute(false)
   env <- parent.frame()
@@ -8,11 +9,18 @@ tf_if <- function(cond, true, false = NULL) {
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")), cond, true, false)), env))
 
-  true_branch <- new.env(parent = env)
-  true_res <- eval(true, true_branch)
+  on.exit(deregister_cond(cond))
 
+  register_cond(cond, TRUE)
+  true_branch <- new.env(parent = env)
+  true_return <- eval(true, true_branch) %||% list()
+
+  register_cond(cond, FALSE)
   false_branch <- new.env(parent = env)
-  false_res <- eval(false, false_branch)
+  false_return <- eval(false, false_branch) %||% list()
+
+  if(!is_same_structure(true_return, false_return))
+    true_return <- false_return <- list()
 
   vars_modified <- union(names(true_branch), names(false_branch))
 
@@ -30,17 +38,27 @@ tf_if <- function(cond, true, false = NULL) {
   rm(list = undefineds, envir = true_branch)
   rm(list = undefineds, envir = false_branch)
 
-  ## TODO: the return value of true_fn and false_fn shoule include
-  # the return value of the if expression (true_res or false_res)
-  # if the returned shapes are compatible. something like:
-  # list(modified = as.list(true_branch),
-  #      return = true_res)
-  modified <- tf$cond(cond,
-                      function() dict(as.list(true_branch , all.names = TRUE)),
-                      function() dict(as.list(false_branch, all.names = TRUE)))
+  outcome <- tf$cond(cond,
+                      function() list(modified = as.list(true_branch , all.names = TRUE), return = true_return),
+                      function() list(modified = as.list(false_branch, all.names = TRUE), return = false_return))
 
-  list2env(modified, envir = env)
-
-  invisible()
+  list2env(outcome$modified, envir = env)
+  invisible(outcome$return)
 }
 
+#' @importFrom reticulate py_last_error py_clear_last_error
+is_same_structure <- function(x, y) {
+  tryCatch({
+    tf$python$util$nest$assert_same_structure(x, y)
+    TRUE
+  },
+  error = function(e) {
+    py_e <- py_last_error()
+    if (py_e$type == "ValueError" &&
+        grepl("The two structures don't have the same nested structure.",
+              py_e$value, fixed = TRUE)) {
+      py_clear_last_error()
+      FALSE
+    }
+  })
+}

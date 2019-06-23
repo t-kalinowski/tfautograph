@@ -62,3 +62,25 @@ test_that("for iterated expression", {
 # R doesn't have tuple unpacking and comprehensions, so not implementing in autograph
 
 
+
+
+
+## End: R translation of python tests
+
+## Start: R tests
+
+
+test_that("for no vars modified in body", {
+  fn <- function(x) {
+    for(e in x) {
+      NULL
+    }
+    e
+  }
+  ag_fn <- autograph(fn)
+  rx <- 1:4
+  tx <- as_tensor(rx)
+
+  expect_equal(fn(rx), grab(ag_fn(tx)))
+})
+

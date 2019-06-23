@@ -1,33 +1,33 @@
 
 
 
-tf_for <- function(var, iterable, body) {
+ag_for <- function(var, iterable, body) {
   var  <- substitute(var)
   body <- substitute(body)
   env  <- parent.frame()
 
-  tf_for_impl(iterable, var, body, env)
+  ag_for_impl(iterable, var, body, env)
 }
 
 
-tf_for_impl <- function(iterable, var, body, env) UseMethod("tf_for_impl")
+ag_for_impl <- function(iterable, var, body, env) UseMethod("ag_for_impl")
 
-tf_for_impl.default <- function(iterable, var, body, env) {
+ag_for_impl.default <- function(iterable, var, body, env) {
   eval(as.call(list(quote(.Primitive("for")), var, iterable, body)), env)
 }
 
-tf_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
+ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
     .NotYetImplemented()
   }
 
-tf_for_impl.tensorflow.python.data.ops.iterator_ops.IteratorV2 <-
+ag_for_impl.tensorflow.python.data.ops.iterator_ops.IteratorV2 <-
   function(iterable, var, body, env) {
     .NotYetImplemented()
   }
 
 
-tf_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
+ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   # modeled after _known_len_tf_for_stmt()
   body_vars <- setdiff(all.vars(body), deparse(var))
 
@@ -57,6 +57,7 @@ tf_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
     elem <- iter$read(index)
     body_fn <- env_bury(body_fn, !!var := elem)
     body_state <- do.call(body_fn, body_args)
+    # print(    list(index + 1L, body_state))
     list(index + 1L, body_state)
   }
 
@@ -65,10 +66,15 @@ tf_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   res <- tf$while_loop(
     cond = while_cond,
     body = while_body,
-    loop_vars = list(0L, unname(mget(body_vars, envir = env))))
+    loop_vars = list(0L, unname(mget(body_vars, envir = env))),
+    return_same_structure = TRUE)
 
+  # browser()
+  # RES <<- res
+  # res
   modified <- res[[2L]]
   names(modified) <- body_vars
+  modified[[deparse(var)]] <- iter$read(res[[1]] - 1L)
 
   list2env(modified, envir = env)
 

@@ -17,11 +17,8 @@ test_that("while basic", {
     }
     list(s, i, n)
   }
-
-  # devtools::load_all()
   ag_fn <- autograph(fn)
-  # res <- ag_fn(as_tensor(5L))
-  # grab(res)
+  grab(ag_fn(as_tensor(5L)))
 
   expect_result(ag_fn, as_tensor(5L), list(10L, 5L, 5L))
 })
@@ -139,7 +136,8 @@ test_that("while test while dispatches by cond only", {
   }
   ag_fn <- autograph(fn)
 
-  expect_result(ag_fn, list(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
+  expect_equal(ag_fn(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
+  # expect_result(ag_fn, list(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
   expect_error(ag_fn(as_tensor(5L), TensorIncompatibleNumeric(0L)), "TypeError")
 })
 
