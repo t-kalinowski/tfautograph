@@ -1,10 +1,5 @@
 
-if(interactive()) {
-  devtools::load_all()
-  source(system.file("tests", "testthat", "utils.R",
-                     package = "tfautograph"))
-} else
-  source("utils.R")
+source("utils.R")
 
 
 test_that("while basic", {
