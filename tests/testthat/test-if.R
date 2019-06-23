@@ -1,11 +1,5 @@
 
-
-if(interactive()) {
-  devtools::load_all()
-  source(system.file("tests", "testthat", "utils.R",
-                   package = "tfautograph"))
-} else
-  source("utils.R")
+source("utils.R")
 
 # these tests are all modeled after:
 # tensorflow/python/autograph/converters/control_flow_test.py
@@ -160,3 +154,60 @@ test_that("if unbalanced composite", {
   expect_result(ag_fn, list(list(b=2L), as_tensor(TRUE)), list(7L, 13L))
   expect_result(ag_fn, list(list(b=2L), as_tensor(FALSE)), list(2L, 5L))
 })
+
+test_that("if as last expression", {
+  fn <- function(n) {
+    if (n > 0L)
+      -n
+    else
+      2L * n
+  }
+  ag_fn <- autograph(fn)
+
+  expect_result(ag_fn, as_tensor(1L), -1)
+  expect_result(ag_fn, as_tensor(-1L), -2L)
+})
+
+test_that("nested if statement", {
+  fn <- function(n) {
+    a <- 0L
+    if (n > 0L) {
+      if (n > 1L) {
+        a <- -n
+      } else {
+        a <- 0L
+      }
+    } else
+      a <- 2L * n
+
+    a
+  }
+  ag_fn <- autograph(fn)
+
+  expect_result(ag_fn, as_tensor(1L), 0)
+  expect_result(ag_fn, as_tensor(2L), -2)
+  expect_result(ag_fn, as_tensor(-1L), -2L)
+})
+
+test_that("can call other functions", {
+
+  fn <- function(n) {
+    a <- 0L
+    b <- 0L
+    if (n > 0L)
+      a <- -n
+    else
+      b <- 2L * n
+    list(a, b)
+  }
+
+  g <- function(n) {
+    fn(n)
+  }
+
+  ag_fn <- autograph(g)
+
+  expect_result(ag_fn, as_tensor(1L), list(-1, 0))
+  expect_result(ag_fn, as_tensor(-1L), list(0, -2))
+})
+
