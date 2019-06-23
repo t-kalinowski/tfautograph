@@ -1,5 +1,3 @@
-
-
 if(interactive()) {
   devtools::load_all()
   source("tests/testthat/utils.R")
