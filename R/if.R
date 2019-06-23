@@ -13,14 +13,14 @@ ag_if <- function(cond, true, false = NULL) {
 
   register_cond(cond, TRUE)
   true_branch <- new.env(parent = env)
-  true_return <- eval(true, true_branch) %||% list()
+  true_return <- eval(true, true_branch)
 
   register_cond(cond, FALSE)
   false_branch <- new.env(parent = env)
-  false_return <- eval(false, false_branch) %||% list()
+  false_return <- eval(false, false_branch)
 
   if(!is_same_structure(true_return, false_return))
-    true_return <- false_return <- list()
+    true_return <- false_return <- NULL
 
   vars_modified <- union(names(true_branch), names(false_branch))
 
@@ -38,18 +38,28 @@ ag_if <- function(cond, true, false = NULL) {
   rm(list = undefineds, envir = true_branch)
   rm(list = undefineds, envir = false_branch)
 
-  outcome <- tf$cond(cond,
-                      function() list(modified = as.list(true_branch , all.names = TRUE), return = true_return),
-                      function() list(modified = as.list(false_branch, all.names = TRUE), return = false_return))
+  outcome <-
+    tf$cond(cond,
+              function()
+              dropNULLs(list(
+                modified = as.list(true_branch , all.names = TRUE),
+                returned = true_return
+              )),
+            function()
+              dropNULLs(list(
+                modified = as.list(false_branch, all.names = TRUE),
+                returned = false_return
+              )))
 
   list2env(outcome$modified, envir = env)
-  invisible(outcome$return)
+  outcome$returned
 }
 
 #' @importFrom reticulate py_last_error py_clear_last_error
 is_same_structure <- function(x, y) {
   tryCatch({
-    tf$python$util$nest$assert_same_structure(x, y)
+    tf$python$util$nest$assert_same_structure(x %||% list(), y %||% list())
+    # no exceptions raised with NULLs
     TRUE
   },
   error = function(e) {
@@ -59,6 +69,7 @@ is_same_structure <- function(x, y) {
               py_e$value, fixed = TRUE)) {
       py_clear_last_error()
       FALSE
-    }
+    } else
+      stop(e)
   })
 }

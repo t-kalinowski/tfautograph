@@ -21,3 +21,7 @@ any_tensors_in <- function(expr, env) {
       return(TRUE)
   FALSE
 }
+
+
+dropNULLs <- function(x)
+  x[!vapply(x, is.null, FALSE)]
