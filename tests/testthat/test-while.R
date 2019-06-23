@@ -1,5 +1,8 @@
-
-source("utils.R")
+if(interactive()) {
+  devtools::load_all()
+  source("tests/testthat/utils.R")
+} else
+  source("utils.R")
 
 
 test_that("while basic", {
