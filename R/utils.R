@@ -23,5 +23,5 @@ any_tensors_in <- function(expr, env) {
 }
 
 
-dropNULLs <- function(x)
-  x[!vapply(x, is.null, FALSE)]
+drop_empty <- function(x)
+  x[!vapply(x, function(x) identical(length(x), 0L), FALSE)]

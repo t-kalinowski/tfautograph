@@ -41,17 +41,17 @@ ag_if <- function(cond, true, false = NULL) {
   outcome <-
     tf$cond(cond,
               function()
-              dropNULLs(list(
-                modified = as.list(true_branch , all.names = TRUE),
+              drop_empty(list(
+                modified = as.list(true_branch, all.names = TRUE),
                 returned = true_return
               )),
             function()
-              dropNULLs(list(
+              drop_empty(list(
                 modified = as.list(false_branch, all.names = TRUE),
                 returned = false_return
               )))
 
-  list2env(outcome$modified, envir = env)
+  list2env(outcome$modified %||% list(), envir = env)
   outcome$returned
 }
 
