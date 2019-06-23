@@ -12,6 +12,7 @@ uncaught_loop_control_flow_condition <- function(type, env) {
 }
 
 mold_ag_control_flow <- function(type) {
+  force(type)
   function(env = parent.frame()) {
     tryCatch(
       eval(
