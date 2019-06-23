@@ -11,19 +11,17 @@ uncaught_loop_control_flow_condition <- function(type, env) {
   )
 }
 
+
 mold_ag_control_flow <- function(type) {
-  force(type)
-  function(env = parent.frame()) {
+  body <- substitute(
     tryCatch(
-      eval(
-        as.call(list(as.call(list(quote(.Primitive), type)))),
-        env),
+      eval(quote(.Primitive(type)()), env),
       error = function(e) {
         signalCondition(uncaught_loop_control_flow_condition(type, env))
         do_return(env)
       }
-    )
-  }
+    ), env = list(type = type))
+  new_function(alist(env = parent.frame()), body, parent.frame())
 }
 
 ag_break <- mold_ag_control_flow("break")
