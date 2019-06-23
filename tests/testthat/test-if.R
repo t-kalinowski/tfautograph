@@ -189,7 +189,7 @@ test_that("nested if statement", {
   expect_result(ag_fn, as_tensor(-1L), -2L)
 })
 
-test_that("can call other functions", {
+test_that("can call from another functions", {
 
   fn <- function(n) {
     a <- 0L
@@ -201,13 +201,13 @@ test_that("can call other functions", {
     list(a, b)
   }
 
+  ag_fn <- autograph(fn)
+
   g <- function(n) {
-    fn(n)
+    ag_fn(n)
   }
 
-  ag_fn <- autograph(g)
-
-  expect_result(ag_fn, as_tensor(1L), list(-1, 0))
-  expect_result(ag_fn, as_tensor(-1L), list(0, -2))
+  expect_result(g, as_tensor(1L), list(-1, 0))
+  expect_result(g, as_tensor(-1L), list(0, -2))
 })
 
