@@ -26,12 +26,11 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     val     <- eval(expr, envir = env)
 
     if (!is_tensor(val)) {
-        # route through the same error signaling path if not all true
-      if (!(is.logical(val) && !anyNA(val) && all(val)))
-        return(eval(substitute(base::stopifnot(expr), list(expr = expr)),
-                    envir = env))
-      else
+      if (is.logical(val) && !anyNA(val) && all(val))
         return(NULL) # not need to evaluate expr twice if not error
+      else
+        # route through the same error signaling path if not all true
+        return(eval(substitute(base::stopifnot(expr), list(expr = expr)), envir = env))
     }
 
     var_nms <- dots_vars[[i]]
@@ -40,7 +39,6 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     op      <- tf$Assert(val, data)
     list(op = op, var_nms = var_nms)
   }))
-
 
 
   names(all_var_nms) <- all_var_nms
