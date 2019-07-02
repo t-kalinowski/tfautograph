@@ -64,7 +64,7 @@ pretty_call_stack <- function() {
 }
 
 pretty_tf_assert_data <- function(expr, vars, call_stack = NULL) {
-  expr <- deparse(expr, width.cutoff = 500)
+  expr <- as.list(deparse(expr, width.cutoff = 500))
   data <- rbind(as.list(paste(names(vars), "value:")),
                 unname(vars),
                 deparse.level = 0)
