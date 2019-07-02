@@ -70,3 +70,26 @@ test_that("break and next basic", {
 #   expect_ag_equivalent(fn, 5L)
 # })
 
+
+test_that("break and next in simple for", {
+  fn <- function(l) {
+    x <- 0
+    y <- 0
+    z <- 0
+    for(i in l) {
+      add(x) <- 1L
+      if (i %% 5L == 0L)
+        break
+      else if (i %% 2L == 0L) {
+        add(y) <- 1
+        next
+      }
+      add(z) <- 1
+    }
+    list(x, y, z)
+  }
+
+
+  for (n in 0:6)
+    expect_ag_equivalent(fn, array(seq_len(n)))
+})
