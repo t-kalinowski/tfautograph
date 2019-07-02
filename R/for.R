@@ -72,7 +72,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   if(iterable$shape$as_list()[1] > 0)
     body_vars[[deparse(var)]] <- iterable$`__getitem__`(index-1L)
-  # alternatively to calling __getitem__, it might make more sense to to
+  # alternatively to calling __getitem__, it might make more sense to call
   # `ta$read(index-1L)`, however then you run into an issue where the
   # TensorArray element might have been cleared from memory already, having
   # already been read once in the loop. Having to set TensorArray(...,
