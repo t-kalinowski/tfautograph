@@ -16,6 +16,52 @@ ag_for_impl.default <- function(iterable, var, body, env) {
   eval(as.call(list(quote(.Primitive("for")), var, iterable, body)), env)
 }
 
+
+
+dataset_for_loop_with_potential_break <-
+  function(iterable, var, body_fn, body_vars, env) {
+    .NotYetImplemented()
+
+    establish_cond_registry()
+    on.exit(remove_cond_registry())
+
+    did_break <- FALSE
+    initial_state <- tuple(did_break, body_vars)
+
+    ds_scan <- function(ds, ...) ds$apply(tf$data$experimental$scan(...))
+    ds_take_while <- function(ds, ...) ds$apply(tf$data$experimental$take_while(...))
+
+    scan_fn <- function(...) .NotYetImplemented()
+    predicate_fn <- function(...) .NotYetImplemented()
+
+    iterable <- ds_scan(iterable, initial_state, scan_fn)
+    iterable <- ds_take_while(iterable, predicate_fn)
+
+    c(., final_state) %<-%
+      iterable$reduce(initial_state,
+                      function(current_state, next_ds_elem) {
+                        c(did_break, body_vars) %<-% current_state
+                        body_fn <- env_bury(body_fn,!!var := next_ds_elem)
+                        body_fn <- wrap_fn_with_loop_control_flow_handlers(body_fn)
+                        do.call(body_fn, list(did_break, body_vars))
+                      })
+
+    list2env(final_state, env)
+  }
+
+
+dataset_for_loop_no_break <-
+  function(iterable, var, body_fn, body_vars, env) {
+    initial_state <- body_vars
+
+    reduce_func <- function(current_state, next_ds_elem) {
+      body_fn <- env_bury(body_fn,!!var := next_ds_elem)
+      do.call(body_fn, current_state)
+    }
+    final_state <- iterable$reduce(initial_state, reduce_func)
+    final_state
+  }
+
 #' @importFrom reticulate tuple
 ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
@@ -23,25 +69,17 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
     body_vars <- body_vars[vapply(body_vars, exists, TRUE, envir = env)]
 
     body_fn <- as_loop_fn(body, body_vars, env)
-
-    establish_cond_registry()
-    on.exit(remove_cond_registry())
-
-    did_break <- FALSE
     body_vars <- mget(body_vars, env, inherits = TRUE)
-    initial_state <- tuple(did_break, body_vars)
 
-    c(., final_state) %<-%
-      iterable$reduce(
-        initial_state,
-        function(current_state, next_ds_elem) {
-          c(did_break, body_vars) %<-% current_state
-          body_fn <- env_bury(body_fn, !!var := next_ds_elem)
-          body_fn <- wrap_fn_with_loop_control_flow_handlers(body_fn)
-          do.call(body_fn, list(did_break, body_vars))
-        })
+    can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
+
+    final_state <- if(can_break)
+      dataset_for_loop_with_potential_break(iterable, var, body_fn, body_vars, env)
+     else
+      dataset_for_loop_no_break(iterable, var, body_fn, body_vars, env)
 
     list2env(final_state, env)
+    invisible()
   }
 
 ag_for_impl.tensorflow.python.data.ops.iterator_ops.IteratorV2 <-
