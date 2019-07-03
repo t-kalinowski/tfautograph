@@ -26,6 +26,7 @@ ag_for_impl.tensorflow.python.data.ops.iterator_ops.IteratorV2 <-
     .NotYetImplemented()
   }
 
+#' @importFrom zeallot %->%
 ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   # modeled after _known_len_tf_for_stmt()
   body_vars <- setdiff(all.vars(body), deparse(var))
@@ -52,7 +53,8 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
     elem <- iter$read(index)
     body_fn <- env_bury(body_fn, !!var := elem)
     body_fn <- wrap_fn_with_loop_control_flow_handlers(body_fn)
-    c(did_break, body_state) %<-% do.call(body_fn, list(did_break, body_args))
+    do.call(body_fn, list(did_break, body_args)) %->%
+      c(did_break, body_state)
     list(index + 1L, did_break, body_state)
   }
 
