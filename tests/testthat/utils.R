@@ -4,6 +4,7 @@ Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 
 tf <- tensorflow::tf
+tuple <- reticulate::tuple
 
 as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
 
@@ -23,6 +24,9 @@ expect_result <- function(fun, inputs, expected) {
   expect_equal(result, expected)
 }
 
+expect_grabbed_result_equal <- function(tensor, value)
+  expect_equal(grab(tensor), value)
+
 seq_len0 <- function(x) 0L:(x - 1L)
 
 `add<-`      <- function(x, value) x + value
@@ -39,3 +43,7 @@ expect_ag_equivalent <- function(fn, input) {
                do.call(fn, input))
 }
 
+
+np_arr <- function(...) reticulate::np_array(array(seq_len(prod(...)), c(...)), "float32")
+
+tf_arr <- function(...) tf$convert_to_tensor(np_arr(...))
