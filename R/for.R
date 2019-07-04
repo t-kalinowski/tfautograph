@@ -133,13 +133,20 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
       return_same_structure = TRUE
     )
 
-  if(iterable$shape$as_list()[1] > 0)
-    body_vars[[deparse(var)]] <- iterable$`__getitem__`(index-1L)
-  # alternatively to calling __getitem__, it might make more sense to call
-  # `ta$read(index-1L)`, however then you run into an issue where the
-  # TensorArray element might have been cleared from memory already, having
-  # already been read once in the loop. Having to set TensorArray(...,
-  # clear_after_read = FALSE) is probably more expensive than this.
+  # TODO: rethink if this is worth it. python tensorflows autograph punts on
+  # this. The `var` for loop symbol does not persist in the environment after
+  # the loop exits in python autographed functions, unlike what happens when in
+  # this is done in the standard python interperter. Also, doing this for
+  # datasets or iterators is also going to be somewhat expensive. Commenting out
+  # for now
+
+  # if(iterable$shape$as_list()[1] > 0)
+  #   body_vars[[deparse(var)]] <- iterable$`__getitem__`(index-1L)
+  # # alternatively to calling __getitem__, it might make more sense to call
+  # # `ta$read(index-1L)`, however then you run into an issue where the
+  # # TensorArray element might have been cleared from memory already, having
+  # # already been read once in the loop. Having to set TensorArray(...,
+  # # clear_after_read = FALSE) is probably more expensive than this.
   list2env(body_vars, envir = env)
 
   invisible()
