@@ -51,7 +51,9 @@ ag_if <- function(cond, true, false = NULL) {
                 returned = false_return
               )))
 
-  list2env(outcome$modified %||% list(), envir = env)
+  if(!is.null(outcome$modified))
+    list2env(outcome$modified, envir = env)
+
   outcome$returned
 }
 

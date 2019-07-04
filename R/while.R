@@ -12,11 +12,7 @@ ag_while <- function(cond, body) {
   if (!any_tensors_in(cond, env))
     return(eval(as.call(list(quote(.Primitive("while")), cond, body)), env))
 
-
-  # each while loop needs to establish it's own cond registry, so that only
-  # conds from the current scope are collected when loop control flow statements are encountered.
-  establish_cond_registry()
-  on.exit(remove_cond_registry())
+  can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
 
   loop_vars <- unique(c(all.vars(cond), all.vars(body)))
 
@@ -25,17 +21,45 @@ ag_while <- function(cond, body) {
   # test_while_local_composite_complex_illegal
   loop_vars <- loop_vars[vapply(loop_vars, exists, TRUE, envir = env)]
 
-  .cond_fn <- new_function(as_args(loop_vars), cond, env)
+  cond_fn <- new_function(as_args(loop_vars), cond, env)
+  body_fn <- as_loop_body_fn(body, loop_vars, env)
+
+  loop_vars <- mget(loop_vars, envir = env, inherits = TRUE)
+
+
+  tf_while <- if(can_break) while_with_break else while_no_break
+
+  loop_vars <- tf_while(cond_fn, body_fn, loop_vars)
+
+  list2env(loop_vars, env)
+
+  invisible()
+}
+
+while_no_break <- function(cond_fn, body_fn, loop_vars) {
+  res <- tf$while_loop(
+    cond = cond_fn,
+    body = function(...) tuple(body_fn(...)),
+    loop_vars = tuple(loop_vars),
+    return_same_structure = TRUE
+  )
+  names(res) <- names(loop_vars)
+  res
+}
+
+while_with_break <- function(cond_fn, body_fn, loop_vars) {
+
+  establish_cond_registry()
+  on.exit(remove_cond_registry())
+
+  .cond_fn <- cond_fn
   cond_fn <- function(did_break, loop_vars)
     !did_break & do.call(.cond_fn, loop_vars)
 
-
-  .body_fn <- as_loop_fn(body, loop_vars, env)
+  .body_fn <- body_fn
   body_fn <- wrap_fn_with_loop_control_flow_handlers(.body_fn)
 
   did_break <- FALSE
-  loop_vars <- mget(loop_vars, envir = env, inherits = TRUE)
-
   res <- tf$while_loop(
     cond = cond_fn,
     body = body_fn,
@@ -43,18 +67,21 @@ ag_while <- function(cond, body) {
     return_same_structure = TRUE
   )
 
-  list2env(res[[2]], env)
+  res[[2L]]
 }
 
 
 
-as_loop_fn <- function(body_expr, loop_vars, env) {
+
+as_loop_body_fn <- function(body_expr, loop_vars, env) {
+  args <- as_args(names(loop_vars) %||% loop_vars)
+
   body_w_ret <- substitute({
     body_expr
     mget(loop_vars)
   }, list(body_expr = body_expr, loop_vars = loop_vars))
 
-  new_function(as_args(loop_vars), body_w_ret, env)
+  new_function(args, body_w_ret, env)
 }
 
 
