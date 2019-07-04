@@ -69,6 +69,7 @@ test_that("for iterated expression", {
 
 
 test_that("for no vars modified in body", {
+  skip("rethink exporting for loop final var state")
   fn <- function(x) {
     for(e in x) {
       NULL
