@@ -1,0 +1,90 @@
+---
+title: "AutoGraph: Easy control flow for graphs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AutoGraph: Easy control flow for graphs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+AutoGraph helps you write complicated graph code using normal R Behind the scenes, AutoGraph 
+automatically transforms your code into the equivalent TensorFlow graph code. AutoGraph 
+already supports much of the R language, and that coverage continues to grow. For a 
+list of supported R language features, see the Autograph capabilities and 
+limitations.
+
+```{r setup}
+library(tensorflow)
+library(tfautograph)
+```
+
+We'll enable eager execution for demonstration purposes, but AutoGraph works in both eager and graph execution environments:
+
+```{r}
+tfe_enable_eager_execution()
+```
+
+> **Note**: AutoGraph converted code is designed to run during graph execution. When 
+eager exectuon is enabled, use explicit graphs (as this example shows) or 
+____tf.contrib.eager.defun____.
+
+## Automatically convert R control flow
+
+AutoGraph will convert much of the Python language into the equivalent TensorFlow graph building code.
+
+> **Note**: In real applications batching is essential for performance. The best 
+code to convert to AutoGraph is code where the control flow is decided at the batch 
+level. If making decisions at the individual example level, you must index and 
+batch the examples to maintain performance while applying the control flow logic.
+
+AutoGraph converts a function like:
+
+```{r}
+square_if_positive <- function(x) {
+  if (x > 0){
+    x <- x * x
+  } else {
+   x <- 0 
+  }
+  x
+}
+```
+
+To a function that uses graph building:
+
+```{r}
+square_if_positive_graph <- autograph(square_if_positive)
+square_if_positive_graph(tf$constant(10))
+square_if_positive_graph(tf$constant(-10))
+```
+
+Note that the pure R function would fail if we passed a Tensor as input:
+
+```{r}
+square_if_positive(tf$constant(5))
+```
+
+AutoGraph supports common R statements like `while`, `for`, `if`, `break`, and `return`(#TODO), 
+with support for nesting. Compare this function with the complicated graph version displayed in the following code blocks:
+
+```{r}
+sum_even <- autograph(function(items) {
+  s <- 0
+  for (i in items) {
+    if (i %% 2 <= 0)
+      s <- s + i
+  }
+  s
+})
+
+sum_even(tf$constant(list(1,2,3,4)))
+```
+
+
