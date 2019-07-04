@@ -68,7 +68,7 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
     body_vars <- setdiff(all.vars(body), deparse(var))
     body_vars <- body_vars[vapply(body_vars, exists, TRUE, envir = env)]
 
-    body_fn <- as_loop_fn(body, body_vars, env)
+    body_fn <- as_loop_body_fn(body, body_vars, env)
     body_vars <- mget(body_vars, env, inherits = TRUE)
 
     can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
@@ -97,7 +97,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   # test_while_local_composite_complex_illegal
   body_vars <- body_vars[vapply(body_vars, exists, TRUE, envir = env)]
 
-  body_fn <- as_loop_fn(body, body_vars, env)
+  body_fn <- as_loop_body_fn(body, body_vars, env)
 
   # track python tensorflow TODO, reimplement here if implementation there changes:
   ## TODO(b/117628877): Revisit performance once XLA has the necessary support.
