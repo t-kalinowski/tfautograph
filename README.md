@@ -28,7 +28,8 @@ Implemented so far:
 
 Additional remaining tasks:
 
-  - \[ \] `switch` and/or `if else if else if` chains into `tf.case`?
+  - \[ \] `if else if else if` chains into `tf.case`?
+  - \[ \] `switch` into `tf.switch_case`?
   - \[ \] nicer error messages warning about undefined symbols and
     unbalanced branches
   - \[ \] R function documentation
