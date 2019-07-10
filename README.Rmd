@@ -22,7 +22,7 @@ This package implements autograph for R. It can be used to translate R control f
 
 Implemented so far:
 
- - [x] `if` 
+ - [x] `if`
  - [x] `while` 
  - [x] `next` in `while` (python `continue`)
  - [x] `break` in `while`
@@ -33,13 +33,15 @@ Implemented so far:
  - [x] `stopifnot` (python `assert`)
  - [ ] early `return` in `while` and `for`
  - [ ] `print`
+ - [ ] `switch` (autograph to `tf.switch_case`)
  
  
 Additional remaining tasks:
 
+ - [ ] `if ... else if ... else if` chains autograph into `tf.case` (maybe)
  - [ ] nicer error messages warning about undefined symbols and unbalanced branches
  - [ ] R function documentation
- - [ ] vignette / this README
+ - [ ] vignette / README
  - [ ] submit to CRAN
 
 
