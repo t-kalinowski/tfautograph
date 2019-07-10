@@ -24,6 +24,7 @@ Implemented so far:
   - \[x\] `next` and `break` in `for`
   - \[x\] `stopifnot` (python `assert`)
   - \[ \] early `return` in `while` and `for`
+  - \[ \] `print`
 
 Additional remaining tasks:
 
