@@ -25,15 +25,16 @@ Implemented so far:
   - \[x\] `stopifnot` (python `assert`)
   - \[ \] early `return` in `while` and `for`
   - \[ \] `print`
+  - \[ \] `switch` (autograph to `tf.switch_case`)
 
 Additional remaining tasks:
 
-  - \[ \] `if else if else if` chains into `tf.case`?
-  - \[ \] `switch` into `tf.switch_case`?
+  - \[ \] `if ... else if ... else if` chains autograph into `tf.case`
+    (maybe)
   - \[ \] nicer error messages warning about undefined symbols and
     unbalanced branches
   - \[ \] R function documentation
-  - \[ \] vignette / this README
+  - \[ \] vignette / README
   - \[ \] submit to CRAN
 
 ## Installation
