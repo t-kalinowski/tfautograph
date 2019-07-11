@@ -33,6 +33,7 @@ Additional remaining tasks:
     (maybe)
   - \[ \] nicer error messages warning about undefined symbols and
     unbalanced branches
+  - \[ \] autograph inline expressions (only functions suported at the moment)
   - \[ \] R function documentation
   - \[ \] vignette / README
   - \[ \] submit to CRAN
