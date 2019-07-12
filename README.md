@@ -23,7 +23,7 @@ Implemented so far:
   - \[ \] `for` with tf iterators
   - \[x\] `next` and `break` in `for`
   - \[x\] `stopifnot` (python `assert`)
-  - \[ \] early `return` in `while` and `for`
+  - \[ \] early `return` in `while` and `for` (maybe for v2)
   - \[ \] `print`
   - \[ \] `switch` (autograph to `tf.switch_case`)
 
@@ -31,9 +31,10 @@ Additional remaining tasks:
 
   - \[ \] `if ... else if ... else if` chains autograph into `tf.case`
     (maybe)
+  - \[ \] autograph inline expressions also (only functions can be
+    autographed at the moment)
   - \[ \] nicer error messages warning about undefined symbols and
     unbalanced branches
-  - \[ \] autograph inline expressions (only functions suported at the moment)
   - \[ \] R function documentation
   - \[ \] vignette / README
   - \[ \] submit to CRAN
