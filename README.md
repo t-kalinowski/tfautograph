@@ -35,6 +35,10 @@ Additional remaining tasks:
     autographed at the moment)
   - \[ \] nicer error messages warning about undefined symbols and
     unbalanced branches
+  - \[ \] a way to pass through additional options to `tf.while_loop`
+    and others
+  - \[ \] an escape hatch to prevent a specific statement from being
+    autographed
   - \[ \] R function documentation
   - \[ \] vignette / README
   - \[ \] submit to CRAN
