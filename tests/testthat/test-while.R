@@ -111,9 +111,10 @@ test_that("while local composite complex illegal", {
   }
   ag_fn <- autograph(fn)
 
-  # expect_error(ag_fn(as_tensor(5L)), 'must be defined before the loop:.*tc.*')
   # TODO: while should return a better error message
-  expect_error(ag_fn(as_tensor(5L)), '*tc*')
+  expect_error(ag_fn(as_tensor(5L)), '*tc*', class = "access_undefined")
+  expect_error(ag_fn(as_tensor(5L)), 'must be defined before the loop',
+               class = "access_undefined")
 })
 
 test_that("while test while dispatches by cond only", {
