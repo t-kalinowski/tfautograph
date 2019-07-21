@@ -38,24 +38,64 @@ ag_if <- function(cond, true, false = NULL) {
   rm(list = undefineds, envir = true_branch)
   rm(list = undefineds, envir = false_branch)
 
-  outcome <-
-    tf$cond(cond,
-              function()
-              drop_empty(list(
-                modified = as.list(true_branch, all.names = TRUE),
-                returned = true_return
-              )),
-            function()
-              drop_empty(list(
-                modified = as.list(false_branch, all.names = TRUE),
-                returned = false_return
-              )))
+  true_outcome <- drop_empty(list(
+    modified = as.list(true_branch, all.names = TRUE),
+    returned = true_return
+  ))
+
+  false_outcome <-  drop_empty(list(
+    modified = as.list(false_branch, all.names = TRUE),
+    returned = false_return
+  ))
+
+  if(!length(true_outcome))
+    return(invisible())
+
+  outcome <- tf$cond(cond,
+                     function() true_outcome,
+                     function() false_outcome,
+                     strict = TRUE)
 
   if(!is.null(outcome$modified))
     list2env(outcome$modified, envir = env)
 
   outcome$returned
 }
+
+
+
+bury_as_pretty_errors <- function(fn, undefs) {
+  e <- new.env(parent = environment(fn))
+
+  for(u in undefs)
+    makeActiveBinding(u, function() stop("must be defined before the loop"), e)
+
+  environment(fn) <- e
+  fn
+}
+#
+#
+# make_undefs <- function(nms, env, call, msg) {
+#   # nms <- as.character(nms)
+#   lapply(nms, function(nm) {
+#     nm <- as.character(nm)
+#     fn <-  function(x) {
+#       if (missing(x))
+#         stop(undef_condition(nm, call, msg))
+#       else {
+#         rm(list = nm, envir = env)
+#         assign(nm, value = x, envir = env)
+#       }
+#     }
+#     makeActiveBinding(nm, fn, env)
+#   })
+# }
+#
+#
+# pretty_erroring_undef <- function(nm) {
+#   makeActiveBinding(nm, function() stop("Must be defined before the loop"), env)
+# }
+
 
 #' @importFrom reticulate py_last_error py_clear_last_error
 is_same_structure <- function(x, y) {

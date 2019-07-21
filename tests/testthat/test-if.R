@@ -215,20 +215,19 @@ test_that("can call from another functions", {
   expect_result(g, as_tensor(-1L), list(0, -2))
 })
 
-test_that("can early return", {
-  skip("early return not yet implemented")
-
-  fn <- function(n) {
-    if (n > 0)
-      return(1)
-
-
-    n + 1
-  }
-
-  fn <- autograph(fn)
-
-  expect_result(fn, as_tensor(1L), 1)
-  expect_result(fn, as_tensor(-1L), 0)
-})
+# test_that("can early return", {
+#   skip("early return not yet implemented")
+#
+#   fn <- function(n) {
+#     if (n > 0)
+#       return(1)
+#
+#     n + 1
+#   }
+#
+#   fn <- autograph(fn)
+#
+#   expect_result(fn, as_tensor(1L), 1)
+#   expect_result(fn, as_tensor(-1L), 0)
+# })
 

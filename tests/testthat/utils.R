@@ -27,7 +27,7 @@ expect_result <- function(fun, inputs, expected) {
 expect_grabbed_result_equal <- function(tensor, value)
   expect_equal(grab(tensor), value)
 
-seq_len0 <- function(x) 0L:(x - 1L)
+seq_len0 <- function(x) if(x == 0L) integer() else 0L:(x - 1L)
 
 `add<-`      <- function(x, value) x + value
 `subtract<-` <- function(x, value) x - value
