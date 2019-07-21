@@ -68,20 +68,20 @@ test_that("for iterated expression", {
 ## Start: R tests
 
 
-test_that("for no vars modified in body", {
-  skip("rethink exporting for loop final var state")
-  fn <- function(x) {
-    for(e in x) {
-      NULL
-    }
-    e
-  }
-  ag_fn <- autograph(fn)
-  rx <- 1:4
-  tx <- as_tensor(rx)
-
-  expect_equal(fn(rx), grab(ag_fn(tx)))
-})
+# test_that("for no vars modified in body", {
+#   skip("rethink exporting for loop final var state")
+#   fn <- function(x) {
+#     for(e in x) {
+#       NULL
+#     }
+#     e
+#   }
+#   ag_fn <- autograph(fn)
+#   rx <- 1:4
+#   tx <- as_tensor(rx)
+#
+#   expect_equal(fn(rx), grab(ag_fn(tx)))
+# })
 
 
 test_that("for with tf Dataset", {
