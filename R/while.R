@@ -27,6 +27,7 @@ ag_while <- function(cond, body) {
   } else
     loop_vars <- tuple(loop_vars)
 
+  # browser()
   res <- tf$while_loop(
     cond = cond_fn,
     body = body_fn,
@@ -59,8 +60,8 @@ as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
   }
 }
 
-as_loop_body_fn <- function(body_expr, loop_vars, env) {
-
+as_loop_body_fn <- function(body_expr, loop_vars, env, call = sys.call(-1)) {
+  force(call)
   args <- names(loop_vars) %||% loop_vars
 
   fn <- new_function(as_args(args), quote({
@@ -69,7 +70,7 @@ as_loop_body_fn <- function(body_expr, loop_vars, env) {
     eval(body_expr, exec_env)
 
     if(length(undefs <- setdiff(names(exec_env), args)))
-      signalCondition(undefined_vars_condition(undefs, env))
+      make_active_undefs(undefs, env, call)
 
     mget(args, exec_env)
   }))

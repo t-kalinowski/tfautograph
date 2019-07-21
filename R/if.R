@@ -48,8 +48,12 @@ ag_if <- function(cond, true, false = NULL) {
     returned = false_return
   ))
 
-  if(!length(true_outcome))
-    return(invisible())
+  if(length(undefineds))
+    make_active_undefs(undefineds, env, sys.call())
+
+  if(!length(true_outcome) && !length(false_outcome))
+    return()
+
 
   outcome <- tf$cond(cond,
                      function() true_outcome,
@@ -59,59 +63,9 @@ ag_if <- function(cond, true, false = NULL) {
   if(!is.null(outcome$modified))
     list2env(outcome$modified, envir = env)
 
+
   outcome$returned
 }
 
 
 
-bury_as_pretty_errors <- function(fn, undefs) {
-  e <- new.env(parent = environment(fn))
-
-  for(u in undefs)
-    makeActiveBinding(u, function() stop("must be defined before the loop"), e)
-
-  environment(fn) <- e
-  fn
-}
-#
-#
-# make_undefs <- function(nms, env, call, msg) {
-#   # nms <- as.character(nms)
-#   lapply(nms, function(nm) {
-#     nm <- as.character(nm)
-#     fn <-  function(x) {
-#       if (missing(x))
-#         stop(undef_condition(nm, call, msg))
-#       else {
-#         rm(list = nm, envir = env)
-#         assign(nm, value = x, envir = env)
-#       }
-#     }
-#     makeActiveBinding(nm, fn, env)
-#   })
-# }
-#
-#
-# pretty_erroring_undef <- function(nm) {
-#   makeActiveBinding(nm, function() stop("Must be defined before the loop"), env)
-# }
-
-
-#' @importFrom reticulate py_last_error py_clear_last_error
-is_same_structure <- function(x, y) {
-  tryCatch({
-    tf$python$util$nest$assert_same_structure(x %||% list(), y %||% list())
-    # no exceptions raised with NULLs
-    TRUE
-  },
-  error = function(e) {
-    py_e <- py_last_error()
-    if (py_e$type == "ValueError" &&
-        grepl("The two structures don't have the same nested structure.",
-              py_e$value, fixed = TRUE)) {
-      py_clear_last_error()
-      FALSE
-    } else
-      stop(e)
-  })
-}
