@@ -19,9 +19,11 @@ Implemented so far:
   - \[x\] `next` in `while` (python `continue`)
   - \[x\] `break` in `while`
   - \[x\] `for` with tensors
+  - \[x\] `next/break` in `for` with tensors
   - \[x\] `for` with tf datasets
+  - \[x\] `next/break` in `for` with tf datasets
   - \[ \] `for` with tf iterators
-  - \[x\] `next` and `break` in `for`
+  - \[ \] `next/break` in `for` with tf iterators
   - \[x\] `stopifnot` (python `assert`)
   - \[ \] early `return` in `while` and `for` (maybe for v2)
   - \[ \] `print`
@@ -33,7 +35,7 @@ Additional remaining tasks:
     (maybe)
   - \[ \] autograph inline expressions also (only functions can be
     autographed at the moment)
-  - \[ \] nicer error messages warning about undefined symbols and
+  - \[x\] nicer error messages warning about undefined symbols and
     unbalanced branches
   - \[ \] a way to pass through additional options to `tf.while_loop`
     and others
