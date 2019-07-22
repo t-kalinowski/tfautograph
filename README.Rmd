@@ -30,8 +30,6 @@ Implemented so far:
  - [x] `next/break` in `for` with tensors
  - [x] `for` with tf datasets
  - [x] `next/break` in `for` with tf datasets
- - [ ] `for` with tf iterators
- - [ ] `next/break` in `for` with tf iterators
  - [x] `stopifnot` (python `assert`)
  - [ ] early `return` in `while` and `for` (maybe for v2)
  - [ ] `print`
