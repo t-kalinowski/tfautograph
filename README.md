@@ -32,8 +32,8 @@ Additional remaining tasks:
   - \[ \] `if ... else if ... else if` chains autograph into `tf.case`
     (maybe)
   - \[x\] autograph inline expressions also, in addition to functions
-  - \[x\] nicer error messages warning about undefined symbols and
-    unbalanced branches
+  - \[x\] nice informative error messages warning about undefined
+    symbols and unbalanced branches
   - \[ \] a way to pass through additional options to `tf.while_loop`
     and others
   - \[ \] an escape hatch to prevent a specific statement from being
