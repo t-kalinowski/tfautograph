@@ -1,7 +1,7 @@
 
 
 #' @importFrom tensorflow tf
-#' @importFrom rlang env_bury
+#' @export
 autograph <- function(x) {
   x <- substitute(x)
   env <- parent.frame()
