@@ -79,6 +79,35 @@ test_that("if single output", {
 })
 
 
+test_that("if single output - inline expr", {
+
+  n <- local({
+    n <- as_tensor(1L)
+    autograph({
+      if (n > 0L)
+        n <- -n
+    })
+    n
+  })
+
+  expect_equal(grab(n), -1L)
+
+  n <- local({
+    n <- as_tensor(-2L)
+    autograph({
+      if (n > 0L)
+        n <- n*n
+    })
+    n
+  })
+  expect_equal(grab(n), -2L)
+
+})
+
+
+
+
+
 test_that("if single semi", {
 
   fn <- function(n) {
@@ -106,6 +135,33 @@ test_that("if local var", {
 
   expect_result(ag_fn, as_tensor(1L), 5L)
   expect_result(ag_fn, as_tensor(-1L), -1L)
+
+
+  fn <- function(n) {
+    if(n > 0L) {
+      b <- 4L
+      n <- b + 1L
+    }
+    b
+  }
+  ag_fn <- autograph(fn)
+  expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
+               class = "access_undefined")
+
+
+  local({
+    n <- as_tensor(1L)
+
+    autograph(if (n > 0L) {
+      b <- 4L
+      n <- b + 1L
+    })
+
+
+    expect_equal(grab(n), 5L)
+    expect_error(b, "Symbol `b` is \\*undefined\\*",
+                 class = "access_undefined")
+  })
 })
 
 
