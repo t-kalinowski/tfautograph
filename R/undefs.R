@@ -7,11 +7,13 @@ undefined_vars_condition <- function(undefs, env = NULL) {
 
 
 make_active_undefs <- function(undefs, env, call) {
-  # force(call)
+  force(call)
 
   lapply(undefs, function(undef)  {
-    makeActiveBinding(undef, function()
-      stop(access_undefined_condition(undef, call)), env)
+    makeActiveBinding(
+      undef,
+      function() stop(access_undefined_condition(undef, call)),
+      env)
   })
 }
 

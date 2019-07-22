@@ -23,16 +23,15 @@ Implemented so far:
   - \[x\] `for` with tf datasets
   - \[x\] `next/break` in `for` with tf datasets
   - \[x\] `stopifnot` (python `assert`)
-  - \[ \] early `return` in `while` and `for` (maybe for v2)
   - \[ \] `print`
   - \[ \] `switch` (autograph to `tf.switch_case`)
+  - \[ \] early `return` in `while` and `for` (maybe for v2)
 
 Additional remaining tasks:
 
   - \[ \] `if ... else if ... else if` chains autograph into `tf.case`
     (maybe)
-  - \[ \] autograph inline expressions also (only functions can be
-    autographed at the moment)
+  - \[x\] autograph inline expressions also, in addition to functions
   - \[x\] nicer error messages warning about undefined symbols and
     unbalanced branches
   - \[ \] a way to pass through additional options to `tf.while_loop`
