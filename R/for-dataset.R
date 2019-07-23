@@ -4,7 +4,9 @@
 ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
 
-    body_vars <- get_existing_var_nms(body, var, env = env)
+    body_vars <-
+      get_registered_next_while_loop_vars() %||%
+      get_existing_var_nms(body, var, env = env)
     var <- deparse(var)
 
     body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env)

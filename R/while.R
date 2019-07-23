@@ -14,7 +14,10 @@ ag_while <- function(cond, body) {
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
 
-  loop_vars <- get_existing_var_nms(cond, body, env = env)
+  loop_vars <-
+    get_registered_next_while_loop_vars() %||%
+    get_existing_var_nms(cond, body, env = env)
+
 
   cond_fn <- as_loop_cond_fn(cond, loop_vars, env)
   body_fn <- as_loop_body_fn(body, loop_vars, env)
@@ -27,13 +30,17 @@ ag_while <- function(cond, body) {
   } else
     loop_vars <- tuple(loop_vars)
 
-  # browser()
-  res <- tf$while_loop(
-    cond = cond_fn,
-    body = body_fn,
-    loop_vars = loop_vars,
-    return_same_structure = TRUE
+  while_loop_args <- c(
+    list(
+      cond = cond_fn,
+      body = body_fn,
+      loop_vars = loop_vars,
+      return_same_structure = TRUE
+    ),
+    get_registered_next_while_loop_opts()
   )
+
+  res <- do.call(tf$while_loop, while_loop_args)
 
   loop_vars <- res[[1]]
   list2env(loop_vars, env)
@@ -46,6 +53,15 @@ get_existing_var_nms <- function(..., env) {
   vars <- unique(unlist(lapply(list(...), all.vars)))
   vars[vapply(vars, exists, TRUE, envir = env)]
 }
+
+
+get_tensor_var_nms <- function(..., env) {
+  existing <- get_existing_var_nms(..., env = env)
+  existing[vapply(mget(existing, envir = env, inherits = TRUE),
+                  is_tensor, TRUE)]
+}
+
+
 
 as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
 
