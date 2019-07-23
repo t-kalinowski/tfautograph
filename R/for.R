@@ -27,7 +27,10 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   ta <- tf$TensorArray(iterable$dtype, size = n)
   iter <- ta$unstack(iterable)
 
-  loop_vars <- get_existing_var_nms(body, var, env = env)
+  loop_vars <-
+    get_registered_next_while_loop_vars() %||%
+    get_existing_var_nms(body, var, env = env)
+
   var <- deparse(var)
 
   .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env)
@@ -55,12 +58,17 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   loop_vars <- mget(loop_vars, env, inherits = TRUE)
 
-  res <- tf$while_loop(
-    cond = cond_fn,
-    body = body_fn,
-    loop_vars = drop_empty(list(index, loop_vars, did_break)),
-    return_same_structure = TRUE
+  while_loop_args <- c(
+    list(
+      cond = cond_fn,
+      body = body_fn,
+      loop_vars = drop_empty(list(index, loop_vars, did_break)),
+      return_same_structure = TRUE
+    ),
+    get_registered_next_while_loop_opts()
   )
+
+  res <- do.call(tf$while_loop, while_loop_args)
 
   # activate_undefs(undefs, sym)
   loop_vars <- res[[2]]

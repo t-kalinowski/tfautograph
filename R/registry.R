@@ -51,3 +51,24 @@ reduce_registered_conds <- function(registry = get_active_cond_registry()) {
 }
 
 
+.registries$while_opts <- new.env(parent = emptyenv())
+
+register_next_while_loop_vars <- function(x) {
+  .registries$while_opts$next_vars <- x
+}
+
+get_registered_next_while_loop_vars <- function() {
+  on.exit(.registries$while_opts$next_vars <- NULL)
+  .registries$while_opts$next_vars
+}
+
+
+register_next_while_loop_opts <- function(args) {
+  .registries$while_opts$next_opts <- args
+}
+
+get_registered_next_while_loop_opts <- function() {
+  on.exit(.registries$while_opts$next_opts <- NULL)
+  .registries$while_opts$next_opts
+}
+
