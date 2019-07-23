@@ -38,6 +38,7 @@ Additional remaining tasks:
     and others
   - \[ \] an escape hatch to prevent a specific statement from being
     autographed
+  - \[ \] a verbose/debug mode that logs what autograph is doing
   - \[ \] R function documentation
   - \[ \] vignette / README
   - \[ \] submit to CRAN
