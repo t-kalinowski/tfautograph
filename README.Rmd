@@ -33,21 +33,24 @@ Implemented so far:
  - [x] `stopifnot` (python `assert`)
  - [ ] `print`
  - [ ] `switch` (autograph to `tf.switch_case`)
- - [ ] early `return` in `while` and `for` (maybe for v2)
  
  
 Additional remaining tasks:
 
- - [ ] `if ... else if ... else if` chains autograph into `tf.case` (maybe)
  - [x] autograph inline expressions also, in addition to functions
  - [x] nice informative error messages warning about undefined symbols and unbalanced branches
- - [ ] a way to pass through additional options to `tf.while_loop` and others
+ - [x] a way to pass through additional options to `tf.while_loop`
  - [ ] an escape hatch to prevent a specific statement from being autographed
  - [ ] a verbose/debug mode that logs what autograph is doing
  - [ ] R function documentation
  - [ ] vignette / README
  - [ ] submit to CRAN
 
+
+Planned for CRAN release #2
+
+ - [ ] early `return` in `while` and `for` 
+ - [ ] autograph `if ... else if ... else if` chains into `tf.case` 
 
 ## Installation
 
