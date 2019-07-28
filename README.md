@@ -43,6 +43,7 @@ Planned for CRAN release \#2
 
   - \[ \] early `return` in `while` and `for`
   - \[ \] autograph `if ... else if ... else if` chains into `tf.case`
+  - \[ \] `recursive` support
 
 ## Installation
 
