@@ -28,3 +28,9 @@ ag_while_opts <- function(...,
     register_next_while_loop_opts(args)
   invisible()
 }
+
+
+#' @export
+ag_name <- function(x) {
+  register_next_ag_name(x)
+}
