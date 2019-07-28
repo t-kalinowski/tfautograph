@@ -72,3 +72,14 @@ get_registered_next_while_loop_opts <- function() {
   .registries$while_opts$next_opts
 }
 
+
+
+get_next_ag_name <- function() {
+  on.exit(.registries$next_ag_name <- NULL)
+  .registries$next_ag_name
+}
+
+register_next_ag_name <- function(nm) {
+  .registries$next_ag_name <- nm
+}
+

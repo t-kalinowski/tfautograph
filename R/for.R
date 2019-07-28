@@ -65,6 +65,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
       loop_vars = drop_empty(list(index, loop_vars, did_break)),
       return_same_structure = TRUE
     ),
+    name = get_next_ag_name(),
     get_registered_next_while_loop_opts()
   )
 
