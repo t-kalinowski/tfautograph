@@ -83,3 +83,47 @@ register_next_ag_name <- function(nm) {
   .registries$next_ag_name <- nm
 }
 
+
+
+.registries$control_dependency_ops_registries <- new.env(parent = emptyenv())
+
+register_control_dependency_ops <- function(ops, env) {
+  env_id <- format(env)
+
+  registry <- .registries$control_dependency_ops_registries[[env_id]]
+  if (is.null(registry))
+    registry <-
+    .registries$control_dependency_ops_registries[[env_id]] <-
+    new.env(parent = emptyenv())
+
+  if(!is.list(ops))
+    ops <- list(ops)
+
+  for(op in ops)
+    registry[[op$name]] <- op
+}
+
+capture_registered_control_dependency_ops <- function(x, clear = TRUE) {
+  env_id <- format(parent.frame())
+  registry <- .registries$control_dependency_ops_registries[[env_id]]
+
+  # browser()
+  if(is.null(registry))
+    stop("Could not find control dependency ops registry")
+
+  if(clear)
+    on.exit(rm(list = env_id, envir = .registries$control_dependency_ops_registries))
+
+  ops <- unname(as.list(registry, all.names = TRUE))
+
+  ## tf$identity and tf$identity_n can't be trusted to preserve shape
+  # x <- list(as_tensor(1), as_tensor(2), as_tensor(3))
+  # tf$identity_n(list(x))[[1]]
+  #>># Tensor("IdentityN_7:0", shape=(3,), dtype=float32)
+
+  with(tf$control_dependencies(ops),
+       rapply(list(x), tf$identity, classes = "tensorflow.tensor", how = "replace"))[[1]]
+  # TODO: what about user constructed python outputs set with convert = FALSE?
+  # eg, tuple outputs like? `tuple(x, y, z)`
+}
+
