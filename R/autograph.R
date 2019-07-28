@@ -6,41 +6,96 @@ autograph <- function(x) {
   x <- substitute(x)
   env <- parent.frame()
 
+  if (is.symbol(x)) {
+    # function or something with `environment<-` method
+
+    x <- get(deparse(x), envir = env)
+    environment(x) <- new_ag_mask(parent = environment(x))
+
+  } else {
+
+    # in line expression
+    ag_mask <- new_ag_mask(parent = env)
+    eval_env <- new.env(parent = ag_mask)
+    x <- eval(x, eval_env)
+
+    # reset env of locally defined functions
+    for(nm in names(eval_env))
+      if(!bindingIsActive(nm, eval_env) &&
+         identical(environment(eval_env[[nm]]), eval_env))
+        environment(eval_env[[nm]]) <- ag_mask
+
+    transfer_env(from = eval_env, to = env)
+
+    # reset env of anonymous returned functions
+    if(identical(environment(x), eval_env))
+      environment(x) <- ag_mask
+  }
+  x
+}
+
+
+new_ag_mask <- function(parent) {
+
   ag_mask <- list(
     `if`        = ag_if,
     `while`     = ag_while,
     `for`       = ag_for,
     `break`     = ag_break,
     `next`      = ag_next,
-    `stopifnot` = ag_stopifnot
+    `stopifnot` = ag_stopifnot,
+    `switch`    = ag_switch,
+    `on.exit`   = ag_on.exit
+    # `tf$print`  = ag_tf_print
   )
 
-  if (is.symbol(x)) {
-    # function or something with `environment<-` method
-    x <- get(deparse(x), envir = env)
-    environment(x) <- list2env(ag_mask, parent = environment(x))
+  ag_mask <- list2env(ag_mask, parent = parent)
 
-  } else {
-    # in line expression
-    mask <- list2env(ag_mask, parent = env)
-    eval_env <- new.env(parent = mask)
-    x <- eval(x, eval_env)
+  attr(ag_mask, "name") <-
+    sprintf("package:tfautograph:ag_mask\n parent: %s", format(parent))
+  # the base R environment print functions are hardcoded to only print the
+  # environment name if the name starts with "package:"
+  # relevant functions:
+  # R_IsPackageEnv
+  # https://github.com/wch/r-source/blob/f4e6da5bea5a95fc6403160a5a04f42925990148/src/main/envir.c#L3520
 
-    modified <- as.list(eval_env, all.names = TRUE)
+  # PrintEnvironment
+  # https://github.com/wch/r-source/blob/5f0affa2c7016e054f3eb4b64e247d428a6477dd/src/main/inspect.c#L42
 
-    syms <- names(modified)
-    names(syms) <- syms
-    are_active <- vapply(syms, function(sym)
-      bindingIsActive(sym, eval_env), FALSE)
+  # EncodeEnvironment
+  # https://github.com/wch/r-source/blob/bc6e559c4940ed18e99ac2fd91d20f01ed186c72/src/main/printutils.c#L148
 
-    active     <- modified[ syms[ are_active] ]
-    not_active <- modified[ syms[!are_active] ]
-    if (length(not_active))
-      list2env(not_active, env)
-
-    for (sym in names(active))
-      makeActiveBinding(sym, active[[sym]], env)
-
-  }
-  x
+  lockEnvironment(ag_mask)
+  ag_mask
 }
+
+
+
+transfer_env <- function(from, to) {
+  if(!length(from))
+    return()
+
+  syms <- names(from)
+  names(syms) <- syms
+  are_active <- vapply(syms, function(sym) bindingIsActive(sym, from), FALSE)
+
+  from_list <- as.list(from, all.names = TRUE)
+
+  if (any(!are_active)) {
+    not_active <- from_list[syms[!are_active]]
+    list2env(not_active, to)
+  }
+
+  # TODO: active bindings functions may need to have their environement reset
+
+  if(any(are_active)) {
+    active <- from_list[ syms[are_active] ]
+    for (sym in names(active))
+      makeActiveBinding(sym, active[[sym]], to)
+  }
+
+  invisible()
+}
+
+
+
