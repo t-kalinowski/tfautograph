@@ -46,7 +46,6 @@ new_ag_mask <- function(parent) {
     `stopifnot` = ag_stopifnot,
     # `switch`    = ag_switch,
     `on.exit`   = ag_on.exit
-    # `tf$print`  = ag_tf_print
   )
 
   ag_mask <- list2env(ag_mask, parent = parent)
