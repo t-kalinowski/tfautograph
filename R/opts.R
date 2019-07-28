@@ -19,7 +19,12 @@ ag_while_opts <- function(...,
 ) {
   if(...length())
     stop("all options passed must be named")
+  storage.mode(parallel_iterations) <- "integer"
   args <- as.list(environment())
-  register_next_while_loop_opts(args)
+  for(a in names(args))
+    if(eval(bquote(missing(.(as.name(a))))))
+      args[[a]] <- NULL
+  if(length(args))
+    register_next_while_loop_opts(args)
   invisible()
 }
