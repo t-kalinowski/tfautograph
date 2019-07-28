@@ -1,6 +1,9 @@
 
+
+
 ag_stopifnot <- function(..., exprs, local = TRUE) {
-  if(missing(exprs)) {
+
+    if(missing(exprs)) {
     dots <- eval(substitute(alist(...)))
     env <- parent.frame()
   } else {
@@ -41,17 +44,40 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
   }))
 
 
-  names(all_var_nms) <- all_var_nms
-  vars_w_ctrl_deps <- lapply(all_var_nms, function(var_nm) {
-    var <- all_vars[[var_nm]]
-    var_ops <- drop_empty(lapply(assert_ops, function(op) {
-      if (var_nm %in% op$var_nms)
-        op$op
-    }))
-    with(tf$control_dependencies(var_ops), tf$identity(var))
-  })
+  if (length(assert_ops)) {
+    names(all_var_nms) <- all_var_nms
+    vars_w_ctrl_deps <- lapply(all_var_nms, function(var_nm) {
+      var <- all_vars[[var_nm]]
+      var_ops <- drop_empty(lapply(assert_ops, function(op) {
+        if (var_nm %in% op$var_nms)
+          op$op
+      }))
+      with(tf$control_dependencies(var_ops), tf$identity(var))
+    })
+    list2env(vars_w_ctrl_deps, envir = env)
 
-  list2env(vars_w_ctrl_deps, envir = env)
+    # TODO, currently, this next block does effectively nothing when
+    # autographing an inline expression. at least `on.exit` doesn't throw an
+    # error because it registers in the extra frame introduced by base::eval,
+    # and capture_registered_control_dependency_ops() still clears the registry
+    # of ops for that frame, but nothing more is captured because there is
+    # nothing meaningful returned by `returnValue()`. Ideally we should test if
+    # we're in the context of an autographed function, and if not, then we should skip
+    # registring the ops and skip capturing the ops in the returnValue(). The
+    # difficulty is in figuring out an elegant way to test if we're executing in
+    # an autographed function.
+
+    register_control_dependency_ops(lapply(assert_ops, function(op) op$op), env)
+
+    on.exit.elsewhere({
+      if (!is.null(
+        new_return_value <-
+        tfautograph:::capture_registered_control_dependency_ops(returnValue())
+      ))
+        return(new_return_value)
+    }, envir = env)
+
+  }
   invisible()
 }
 
