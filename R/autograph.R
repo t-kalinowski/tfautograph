@@ -44,7 +44,7 @@ new_ag_mask <- function(parent) {
     `break`     = ag_break,
     `next`      = ag_next,
     `stopifnot` = ag_stopifnot,
-    `switch`    = ag_switch,
+    # `switch`    = ag_switch,
     `on.exit`   = ag_on.exit
     # `tf$print`  = ag_tf_print
   )
