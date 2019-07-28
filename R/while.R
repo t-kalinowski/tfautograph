@@ -37,6 +37,7 @@ ag_while <- function(cond, body) {
       loop_vars = loop_vars,
       return_same_structure = TRUE
     ),
+    name = get_next_ag_name(),
     get_registered_next_while_loop_opts()
   )
 
