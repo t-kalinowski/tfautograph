@@ -2,8 +2,7 @@
 
 
 ag_stopifnot <- function(..., exprs, local = TRUE) {
-
-    if(missing(exprs)) {
+  if(missing(exprs)) {
     dots <- eval(substitute(alist(...)))
     env <- parent.frame()
   } else {
@@ -16,6 +15,8 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
       stop("`local` must be TRUE or an environment")
   }
 
+
+  # TODO: how to pass in custom messages?
   call_stack <- pretty_call_stack()
 
   dots_vars <- lapply(dots, all.vars)
@@ -43,43 +44,32 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     list(op = op, var_nms = var_nms)
   }))
 
-
   if (length(assert_ops)) {
-    names(all_var_nms) <- all_var_nms
-    vars_w_ctrl_deps <- lapply(all_var_nms, function(var_nm) {
-      var <- all_vars[[var_nm]]
-      var_ops <- drop_empty(lapply(assert_ops, function(op) {
-        if (var_nm %in% op$var_nms)
-          op$op
-      }))
-      with(tf$control_dependencies(var_ops), tf$identity(var))
-    })
-    list2env(vars_w_ctrl_deps, envir = env)
+    ops <- lapply(assert_ops, function(op) op$op)
+    control_dependencies_context <- tf$control_dependencies(ops)
 
-    # TODO, currently, this next block does effectively nothing when
-    # autographing an inline expression. at least `on.exit` doesn't throw an
-    # error because it registers in the extra frame introduced by base::eval,
-    # and capture_registered_control_dependency_ops() still clears the registry
-    # of ops for that frame, but nothing more is captured because there is
-    # nothing meaningful returned by `returnValue()`. Ideally we should test if
-    # we're in the context of an autographed function, and if not, then we should skip
-    # registring the ops and skip capturing the ops in the returnValue(). The
-    # difficulty is in figuring out an elegant way to test if we're executing in
-    # an autographed function.
+    control_dependencies_context$`__enter__`()
 
-    register_control_dependency_ops(lapply(assert_ops, function(op) op$op), env)
+    register_frame_context(control_dependencies_context, env)
 
-    on.exit.elsewhere({
-      if (!is.null(
-        new_return_value <-
-        tfautograph:::capture_registered_control_dependency_ops(returnValue())
-      ))
-        return(new_return_value)
-    }, envir = env)
+    on.exit.elsewhere(return(
+      tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
+    ), add = TRUE, after = TRUE, envir = env)
 
   }
+
   invisible()
 }
+
+identity_op_tensors_and_close_contexts <- function(value) {
+  on.exit(close_and_clear_registered_contexts(parent.frame()))
+  robust_tf_identity(value)
+}
+
+robust_tf_identity <- function(x) {
+  rapply(list(x), tf$identity, classes = "tensorflow.tensor", how = "replace")[[1]]
+}
+
 
 pretty_call_stack <- function() {
   calls <- rev(sys.calls())[-1]

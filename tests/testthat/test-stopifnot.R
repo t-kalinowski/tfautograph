@@ -45,5 +45,8 @@ test_that("stopifnot compound", {
   res <- ag_fn(as_tensor(10), as_tensor(11), as_tensor(12))
   expect_error(grab(res), "x < 10", fixed = TRUE)
 
+  # TODO: make sure this still works in-line expressions and in if statements
+  # anywhere else that as_outcome_fn() is used
+
 })
 

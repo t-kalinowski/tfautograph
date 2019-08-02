@@ -31,8 +31,9 @@ Implemented so far:
  - [x] `for` with tf datasets
  - [x] `next/break` in `for` with tf datasets
  - [x] `stopifnot` (python `assert`)
+ - [x] `switch` (autograph to `tf.switch_case`)
  - [ ] `print`
- - [ ] `switch` (autograph to `tf.switch_case`)
+ - [ ] `stop` and `warning`
  
  
 Additional remaining tasks:
