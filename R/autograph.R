@@ -11,27 +11,44 @@ autograph <- function(x) {
 
     x <- get(deparse(x), envir = env)
     environment(x) <- new_ag_mask(parent = environment(x))
-
-  } else {
-
-    # in line expression
-    ag_mask <- new_ag_mask(parent = env)
-    eval_env <- new.env(parent = ag_mask)
-    x <- eval(x, eval_env)
-
-    # reset env of locally defined functions
-    for(nm in names(eval_env))
-      if(!bindingIsActive(nm, eval_env) &&
-         identical(environment(eval_env[[nm]]), eval_env))
-        environment(eval_env[[nm]]) <- ag_mask
-
-    transfer_env(from = eval_env, to = env)
-
-    # reset env of anonymous returned functions
-    if(identical(environment(x), eval_env))
-      environment(x) <- ag_mask
+    return(x)
   }
-  x
+
+  # in line expression
+  ag_mask <- new_ag_mask(parent = env)
+  fn <- as_outcome_fn(x, ag_mask)
+  outcome <- fn()
+
+  # reset env of locally defined functions
+  for (nm in names(outcome$exec_env))
+    if (!bindingIsActive(nm, outcome$exec_env) &&
+        identical(environment(outcome$exec_env[[nm]]), outcome$exec_env))
+      environment(outcome$exec_env[[nm]]) <- ag_mask
+
+  transfer_env(from = outcome$exec_env, to = env)
+
+  # reset env of anonymous returned functions
+  if (identical(environment(outcome$returned), outcome$exec_env))
+    environment(outcome$returned) <- ag_mask
+
+  outcome$returned
+}
+
+
+
+
+# modified = as.list(environment(), all.names = TRUE),
+# need to handle undefineds still after this.
+
+
+as_outcome_fn <- function(expr, env) {
+  body <- substitute({
+    base::on.exit(return(list(
+      returned = returnValue(), exec_env = environment()
+    )), add = TRUE)
+    expr
+  }, list(expr = expr))
+  as.function.default(list(body), envir = env)
 }
 
 
