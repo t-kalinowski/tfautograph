@@ -28,6 +28,8 @@ ag_if <- function(cond, true, false = NULL) {
     missing <- setdiff(vars_modified, names(branch))
     objs <- mget(missing, envir = env, inherits = TRUE,
                  ifnotfound = undefined_mold(missing))
+    obj_modes <- vapply(objs, mode, "")
+    objs <- objs[obj_modes %in% valid_modes]
     list2env(objs, branch)
   }
 
@@ -54,18 +56,53 @@ ag_if <- function(cond, true, false = NULL) {
   if(!length(true_outcome) && !length(false_outcome))
     return()
 
+  pruned <- prune_identical(true_outcome, false_outcome)
+  true_outcome <- pruned[[1]]
+  false_outcome <- pruned[[2]]
 
   outcome <- tf$cond(cond,
                      function() true_outcome,
                      function() false_outcome,
                      strict = TRUE)
 
-  if(!is.null(outcome$modified))
-    list2env(outcome$modified, envir = env)
+  if (!is.null(outcome$modified)) {
+    for (nm in names(outcome$modified))
+      if (is.list(outcome$modified[[nm]]))
+        outcome$modified[[nm]] <-
+          modifyList(get(nm, env), outcome$modified[[nm]])
+      list2env(outcome$modified, envir = env)
+  }
 
 
   outcome$returned
 }
 
 
+prune_identical <- function(x, y) {
+  if(anyDuplicated(names(x)) || anyDuplicated(names(y)))
+    stop("names can't be duplicated")
 
+  for (nm in intersect(names(x), names(y))) {
+    if (identical(x[[nm]], y[[nm]]))
+      x[[nm]] <-  y[[nm]] <- NULL
+    else if (is.list(x[[nm]]) && is.list(y[[nm]])) {
+      res <- prune_identical(x[[nm]], y[[nm]])
+      x[[nm]] <- res[[1]]
+      y[[nm]] <- res[[2]]
+    }
+  }
+  list(x, y)
+}
+
+
+valid_modes <- c("logical", "numeric", "complex", "character", "raw", "list", "environment")
+
+
+unnamed_lists_to_tuples <- function(x) {
+  if(is.list(x)) {
+    x <- lapply(x, unnamed_lists_to_tuples)
+    if(is.null(names(x)))
+      x <- tuple(x)
+  }
+  x
+}
