@@ -271,6 +271,9 @@ test_that("can call from another functions", {
   expect_result(g, as_tensor(-1L), list(0, -2))
 })
 
+
+# TODO: test if control dependencies are properly captured in an `ag_if`
+
 # test_that("can early return", {
 #   skip("early return not yet implemented")
 #

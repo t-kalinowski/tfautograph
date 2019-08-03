@@ -113,3 +113,17 @@ close_and_clear_registered_contexts <- function(env) {
 }
 
 
+.registries$outcome_frames_registry <- Stack()
+
+register_outcome_env <- function() {
+  registry <- .registries$outcome_frames_registry
+  registry$push(parent.frame())
+}
+get_registered_outcome_env <- function() {
+  registry <- .registries$outcome_frames_registry
+  registry$pop()
+}
+peek_registered_outcome_env<- function() {
+  registry <- .registries$outcome_frames_registry
+  registry$peek()
+}
