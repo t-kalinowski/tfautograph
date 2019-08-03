@@ -50,11 +50,19 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
 
     control_dependencies_context$`__enter__`()
 
-    register_frame_context(control_dependencies_context, env)
+    vars_w_ctrl_deps <- lapply(all_vars, tf$identity)
+    list2env(vars_w_ctrl_deps, envir = env)
 
+    if (identical(env, topenv(env))) {
+      # is this even ever going to be TRUE, isn't this always going to be run
+      # either from an autographed function or an as_outcome_fn()?
+      control_dependencies_context$`__exit__`(NULL, NULL, NULL)
+    } else {
+    register_frame_context(control_dependencies_context, env)
     on.exit.elsewhere(return(
       tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
     ), add = TRUE, after = TRUE, envir = env)
+    }
 
   }
 
