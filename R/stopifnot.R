@@ -58,10 +58,10 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
       # either from an autographed function or an as_outcome_fn()?
       control_dependencies_context$`__exit__`(NULL, NULL, NULL)
     } else {
-    register_frame_context(control_dependencies_context, env)
-    on.exit.elsewhere(return(
-      tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
-    ), add = TRUE, after = TRUE, envir = env)
+      register_frame_context(control_dependencies_context, env)
+      on.exit.elsewhere(return(
+        tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
+      ), add = TRUE, after = TRUE, envir = env)
     }
 
   }

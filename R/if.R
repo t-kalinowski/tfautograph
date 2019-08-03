@@ -12,12 +12,20 @@ ag_if <- function(cond, true, false = NULL) {
   on.exit(deregister_cond(cond))
 
   register_cond(cond, TRUE)
-  true_branch <- new.env(parent = env)
-  true_return <- eval(true, true_branch)
+  get_true_outcome <- as_outcome_fn(true, env)
+  true_outcome <- get_true_outcome()
+  true_branch <- true_outcome$env
+  true_return <- true_outcome$returned
+  # true_branch <- new.env(parent = env)
+  # true_return <- eval(true, true_branch)
 
   register_cond(cond, FALSE)
-  false_branch <- new.env(parent = env)
-  false_return <- eval(false, false_branch)
+  get_false_outcome <- as_outcome_fn(false, env)
+  false_outcome <- get_false_outcome()
+  false_branch <- false_outcome$env
+  false_return <- false_outcome$returned
+  # false_branch <- new.env(parent = env)
+  # false_return <- eval(false, false_branch)
 
   if(!is_same_structure(true_return, false_return))
     true_return <- false_return <- NULL
