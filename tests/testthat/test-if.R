@@ -37,6 +37,9 @@ test_that("if basic", {
     list(a, b)
   }
   ag_fn <- autograph(fn)
+  n <- as_tensor(1L)
+  res <- ag_fn(n)
+  grab(res)
 
   expect_result(ag_fn, as_tensor(1L), list(-1, 0))
   expect_result(ag_fn, as_tensor(-1L), list(0, -2))
@@ -69,8 +72,9 @@ test_that("if complex outputs", {
 test_that("if single output", {
 
   fn <- function(n) {
-    if(n > 0L)
+    if(n > 0L) {
       n <- -n
+    }
     n
   }
   ag_fn <- autograph(fn)
@@ -145,8 +149,9 @@ test_that("if local var", {
     b
   }
   ag_fn <- autograph(fn)
-  expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
-               class = "access_undefined")
+  expect_error(ag_fn(as_tensor(1L)), "b")
+  # expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
+               # class = "access_undefined")
 
 
   local({
@@ -159,8 +164,9 @@ test_that("if local var", {
 
 
     expect_equal(grab(n), 5L)
-    expect_error(b, "Symbol `b` is \\*undefined\\*",
-                 class = "access_undefined")
+    expect_error(b, "b")
+    # expect_error(b, "Symbol `b` is \\*undefined\\*",
+    #              class = "access_undefined")
   })
 })
 

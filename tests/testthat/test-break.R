@@ -13,6 +13,8 @@ test_that("break basic", {
     }
     n
   }
+  # debugonce(ag_if)
+  autograph(fn)(as_tensor(1L))
 
   expect_ag_equivalent(fn, 0L)
   expect_ag_equivalent(fn, 4L)
@@ -24,14 +26,23 @@ test_that("break and next basic", {
     x <- 0
     while (n > 0L) {
       subtract(n) <- 1L
-      if (n %% 5L == 0L)
+      if (n %% 5L == 0L) {
+        # print("hi")
+
         break
-      else if (n %% 2L == 0L)
-        next
+      } else {
+        if (n %% 2L == 0L)
+          next
+      }
       add(x) <- 1
     }
     list(n, x)
   }
+
+  # debugonce(ag_next)
+  autograph(fn)(as_tensor(3L))
+
+
 
   # fn(3) # 0 1
   # fn(4) # 0 2
@@ -105,7 +116,6 @@ test_that("next in for", {
   fn <- function(l) {
     o <- 0L
     for (e in l) {
-      # browser()
       if (e %% 2L == 0L)
         next
       add(o) <- 1L

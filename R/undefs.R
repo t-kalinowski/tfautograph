@@ -17,7 +17,8 @@ make_active_undefs <- function(undefs, env, call) {
   })
 }
 
-
+# TODO: consider if these should be promises made with delayedAsign() rather
+# than active bindings
 access_undefined_condition <- function(sym, call) {
   type <- deparse(call[[1]])
 

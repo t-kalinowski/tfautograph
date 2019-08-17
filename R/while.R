@@ -7,6 +7,8 @@ ag_while <- function(cond, body) {
   body <- substitute(body)
   env <- parent.frame()
 
+  # TODO: rename consuming getters to `consume_*`, eg, `consume_next_ag_name()`
+
   # TODO: revisit this after `append<-` is handled. Dispatching to standard R
   # control flow may no always be the right choise.
   if (!any_tensors_in(cond, env))
@@ -81,6 +83,7 @@ as_loop_body_fn <- function(body_expr, loop_vars, env, call = sys.call(-1)) {
   force(call)
   args <- names(loop_vars) %||% loop_vars
 
+  # TODO: use as_outcome_fn() mechanism here ?
   fn <- new_function(as_args(args), quote({
     exec_env <- new.env(parent = env)
     list2env(mget(args), envir = exec_env)
@@ -101,43 +104,44 @@ as_loop_body_fn <- function(body_expr, loop_vars, env, call = sys.call(-1)) {
 wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
   force(body_fn)
 
-
   function(loop_vars, did_break = NULL) {
+
     establish_cond_registry()
-    on.exit(remove_cond_registry())
 
-    uncaught_loop_control_flow_registry <- Stack()
+    loop_control_flow_registry <-
+      establish_control_flow_registry(
+        loop_vars = names(loop_vars),
+        can_break = !is.null(did_break),
+        graph = tf$compat$v1$get_default_graph()
+      )
+    on.exit({
+      remove_control_flow_registry()
+      remove_cond_registry()
+    }, add = TRUE)
 
-    withCallingHandlers(
-      loop_vars <- do.call(body_fn, loop_vars),
 
-      uncaught_loop_control_flow = function(lcf) {
-        uncaught_loop_control_flow_registry$push(
-          list(
-            is_break = class(lcf)[1] == "break",
-            loop_vars = mget(names(loop_vars), lcf$env, inherits = TRUE),
-            registered_conds = reduce_registered_conds()
-          )
-        )
-      }
-    )
+    loop_vars <- do.call(body_fn, loop_vars)
 
-    out <- drop_empty(list(loop_vars, did_break))
+    #     lapply(names(loop_vars), function(nm) {
+    #       if(identical(loop_vars[nm], loop_vars_in[nm]))
+    #         warning("specify loop vars with ag_loop_vars().
+    #                 %s appears to be an necessarily captured as a loop_var")
+    #     })
 
-    while (length(uncaught_loop_control_flow_registry)) {
-      lcf <- uncaught_loop_control_flow_registry$pop()
+    out <- drop_empty(list(loop_vars = loop_vars, did_break = did_break))
 
-      if (is.null(did_break))
-        lcf$is_break <- NULL
+    while (length(loop_control_flow_registry$recorded_conditions)) {
+      lcf <- compact_lcf(loop_control_flow_registry$recorded_conditions$pop())
 
-      # browser()
       out <- tf$cond(
-        lcf$registered_conds,
-        function() drop_empty(list(lcf$loop_vars, lcf$is_break)),
+        lcf$reduced_conds,
+        function() drop_empty(list(loop_vars = lcf$loop_vars,
+                                   did_break = lcf$is_break)),
         function() out,
         strict = TRUE)
     }
 
-    out
+    unname(drop_empty(out[c('loop_vars', 'did_break')]))
   }
 }
+
