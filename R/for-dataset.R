@@ -38,7 +38,7 @@ dataset_for_loop_with_potential_break <-
       current_state <- current_state[1:2]
 
       current_state[[1]][[var]] <- next_ds_elem
-
+      # TODO: remove `strict = TRUE` arg here, ensure that only dicts are used.
       new_state <- tf$cond(did_break_prior_elem,
                            function() current_state,
                            function() do.call(body_fn, current_state),
