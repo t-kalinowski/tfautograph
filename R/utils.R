@@ -1,5 +1,6 @@
 
 
+is_true <- function(x) identical(x, TRUE)
 
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
 
@@ -15,7 +16,8 @@ as_args <- function(x) {
 
 any_tensors_in <- function(expr, env) {
   var_nms <- all.vars(expr)
-  vals <- mget(var_nms, envir = env, inherits = TRUE, ifnotfound = undefined_mold(var_nms))
+  vals <- mget(var_nms, envir = env, inherits = TRUE,
+               ifnotfound = vector("list", length(var_nms)))
   for(val in vals)
     if(is_tensor(val))
       return(TRUE)

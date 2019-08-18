@@ -149,9 +149,9 @@ test_that("if local var", {
     b
   }
   ag_fn <- autograph(fn)
-  expect_error(ag_fn(as_tensor(1L)), "b")
-  # expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
-               # class = "access_undefined")
+  # expect_error(ag_fn(as_tensor(1L)), "b")
+  expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
+  class = "access_undefined")
 
 
   local({
@@ -164,9 +164,9 @@ test_that("if local var", {
 
 
     expect_equal(grab(n), 5L)
-    expect_error(b, "b")
-    # expect_error(b, "Symbol `b` is \\*undefined\\*",
-    #              class = "access_undefined")
+    # expect_error(b, "b")
+    expect_error(b, "Symbol `b` is \\*undefined\\*",
+                 class = "access_undefined")
   })
 })
 

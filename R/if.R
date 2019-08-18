@@ -1,8 +1,10 @@
 
 
 #' @export
-ag_if_vars <- function(..., return = FALSE, undefs = NULL) {
-  register_if_vars(modified = c(...), return = return, undefs = undefs)
+ag_if_vars <- function(..., modified = list(...), return = FALSE,
+                       undefs = NULL, control_flow = 0) {
+  register_if_vars(modified = modified, return = return, undefs = undefs,
+                   n_control_flow = as.integer(control_flow))
 }
 
 
@@ -31,6 +33,9 @@ ag_if <- function(cond, true, false = NULL) {
       env)
   }
 
+  undefs <- target_outcome$undefs
+  target_outcome$undefs <- NULL
+
   if(!length(target_outcome))
     return()
 
@@ -49,7 +54,8 @@ ag_if <- function(cond, true, false = NULL) {
     list2env(outcome$modified, envir = env)
   }
 
-  # TODO: export undefs here
+  if(length(undefs))
+    export_undefs(undefs, env)
 
   outcome$returned
 }
@@ -98,12 +104,13 @@ build_target_outcome <- function(true, false, env) {
     Filter(function(x) !is.null(pluck_structure(x, env)),
            unbalanced)
   modified <- union(common, unbalanced_gettable)
+  undefs <- setdiff(unbalanced, unbalanced_gettable)
 
   n_lcf <- max(length(true$loop_control_flow), length(false$loop_control_flow))
   if(n_lcf == 0)
     n_lcf <- NULL
 
-  drop_empty(list(modified = modified, return = ret,
+  drop_empty(list(modified = modified, return = ret, undefs = undefs,
                   n_loop_control_flow = n_lcf))
 }
 
@@ -116,8 +123,22 @@ fix_outcome <- function(outcome, target_outcome, env) {
   if(!isTRUE(target_outcome$return))
     outcome$returned <- NULL
 
-  if ((lt <- target_outcome$n_loop_control_flow %||% 0L) >
-      (lo <- length(outcome$loop_control_flow))) {
+  lt <- target_outcome$n_loop_control_flow %||% 0L
+  lo <- length(outcome$loop_control_flow)
+
+  # too much control flow
+  if(lo > lt) {
+    #should only happen if user specified ag_if_vars() with the wrong number of
+    #control flow
+
+    #TODO: this stop() leaves the tensorflow tracing context open, need to
+    #figure out a way to exit that. Raise an exception from the python side?
+    stop("More control flow condition were encountered when autographing `if` ",
+         "than specified in ag_if_vars(). expected: ", lt, "encountered: ", lo)
+  }
+
+  # not enough control flow
+  if (lt > lo) {
     dummy_lcf <- dummy_compact_lcf(env)
 
     outcome$loop_control_flow[(lo + 1):lt] <-

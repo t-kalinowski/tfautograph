@@ -90,7 +90,7 @@ as_loop_body_fn <- function(body_expr, loop_vars, env, call = sys.call(-1)) {
     eval(body_expr, exec_env)
 
     if(length(undefs <- setdiff(names(exec_env), args)))
-      make_active_undefs(undefs, env, call)
+      export_undefs(as.list(undefs), env, call)
 
     mget(args, exec_env)
   }))
