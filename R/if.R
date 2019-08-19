@@ -64,7 +64,7 @@ ag_if <- function(cond, true, false = NULL) {
 
 as_cond_branch_fn <- function(cond, branch_expr, branch, env) {
   force(cond)
-  fn <- as_outcome_fn2(branch_expr, env)
+  fn <- as_outcome_fn(branch_expr, env)
   function() {
     register_cond(cond, branch)
     on.exit(deregister_cond(cond))
