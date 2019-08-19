@@ -8,7 +8,6 @@ autograph <- function(x) {
 
   if (is.symbol(x)) {
     # function or something with `environment<-` method
-
     x <- get(deparse(x), envir = env)
     environment(x) <- new_ag_mask(parent = environment(x))
     return(x)
@@ -19,22 +18,27 @@ autograph <- function(x) {
   fn <- as_outcome_fn(x, ag_mask)
   outcome <- fn()
 
-  # reset env of locally defined functions
-  for (nm in names(outcome$env))
-    if (!bindingIsActive(nm, outcome$env) &&
-        identical(environment(outcome$env[[nm]]), outcome$env))
-      environment(outcome$env[[nm]]) <- ag_mask
-
-  transfer_env(from = outcome$env, to = env)
-
-  # reset env of anonymous returned functions
-  if (identical(environment(outcome$returned), outcome$env))
-    environment(outcome$returned) <- ag_mask
+  export_modified(outcome$modified, env)
 
   outcome$returned
 }
 
 
+export_modified <- function(modified, env) {
+  if (is_empty(modified))
+    return()
+
+  for (nm in names(modified)) {
+    if (is.list(modified[[nm]]))
+      modified[[nm]] <- modifyList(get(nm, env), modified[[nm]])
+    else if (is_undef(modified[[nm]])) {
+      makeActiveBinding(nm, modified[[nm]], env)
+      modified[[nm]] <- NULL
+    }
+  }
+  if(length(modified))
+    list2env(modified, envir = env)
+}
 
 
 new_ag_mask <- function(parent) {

@@ -126,7 +126,9 @@ close_and_clear_registered_contexts <- function(env) {
 
 register_outcome_env <- function() {
   registry <- .registries$outcome_frames_registry
-  registry$push(parent.frame())
+  env <- parent.frame()
+  attr(env, "name") <- "tfautograph:outcome_frame"
+  registry$push(env)
 }
 get_registered_outcome_env <- function() {
   registry <- .registries$outcome_frames_registry
@@ -137,6 +139,10 @@ peek_registered_outcome_env<- function() {
   registry$peek()
 }
 
+is_outcome_env <- function(x) {
+  identical(attr(environment(x), "name", TRUE),
+            "tfautograph:outcome_frame")
+}
 
 # TODO:
 get_registered_next_if_vars <- function() NULL
