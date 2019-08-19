@@ -37,31 +37,6 @@ autograph <- function(x) {
 
 
 
-# modified = as.list(environment(), all.names = TRUE),
-# need to handle undefineds still after this.
-
-
-# as_outcome_fn <- function(expr, env) {
-#   body <- substitute({
-#     base::on.exit(return(list(
-#       returned = returnValue(), exec_env = environment()
-#     )), add = TRUE)
-#     expr
-#   }, list(expr = expr))
-#   as.function.default(list(body), envir = env)
-# }
-
-as_outcome_fn <- function(expr, env) {
-  expr <- substitute({
-    tfautograph:::register_outcome_env()
-    expr
-  }, list(expr = expr))
-  fn <- as.function.default(list(expr), envir = env)
-  function() list(returned = fn(), env = get_registered_outcome_env())
-}
-
-
-
 new_ag_mask <- function(parent) {
 
   ag_mask <- list(
