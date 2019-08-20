@@ -100,6 +100,17 @@ transfer_env <- function(from, to) {
   }
 
   invisible()
+#' @export
+is_autographed <- function(fn) {
+  if (is.environment(e <- environment(fn)))
+    while (!identical(e, emptyenv())) {
+      nm <- attr(e, "name", TRUE)
+      if (!is.null(nm) &&
+          grepl("package:tfautograph:ag_mask", nm))
+        return(TRUE)
+      e <- parent.env(e)
+    }
+  FALSE
 }
 
 
