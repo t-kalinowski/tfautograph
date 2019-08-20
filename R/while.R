@@ -16,6 +16,9 @@ ag_while <- function(cond, body) {
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
 
+  # TODO: consider tracing with as_concrete_fn() here for better inference of
+  # loop_vars here. Downside is slight bloat of overall graph in tf v1, but in
+  # tf v2 the traced graph will be able to be garbage collected. Worth tradeoff?
   loop_vars <-
     get_registered_next_while_loop_vars() %||%
     get_existing_var_nms(cond, body, env = env)
@@ -79,24 +82,28 @@ as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
   }
 }
 
-as_loop_body_fn <- function(body_expr, loop_vars, env, call = sys.call(-1)) {
+
+as_loop_body_fn <- function(body_expr, loop_vars, env,
+                            dont_check = NULL,
+                            call = sys.call(-1)) {
   force(call)
-  args <- names(loop_vars) %||% loop_vars
 
-  # TODO: use as_outcome_fn() mechanism here ?
-  fn <- new_function(as_args(args), quote({
-    exec_env <- new.env(parent = env)
-    list2env(mget(args), envir = exec_env)
-    eval(body_expr, exec_env)
+  loop_vars <- names(loop_vars) %||% loop_vars
+  outcome_fn <- as_outcome_fn(body_expr, env, args = as_args(loop_vars))
 
-    if(length(undefs <- setdiff(names(exec_env), args)))
+  fn <- function(...) {
+    loop_vars_in <- list(...)
+
+    outcome <- outcome_fn(...)
+
+    if(length(undefs <- setdiff(names(outcome$modified), loop_vars)))
       export_undefs(as.list(undefs), env, call)
 
-    mget(args, exec_env)
-  }))
+
+    outcome$modified[loop_vars]
+  }
 
   fn <- wrap_fn_with_loop_control_flow_handlers(fn)
-
   fn
 }
 
@@ -106,14 +113,15 @@ wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
 
   function(loop_vars, did_break = NULL) {
 
-    establish_cond_registry()
-
     loop_control_flow_registry <-
       establish_control_flow_registry(
         loop_vars = names(loop_vars),
         can_break = !is.null(did_break),
         graph = tf$compat$v1$get_default_graph()
       )
+
+    establish_cond_registry()
+
     on.exit({
       remove_control_flow_registry()
       remove_cond_registry()

@@ -1,7 +1,8 @@
 
 
 
-as_outcome_fn <- function(expr, env) {
+
+as_outcome_fn <- function(expr, env, args = NULL) {
   if(is.null(expr))
     return(as.function(list(NULL), envir = env))
 
@@ -9,10 +10,10 @@ as_outcome_fn <- function(expr, env) {
     tfautograph:::register_outcome_env()
     expr
   }, list(expr = expr))
-  fn <- as.function.default(list(expr), envir = env)
+  fn <- as.function.default(c(args, list(expr)), envir = env)
 
-  function() {
-    returned <- fn()
+  function(...) {
+    returned <- fn(...)
     outcome_env <- get_registered_outcome_env()
 
     modified <- as.list(outcome_env, all.names = TRUE)
@@ -23,11 +24,12 @@ as_outcome_fn <- function(expr, env) {
         environment(val) <- env
 
     if (identical(environment(returned), outcome_env))
-        environment(returned) <- env
+      environment(returned) <- env
 
     drop_empty(list(returned = returned, modified = modified))
   }
 }
+
 
 
 export_modified <- function(modified, env) {
@@ -35,7 +37,7 @@ export_modified <- function(modified, env) {
     return()
 
   for (nm in names(modified)) {
-    if (is.list(modified[[nm]]))
+    if (is.list(modified[[nm]]) && exists(nm, envir = env))
       modified[[nm]] <- modifyList(get(nm, env), modified[[nm]])
     else if (is_undef(modified[[nm]])) {
       makeActiveBinding(nm, modified[[nm]], env)
@@ -54,7 +56,7 @@ prune_nested_unmodified <- function(modified, env) {
     obj <- modified[[nm]]
     if(!is_named_list(obj))
       next
-    orig <- get(nm, env)
+    orig <- get0(nm, env)
     pruned_obj <- prune_identical(obj, orig)[[1]]
     modified[[nm]] <- pruned_obj
   }
