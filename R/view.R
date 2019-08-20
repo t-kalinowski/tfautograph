@@ -5,23 +5,24 @@
 #' @param ... other arguments passed to [tensorflow::tensorboard()]
 #'
 #' @export
-view_function_graph <- function(fun, args, ...) {
+view_function_graph <- function(fn, args, ...) {
 
-  if (!tensorflow::tf$executing_eagerly())
+  if (!tf$executing_eagerly())
     stop("Eager execution is required.")
 
   logdir <- tempfile(pattern = "tflogdir")
-  writer <- tensorflow::tf$summary$create_file_writer(logdir)
+  writer <- tf$summary$create_file_writer(logdir)
 
-  # make sure fun is an autographed fun
-  fun <- autograph(fun)
+  # make sure fn is autographed
+  if(!is_autographed(fn))
+    fn <- autograph(fn)
 
   # enable tracing
-  tensorflow::tf$summary$trace_on(graph=TRUE, profiler=TRUE)
+  tf$summary$trace_on(graph=TRUE, profiler=TRUE)
 
-  do.call(fun, args)
+  do.call(fn, args)
 
-  # write the grpah and profiling
+  # write the graph and profiling
   with(writer$as_default(), {
     tensorflow::tf$summary$trace_export(
       name = "function",
@@ -33,7 +34,4 @@ view_function_graph <- function(fun, args, ...) {
   # launch tensorboard
   tensorflow::tensorboard(log_dir = logdir, ...)
 }
-
-
-
 
