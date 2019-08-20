@@ -138,7 +138,6 @@ wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
         function() drop_empty(list(loop_vars = lcf$loop_vars,
                                    did_break = lcf$is_break)),
         function() out)
-       # strict = TRUE)
     }
 
     unname(drop_empty(out[c('loop_vars', 'did_break')]))

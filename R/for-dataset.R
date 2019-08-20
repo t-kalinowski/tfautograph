@@ -33,22 +33,29 @@ dataset_for_loop_with_potential_break <-
     initial_state <- tuple(body_vars, did_break, did_break_prior_elem)
 
     scan_fn <- function(current_state, next_ds_elem) {
-      # names(current_state) <- c("loop_vars", "did_break", "did_break_prior_elem")
-      did_break_prior_elem <- current_state[[2]]
-      current_state <- current_state[1:2]
 
-      current_state[[1]][[var]] <- next_ds_elem
-      # TODO: remove `strict = TRUE` arg here, ensure that only dicts are used.
+      nms <- c("loop_vars", "did_break", "did_break_prior_elem")
+      names(current_state) <- nms
+
+      did_break_prior_elem <- current_state$did_break
+      current_state$did_break_prior_elem <- NULL
+
+      fn <- function(current_state) {
+        res <- do.call(body_fn, current_state)
+        names(res) <- c("loop_vars", "did_break")
+        res
+      }
+
+      current_state$loop_vars[[var]] <- next_ds_elem
       new_state <- tf$cond(did_break_prior_elem,
                            function() current_state,
-                           function() do.call(body_fn, current_state),
-                           strict = TRUE)
+                           function() fn(current_state))
 
       if (!exists(var, envir = env))
-        new_state[[1]][[var]] <- NULL
+        new_state$loop_vars[[var]] <- NULL
 
-      new_state[[3]] <- did_break_prior_elem
-      new_state <- do.call(tuple, new_state)
+      new_state$did_break_prior_elem <- did_break_prior_elem
+      new_state <- do.call(tuple, unname(new_state[nms]))
       tuple(new_state, new_state)
     }
 
