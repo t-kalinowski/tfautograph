@@ -24,23 +24,6 @@ autograph <- function(x) {
 }
 
 
-export_modified <- function(modified, env) {
-  if (is_empty(modified))
-    return()
-
-  for (nm in names(modified)) {
-    if (is.list(modified[[nm]]))
-      modified[[nm]] <- modifyList(get(nm, env), modified[[nm]])
-    else if (is_undef(modified[[nm]])) {
-      makeActiveBinding(nm, modified[[nm]], env)
-      modified[[nm]] <- NULL
-    }
-  }
-  if(length(modified))
-    list2env(modified, envir = env)
-}
-
-
 new_ag_mask <- function(parent) {
 
   ag_mask <- list(
@@ -70,36 +53,11 @@ new_ag_mask <- function(parent) {
   # EncodeEnvironment
   # https://github.com/wch/r-source/blob/bc6e559c4940ed18e99ac2fd91d20f01ed186c72/src/main/printutils.c#L148
 
-  lockEnvironment(ag_mask)
+  lockEnvironment(ag_mask, bindings = TRUE)
   ag_mask
 }
 
 
-
-transfer_env <- function(from, to) {
-  if(!length(from))
-    return()
-
-  syms <- names(from)
-  names(syms) <- syms
-  are_active <- vapply(syms, function(sym) bindingIsActive(sym, from), FALSE)
-
-  from_list <- as.list(from, all.names = TRUE)
-
-  if (any(!are_active)) {
-    not_active <- from_list[syms[!are_active]]
-    list2env(not_active, to)
-  }
-
-  # TODO: active bindings functions may need to have their environement reset
-
-  if(any(are_active)) {
-    active <- from_list[ syms[are_active] ]
-    for (sym in names(active))
-      makeActiveBinding(sym, active[[sym]], to)
-  }
-
-  invisible()
 #' @export
 is_autographed <- function(fn) {
   if (is.environment(e <- environment(fn)))

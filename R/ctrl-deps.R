@@ -1,5 +1,17 @@
 
 
+
+#     register_control_dependency_ops(lapply(assert_ops, function(op) op$op), env)
+#
+#     on.exit.elsewhere({
+#       if (!is.null(
+#         new_return_value <-
+#         tfautograph:::capture_registered_control_dependency_ops(returnValue())
+#       ))
+#         return(new_return_value)
+#     }, envir = env)
+
+
 ag_on.exit <- function(expr = NULL, add = TRUE, after = FALSE) {
   env <- parent.frame()
   if(!add && !is.null(rlang::eval_bare(quote(sys.on.exit())), env))

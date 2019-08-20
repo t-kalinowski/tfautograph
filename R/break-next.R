@@ -124,3 +124,6 @@ remove_control_flow_registry <- function()
 get_active_control_flow_registry <- function()
   .registries$control_flow_registries$peek()
 
+do_return <- function(env, value = NULL) {
+  eval(as.call(list(quote(.Primitive("return")), value)), env)
+}

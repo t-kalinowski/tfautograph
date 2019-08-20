@@ -4,8 +4,7 @@ is_true <- function(x) identical(x, TRUE)
 
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
 
-# is_TRUE_or_FALSE <- function(x) isTRUE(x) || isFALSE(x)
-
+is_bool <- function(x) identical(x, TRUE) || identical(x, FALSE)
 
 as_args <- function(x) {
   out <- rep(list(quote(expr = )), length(x))
@@ -70,9 +69,6 @@ unnamed_lists_to_tuples <- function(x) {
   x
 }
 
-valid_modes <- c("logical", "numeric", "complex", "character", "raw", "list") #, "environment")
-
-
 valid_typeofs <- c("logical", "integer", "double", "complex", "character",
                    "raw", "list") #, "environment")
 
@@ -94,7 +90,3 @@ tf_group_ops <- function(x) {
   with(tf$control_dependencies(op), robust_tf_identity(x))
 }
 
-
-do_return <- function(env, value = NULL) {
-  eval(as.call(list(quote(.Primitive("return")), value)), env)
-}
