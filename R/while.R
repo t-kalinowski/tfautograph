@@ -99,6 +99,9 @@ as_loop_body_fn <- function(body_expr, loop_vars, env,
     if(length(undefs <- setdiff(names(outcome$modified), loop_vars)))
       export_undefs(as.list(undefs), env, call)
 
+    warn_about_unmodified(before = loop_vars_in,
+                          after = outcome$modified[loop_vars],
+                          dont_check = dont_check)
 
     outcome$modified[loop_vars]
   }
@@ -106,6 +109,23 @@ as_loop_body_fn <- function(body_expr, loop_vars, env,
   fn <- wrap_fn_with_loop_control_flow_handlers(fn)
   fn
 }
+
+warn_about_unmodified <- function(before, after, dont_check) {
+  unmodified <- vapply(
+    setdiff(names(before), dont_check),
+    function(nm)  identical(before[[nm]], after[[nm]]),
+    FALSE)
+
+  if(any(unmodified)) {
+    unmod <- names(unmodified[unmodified])
+    mod   <- names(unmodified[!unmodified])
+    warning(sprintf("%s appear to be unnecessarily captured as a loop variable",
+                    yasp::pc_and(yasp::wrap(unmod, "`"))),
+            "\nSpecify loop vars with ag_loop_vars(). e.g.,\n",
+            "ag_loop_vars(", yasp::pcc(yasp::dbl_quote(mod)), ")", call. = FALSE)
+  }
+}
+
 
 
 wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
@@ -127,14 +147,7 @@ wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
       remove_cond_registry()
     }, add = TRUE)
 
-
     loop_vars <- do.call(body_fn, loop_vars)
-
-    #     lapply(names(loop_vars), function(nm) {
-    #       if(identical(loop_vars[nm], loop_vars_in[nm]))
-    #         warning("specify loop vars with ag_loop_vars().
-    #                 %s appears to be an necessarily captured as a loop_var")
-    #     })
 
     out <- drop_empty(list(loop_vars = loop_vars, did_break = did_break))
 
