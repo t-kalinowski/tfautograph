@@ -55,7 +55,7 @@ test_that("while single output", {
     n
   }
 
-  devtools::load_all()
+  # devtools::load_all()
   ag_fn <- autograph(fn)
   res <- ag_fn(as_tensor(5L))
   grab(res)

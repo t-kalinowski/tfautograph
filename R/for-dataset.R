@@ -9,7 +9,8 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
       get_existing_var_nms(body, var, env = env)
     var <- deparse(var)
 
-    body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env)
+    body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env,
+                               dont_check = var)
 
     body_vars <- mget(body_vars, env, inherits = TRUE)
 
