@@ -19,17 +19,18 @@ as_outcome_fn <- function(expr, env, args = NULL) {
     modified <- as.list(outcome_env, all.names = TRUE)
     modified <- prune_nested_unmodified(modified, env)
 
-    for (val in modified)
-      if (identical(environment(val), outcome_env))
-        environment(val) <- env
+    out <- drop_empty(list(returned = returned, modified = modified))
 
-    if (identical(environment(returned), outcome_env))
-      environment(returned) <- env
+    # splice out outcome_env from closures
+    out <- rapply(list(out), function(x) {
+      if (identical(environment(x), outcome_env))
+        environment(x) <- env
+      x
+    }, classes = "function", how = "replace")[[1]]
 
-    drop_empty(list(returned = returned, modified = modified))
+    out
   }
 }
-
 
 
 export_modified <- function(modified, env) {
