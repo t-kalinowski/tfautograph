@@ -23,7 +23,6 @@ ag_while <- function(cond, body) {
     get_registered_next_while_loop_vars() %||%
     get_existing_var_nms(cond, body, env = env)
 
-
   cond_fn <- as_loop_cond_fn(cond, loop_vars, env)
   body_fn <- as_loop_body_fn(body, loop_vars, env)
 
@@ -45,6 +44,8 @@ ag_while <- function(cond, body) {
     name = get_next_ag_name(),
     get_registered_next_while_loop_opts()
   )
+  if(tf_v2())
+    while_loop_args$return_same_structure <- NULL
 
   res <- do.call(tf$while_loop, while_loop_args)
 
@@ -96,12 +97,13 @@ as_loop_body_fn <- function(body_expr, loop_vars, env,
 
     outcome <- outcome_fn(...)
 
-    if(length(undefs <- setdiff(names(outcome$modified), loop_vars)))
+    if (length(undefs <- setdiff(names(outcome$modified), loop_vars)))
       export_undefs(as.list(undefs), env, call)
 
-    warn_about_unmodified(before = loop_vars_in,
-                          after = outcome$modified[loop_vars],
-                          dont_check = dont_check)
+    if (!tf$executing_eagerly())
+      warn_about_unmodified(before = loop_vars_in,
+                            after = outcome$modified[loop_vars],
+                            dont_check = dont_check)
 
     outcome$modified[loop_vars]
   }

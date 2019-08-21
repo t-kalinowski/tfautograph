@@ -10,6 +10,12 @@ as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
 
 .SESS <- NULL
 grab <- function(x) {
+  if(tf$executing_eagerly()) {
+    return(rapply(list(x), function(tensor) tensor$numpy(),
+                  classes = "tensorflow.tensor",
+                  how = "replace")[[1]])
+  }
+
   if(is.null(.SESS))
     .SESS <<- tf$compat$v1$Session()
   .SESS$run(x)

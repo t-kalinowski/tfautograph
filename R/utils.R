@@ -4,6 +4,10 @@ is_true <- function(x) identical(x, TRUE)
 
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
 
+# TODO: maybe check for actual class here? use this throughout codebase for
+# readability
+is_eager_tensor <- function(x) is_tensor(x) && py_has_attr(x, "numpy")
+
 is_bool <- function(x) identical(x, TRUE) || identical(x, FALSE)
 
 as_args <- function(x) {

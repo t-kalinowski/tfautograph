@@ -54,7 +54,7 @@ prune_nested_unmodified <- function(modified, env) {
   for (nm in names(modified)) {
 
     obj <- modified[[nm]]
-    if(!is_named_list(obj))
+    if(is_undef(obj) || is_undef(nm, env) || !is_named_list(obj))
       next
     orig <- get0(nm, env)
     pruned_obj <- prune_identical(obj, orig)[[1]]

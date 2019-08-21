@@ -71,12 +71,21 @@ expand_lcf <-
                            "error", "condition"))
   }
 
-
+#' @importFrom reticulate py_has_attr
 can_register_loop_control_flow <- function(lcf) {
+  if(tf$executing_eagerly())
+    return(TRUE)
+
   registry <- get_active_control_flow_registry()
-  for (x in unlist(compact_lcf(lcf)))
-    if (is_tensor(x) && x$graph != registry$graph)
+
+  for (x in unlist(compact_lcf(lcf))) {
+    if(!is_tensor(x))
+      next
+    if(py_has_attr(x, "numpy"))
+      next
+    if(x$graph != registry$graph)
       return(FALSE)
+  }
   TRUE
 }
 
@@ -90,7 +99,6 @@ register_loop_control_flow <- function(lcf) {
 
 
 try_register_or_signal_error_with_restart <- function(lcf) {
-
   if (can_register_loop_control_flow(lcf))
     register_loop_control_flow(lcf)
   else {
