@@ -19,7 +19,8 @@ is_undef <- function(x, env = NULL) {
   if (is.null(env))
     inherits(x, "undef")
   else {
-    bindingIsActive(x, env) &&
+    exists(x, envir = env, inherits = FALSE) &&
+      bindingIsActive(x, env) &&
       is_true(tryCatch(env[[x]],
                        access_undefined = function(e) TRUE))
   }

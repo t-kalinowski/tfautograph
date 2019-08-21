@@ -137,7 +137,7 @@ test_that("while test while dispatches by cond only", {
 
   expect_equal(ag_fn(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
   # expect_result(ag_fn, list(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
-  expect_error(ag_fn(as_tensor(5L), TensorIncompatibleNumeric(0L)), "TypeError")
+  expect_error(ag_fn(as_tensor(5L), TensorIncompatibleNumeric(0L)), "TypeError|ValueError")
 })
 
 

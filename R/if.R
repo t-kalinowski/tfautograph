@@ -15,6 +15,10 @@ ag_if <- function(cond, true, false = NULL) {
   false <- substitute(false)
   env <- parent.frame()
 
+  # TODO: think if something like this makes sense:
+  # if(tf$executing_eagerly() && py_has_attr(cond, "numpy"))
+  #   cond <- cond$numpy()
+
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")),
                              cond, true, false)), env))
@@ -23,6 +27,8 @@ ag_if <- function(cond, true, false = NULL) {
   false_fn <- as_cond_branch_fn(cond, false, FALSE, env)
 
   target_outcome <- get_registered_next_if_vars()
+  # TODO: consider skipping this if executing eagerly. e.g,
+  # if (is.null(target_outcome) && !tf$executing_eagerly()) {
   if(is.null(target_outcome)) {
     true_fn <- as_concrete_function(true_fn)
     false_fn <- if(is.null(false)) null_fn else as_concrete_function(false_fn)

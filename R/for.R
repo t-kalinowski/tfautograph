@@ -70,6 +70,9 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
     get_registered_next_while_loop_opts()
   )
 
+  if(tf_v2())
+    while_loop_args$return_same_structure <- NULL
+
   res <- do.call(tf$while_loop, while_loop_args)
 
   # activate_undefs(undefs, sym)
@@ -80,4 +83,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   invisible()
 }
 
+#' @importFrom tensorflow tf_version
+tf_v2 <- function() package_version(tf_version()) >= "2"
+tf_v1 <- function() package_version(tf_version()) < "2"
 
