@@ -1,14 +1,29 @@
 
 
 is_true <- function(x) identical(x, TRUE)
-
-is_tensor <- function(x) inherits(x, "tensorflow.tensor")
-
-# TODO: maybe check for actual class here? use this throughout codebase for
-# readability
-is_eager_tensor <- function(x) is_tensor(x) && py_has_attr(x, "numpy")
-
 is_bool <- function(x) identical(x, TRUE) || identical(x, FALSE)
+is_tensor <- function(x) inherits(x, "tensorflow.tensor")
+is_eager_tensor <- function(x) is_tensor(x) && py_has_attr(x, "numpy")
+is_eager <- function(x) py_has_attr(x, "numpy")
+  # z$`__class__`$`__name__` == "EagerTensor"
+
+is_lazy_tensor <- function(x) is_tensor(x) && !is_eager_tensor(x)
+
+
+
+## TODO: should also return true for TensorArrays
+
+# in tf2.0
+# > class(tf$convert_to_tensor(3))
+# [1] "tensorflow.tensor"
+# [2] "tensorflow.python.framework.ops.EagerTensor"
+# [3] "tensorflow.python.framework.ops._EagerTensorBase"
+# [4] "tensorflow.python.framework.ops.Tensor"
+# [5] "tensorflow.python.framework.tensor_like._TensorLike"
+# [6] "python.builtin.object"
+
+# TODO: maybe check for actual class here?
+
 
 as_args <- function(x) {
   out <- rep(list(quote(expr = )), length(x))
@@ -17,14 +32,27 @@ as_args <- function(x) {
 }
 
 
-any_tensors_in <- function(expr, env) {
+sym_tensor_types <- function(expr, env) {
+  # outputs one of "lazy", "eager", "both", "none"
   var_nms <- all.vars(expr)
   vals <- mget(var_nms, envir = env, inherits = TRUE,
                ifnotfound = vector("list", length(var_nms)))
-  for(val in vals)
-    if(is_tensor(val))
-      return(TRUE)
-  FALSE
+  lazy <- eager <- FALSE
+  # TODO use rapply here instead of lapply to handle nested structures
+  types <- unique(unlist(lapply(vals, tensor_type)))
+  if(!length(types))
+    "none"
+  else if (all(c("lazy", "eager") %in% types))
+    "both"
+  else types
+}
+
+
+
+tensor_type <- function(x) {
+  if(!is_tensor(x))
+    return(NULL)
+  if(is_eager(x)) "eager" else "lazy"
 }
 
 

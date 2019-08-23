@@ -16,8 +16,8 @@ ag_if <- function(cond, true, false = NULL) {
   env <- parent.frame()
 
   # TODO: think if something like this makes sense:
-  # if(tf$executing_eagerly() && py_has_attr(cond, "numpy"))
-  #   cond <- cond$numpy()
+  if(is_eager_tensor(cond))
+    cond <- cond$numpy()
 
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")),
@@ -27,9 +27,7 @@ ag_if <- function(cond, true, false = NULL) {
   false_fn <- as_cond_branch_fn(cond, false, FALSE, env)
 
   target_outcome <- get_registered_next_if_vars()
-  # TODO: consider skipping this if executing eagerly. e.g,
-  # if (is.null(target_outcome) && !tf$executing_eagerly()) {
-  if(is.null(target_outcome)) {
+  if (is.null(target_outcome)) {
     true_fn <- as_concrete_function(true_fn)
     false_fn <- if(is.null(false)) null_fn else as_concrete_function(false_fn)
 
@@ -42,7 +40,7 @@ ag_if <- function(cond, true, false = NULL) {
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
 
-  if(!length(target_outcome))
+  if(!length(target_outcome)) # && !tf$executing_eagerly())
     return()
 
   outcome <- tf$cond(cond,
@@ -122,6 +120,9 @@ build_target_outcome <- function(true, false, env) {
 
 
 fix_outcome <- function(outcome, target_outcome, env) {
+
+  if(is.null(target_outcome))
+    return(outcome)
 
   outcome$modified <- pluck_structure(target_outcome$modified,
                                       outcome$modified, env)

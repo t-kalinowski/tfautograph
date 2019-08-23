@@ -92,6 +92,8 @@ can_register_loop_control_flow <- function(lcf) {
 
 
 register_loop_control_flow <- function(lcf) {
+  # if(is_eager_tensor(lcf$reduced_conds))
+  #   signalCondition()
   registry <- get_active_control_flow_registry()
   registry$recorded_conditions$push(compact_lcf(lcf))
 }

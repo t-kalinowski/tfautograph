@@ -16,8 +16,47 @@ ag_for_impl.default <- function(iterable, var, body, env) {
 }
 
 
+did_not_raise_StopIteration <- function(expr) {
+  tryCatch({
+    force(expr)
+    TRUE
+  },
+  error = function(e)
+    grepl("StopIteration", e))
+}
+
+#' @importFrom reticulate iter_next
+active_iterator_get_next <- function() {
+  # it <- peek_active_iterator()
+  # it$`__next__`()
+  iter_next(peek_active_iterator())
+}
+
+#' @importFrom reticulate as_iterator
+ag_for_impl.python.builtin.iterator <-
+  function(iterable, var, body, env) {
+    register_active_iterator(as_iterator(iterable))
+    on.exit(pop_registered_active_iterator())
+
+    # expr <- substitute(
+    #   while (tfautograph:::did_not_raise_StopIteration(
+    #     var <- tfautograph:::active_iterator_get_next()))
+    #   body, list(var = var, body = body))
+
+    expr <- substitute(
+      while (!is.null(var <- tfautograph:::active_iterator_get_next()))
+        body, list(var = var, body = body))
+
+    eval(expr, env)
+  }
+
+
 #' @importFrom zeallot %->%
 ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
+
+  if(tf$executing_eagerly() && is_eager(iterable))
+    return(ag_for_impl.python.builtin.iterator(
+      as_iterator(iterable), var, body, env))
 
   # track python tensorflow TODO, reimplement here if implementation there changes:
   ## TODO(b/117628877): Revisit performance once XLA has the necessary support.
