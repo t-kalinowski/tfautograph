@@ -106,15 +106,23 @@ test_that("while local composite complex illegal", {
       tc <- foo()
       tc$x[[1]] <- tc$x[[1]] + 1L
       subtract(n) <- 1L
+      # print(tc); #print(n)
     }
     tc$x[[1]]
   }
   ag_fn <- autograph(fn)
 
+  if(tf$executing_eagerly()) {
+    # no undefineds produced in eager mode
+    expect_equal(grab(ag_fn(as_tensor(5L))), 4L)
+    ag_fn <- tf_function(ag_fn, autograph = FALSE)
+  }
+
   # TODO: while should return a better error message
-  expect_error(ag_fn(as_tensor(5L)), '*tc*', class = "access_undefined")
+  expect_error(ag_fn(as_tensor(5L)), '*tc*',
+               class = if(!tf$executing_eagerly()) "access_undefined")
   expect_error(ag_fn(as_tensor(5L)), 'must be defined before the loop',
-               class = "access_undefined")
+               class = if(!tf$executing_eagerly()) "access_undefined")
 })
 
 test_that("while test while dispatches by cond only", {

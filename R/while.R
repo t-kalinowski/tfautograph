@@ -11,7 +11,15 @@ ag_while <- function(cond, body) {
 
   # TODO: revisit this after `append<-` is handled. Dispatching to standard R
   # control flow may no always be the right choise.
-  if (!any_tensors_in(cond, env))
+
+
+  cond_tensor_types <- sym_tensor_types(cond, env)
+  if(cond_tensor_types == "eager") {
+    cond <- substitute(as.logical(cond), list(cond = cond))
+    cond_tensor_types <- "none"
+  }
+
+  if (cond_tensor_types == "none")
     return(eval(as.call(list(quote(.Primitive("while")), cond, body)), env))
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))

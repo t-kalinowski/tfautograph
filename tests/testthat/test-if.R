@@ -150,24 +150,30 @@ test_that("if local var", {
   }
   ag_fn <- autograph(fn)
   # expect_error(ag_fn(as_tensor(1L)), "b")
+  if(tf$executing_eagerly()) {
+    # no undefineds produced in eager mode
+    expect_equal(ag_fn(as_tensor(1L)), 4L)
+    ag_fn <- tf_function(ag_fn, autograph = FALSE)
+  }
   expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
-  class = "access_undefined")
+  class = if(!tf$executing_eagerly()) "access_undefined")
 
 
-  local({
-    n <- as_tensor(1L)
+  if (!tf$executing_eagerly()) {
+    local({
+      n <- as_tensor(1L)
 
-    autograph(if (n > 0L) {
-      b <- 4L
-      n <- b + 1L
+      autograph(if (n > 0L) {
+        b <- 4L
+        n <- b + 1L
+      })
+
+      expect_equal(grab(n), 5L)
+      # expect_error(b, "b")
+      expect_error(b, "Symbol `b` is \\*undefined\\*",
+                   class = "access_undefined")
     })
-
-
-    expect_equal(grab(n), 5L)
-    # expect_error(b, "b")
-    expect_error(b, "Symbol `b` is \\*undefined\\*",
-                 class = "access_undefined")
-  })
+  }
 })
 
 

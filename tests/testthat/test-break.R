@@ -7,13 +7,15 @@ if(interactive()) {
 test_that("break basic", {
   fn <- function(n) {
     while (n > 0L) {
-      if (n %% 2L == 0L)
+      if (n %% 2L == 0L) {
         break
+      }
       subtract(n) <- 1L
     }
     n
   }
   # debugonce(ag_if)
+  autograph(fn)(as_tensor(4L))
   autograph(fn)(as_tensor(1L))
 
   expect_ag_equivalent(fn, 0L)

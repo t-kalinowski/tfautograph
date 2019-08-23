@@ -152,4 +152,19 @@ get_registered_next_if_vars <- function() NULL
 
 .registries$control_flow_registries <- Stack()
 
+.registries$active_iterator_registry <- Stack()
+
+
+register_active_iterator <- function(x) {
+  .registries$active_iterator_registry$push(x)
+}
+
+pop_registered_active_iterator <- function() {
+  .registries$active_iterator_registry$pop()
+}
+
+peek_active_iterator <- function() {
+  .registries$active_iterator_registry$peek()
+}
+
 

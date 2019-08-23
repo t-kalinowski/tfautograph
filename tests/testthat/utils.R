@@ -4,6 +4,7 @@ Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 
 tf <- tensorflow::tf
+tf_function <- tensorflow::tf_function
 tuple <- reticulate::tuple
 
 as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
