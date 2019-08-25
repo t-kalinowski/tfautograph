@@ -3,3 +3,4 @@
 .RData
 _*.R
 .DS_Store
+inst/doc
