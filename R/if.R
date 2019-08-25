@@ -84,6 +84,9 @@ as_cond_branch_fn <- function(cond, branch_expr, branch, env) {
       }
     )
 
+    outcome <- prune_ops(outcome)
+    # return object from an eager defun can't be a bare op, must be a tensor.
+
     if (length(local_lcf_reg))
       outcome$loop_control_flow <- as.list(local_lcf_reg)
 
@@ -92,6 +95,20 @@ as_cond_branch_fn <- function(cond, branch_expr, branch, env) {
 }
 
 
+
+prune_invalid_vals <- function(x) {
+  modifyList(list(x = x),
+             rapply(list(x = x), function(v)
+               if (is_valid_val(v)) v else NULL,
+               how = 'replace'))$x
+}
+
+prune_ops <- function(x) {
+  modifyList(list(x = x),
+             rapply(list(x = x), function(v) NULL,
+                    classes = "tensorflow.python.framework.ops.Operation",
+                    how = 'replace'))$x
+}
 
 # from_concrete_fn's `structured_outputs`
 build_target_outcome <- function(true, false, env) {
