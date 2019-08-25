@@ -28,7 +28,10 @@ get_active_cond_registry <- function() {
 unique_tensor_id <- function(x) {
   # TODO: this should probably also hash + concat the graph id, and also the
   # tensor$name
-  as.character(x$`__hash__`())
+
+  # as.character(x$`__hash__`()) #  `__hash__`() no longer works in
+  # tf2, but they don't have a non-experiemental replacement...
+  sprintf("%s:%i", x$name, x$graph$`__hash__`())
 }
 
 #' @importFrom rlang is_bool
