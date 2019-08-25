@@ -93,14 +93,18 @@ train_dataset <- mnist_dataset()
 ### Define the model
 
 ``` r
-model <- keras_model_sequential() %>%
-  layer_reshape(target_shape = c(28 * 28),
-                input_shape = shape(28, 28)) %>%
-  layer_dense(100, activation = 'relu') %>%
-  layer_dense(100, activation = 'relu') %>%
-  layer_dense(10)
-model$build()
-optimizer <- tf$keras$optimizers$Adam() 
+new_model_and_optimizer <- function() {
+  model <- keras_model_sequential() %>%
+    layer_reshape(target_shape = c(28 * 28),
+                  input_shape = shape(28, 28)) %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(10)
+  model$build()
+  optimizer <- tf$keras$optimizers$Adam()
+  list(model, optimizer)
+}
+c(model, optimizer) %<-% new_model_and_optimizer()
 ```
 
 ### Define the training loop
@@ -123,11 +127,7 @@ train_one_step <- function(model, optimizer, x, y) {
   loss
 }
 
-# this is only so that Rmarkdown can capture output that would otherwise go to
-# stdout
-log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
-
-train <- tf_function(autograph(function(model, optimizer) {
+train <- autograph(function(model, optimizer) {
   train_ds <- mnist_dataset()
   step <- 0L
   loss <- 0
@@ -136,41 +136,76 @@ train <- tf_function(autograph(function(model, optimizer) {
     c(x, y) %<-% batch
     step %<>% add(1L)
     loss <- train_one_step(model, optimizer, x, y)
-    if (step %% 10L == 0L)
+    if (compute_accuracy$result() > 0.8) {
+      tf$print( 'Step', step, ': loss', loss, '; accuracy', compute_accuracy$result(),
+        output_stream = log_file)
+      # We direct all tf$print() outputs to a log file only so that Rmarkdown can
+      # show output that would otherwise just go to stdout
+      tf$print("Breaking early", output_stream = log_file)
+      break
+    } else if (step %% 10L == 0L)
       tf$print('Step', step, ': loss', loss,
                '; accuracy', compute_accuracy$result(), 
                output_stream = log_file)
   }
   list(step, loss)
-}))
+})
+```
 
+### train in graph mode
 
-c(step, loss) %<-% train(model, optimizer)
+``` r
+
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+train_graph <- tf_function(train)
+c(step, loss) %<-% train_graph(model, optimizer)
+
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.77995944 ; accuracy 0.363
-#> Step 20 : loss 1.06181931 ; accuracy 0.518
-#> Step 30 : loss 0.766562581 ; accuracy 0.602333307
-#> Step 40 : loss 0.539229751 ; accuracy 0.6585
-#> Step 50 : loss 0.51139605 ; accuracy 0.6956
-#> Step 60 : loss 0.495062023 ; accuracy 0.7225
-#> Step 70 : loss 0.538499296 ; accuracy 0.745428562
-#> Step 80 : loss 0.444634974 ; accuracy 0.763
-#> Step 90 : loss 0.603235066 ; accuracy 0.776666641
-#> Step 100 : loss 0.31680581 ; accuracy 0.7882
-#> Step 110 : loss 0.233325675 ; accuracy 0.797818184
-#> Step 120 : loss 0.388830751 ; accuracy 0.805083334
-#> Step 130 : loss 0.281395674 ; accuracy 0.812846124
-#> Step 140 : loss 0.349985242 ; accuracy 0.819285691
-#> Step 150 : loss 0.308940768 ; accuracy 0.8252
-#> Step 160 : loss 0.309595823 ; accuracy 0.829812527
-#> Step 170 : loss 0.355459481 ; accuracy 0.834823549
-#> Step 180 : loss 0.2305246 ; accuracy 0.839
-#> Step 190 : loss 0.357420385 ; accuracy 0.84331578
-#> Step 200 : loss 0.17443186 ; accuracy 0.84705
-cat('Final step ', as.array(step),
-  ': loss ', as.array(loss),
-  '; accuracy ', as.array(compute_accuracy$result()), "\n", sep = "")
-#> Final step 200: loss 0.1744319; accuracy 0.84705
+#> Step 10 : loss 1.72327757 ; accuracy 0.379
+#> Step 20 : loss 1.21117306 ; accuracy 0.539
+#> Step 30 : loss 0.701422334 ; accuracy 0.61833334
+#> Step 40 : loss 0.479259223 ; accuracy 0.67325
+#> Step 50 : loss 0.46734181 ; accuracy 0.708
+#> Step 60 : loss 0.366834402 ; accuracy 0.7375
+#> Step 70 : loss 0.233186334 ; accuracy 0.760428548
+#> Step 80 : loss 0.360162765 ; accuracy 0.776375
+#> Step 90 : loss 0.555048108 ; accuracy 0.788333356
+#> Step 100 : loss 0.317718416 ; accuracy 0.7974
+#> Step 103 : loss 0.244447649 ; accuracy 0.800679624
+#> Breaking early
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
+#> Final step 103: loss 0.244448; accuracy 0.800680
+```
+
+### train in eager mode
+
+``` r
+# autograph also works in eager mode
+
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+c(model, optimizer) %<-% new_model_and_optimizer()
+c(step, loss) %<-% train(model, optimizer)
+
+cat(readLines(log_file), sep = "\n")
+#> Step 10 : loss 1.75092924 ; accuracy 0.764336288
+#> Step 20 : loss 1.0013392 ; accuracy 0.761951208
+#> Step 30 : loss 0.8112607 ; accuracy 0.763909757
+#> Step 40 : loss 0.592272818 ; accuracy 0.768531442
+#> Step 50 : loss 0.367938846 ; accuracy 0.774183035
+#> Step 60 : loss 0.431332469 ; accuracy 0.780122697
+#> Step 70 : loss 0.308761865 ; accuracy 0.785722554
+#> Step 80 : loss 0.283011258 ; accuracy 0.791967213
+#> Step 90 : loss 0.238270551 ; accuracy 0.796528518
+#> Step 97 : loss 0.433700532 ; accuracy 0.80025
+#> Breaking early
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
+#> Final step 97: loss 0.433701; accuracy 0.800250
 ```
 
 ## Installation

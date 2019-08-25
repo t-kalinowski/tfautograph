@@ -111,14 +111,18 @@ train_dataset <- mnist_dataset()
 
 ### Define the model
 ```{r}
-model <- keras_model_sequential() %>%
-  layer_reshape(target_shape = c(28 * 28),
-                input_shape = shape(28, 28)) %>%
-  layer_dense(100, activation = 'relu') %>%
-  layer_dense(100, activation = 'relu') %>%
-  layer_dense(10)
-model$build()
-optimizer <- tf$keras$optimizers$Adam() 
+new_model_and_optimizer <- function() {
+  model <- keras_model_sequential() %>%
+    layer_reshape(target_shape = c(28 * 28),
+                  input_shape = shape(28, 28)) %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(10)
+  model$build()
+  optimizer <- tf$keras$optimizers$Adam()
+  list(model, optimizer)
+}
+c(model, optimizer) %<-% new_model_and_optimizer()
 ```
 
 
@@ -141,11 +145,7 @@ train_one_step <- function(model, optimizer, x, y) {
   loss
 }
 
-# this is only so that Rmarkdown can capture output that would otherwise go to
-# stdout
-log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
-
-train <- tf_function(autograph(function(model, optimizer) {
+train <- autograph(function(model, optimizer) {
   train_ds <- mnist_dataset()
   step <- 0L
   loss <- 0
@@ -154,21 +154,50 @@ train <- tf_function(autograph(function(model, optimizer) {
     c(x, y) %<-% batch
     step %<>% add(1L)
     loss <- train_one_step(model, optimizer, x, y)
-    if (step %% 10L == 0L)
+    if (compute_accuracy$result() > 0.8) {
+      tf$print( 'Step', step, ': loss', loss, '; accuracy', compute_accuracy$result(),
+        output_stream = log_file)
+      # We direct all tf$print() outputs to a log file only so that Rmarkdown can
+      # show output that would otherwise just go to stdout
+      tf$print("Breaking early", output_stream = log_file)
+      break
+    } else if (step %% 10L == 0L)
       tf$print('Step', step, ': loss', loss,
                '; accuracy', compute_accuracy$result(), 
                output_stream = log_file)
   }
   list(step, loss)
-}))
+})
+```
 
+### train in graph mode
+```{r, message=TRUE, warning=TRUE}
 
-c(step, loss) %<-% train(model, optimizer)
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+train_graph <- tf_function(train)
+c(step, loss) %<-% train_graph(model, optimizer)
+
 cat(readLines(log_file), sep = "\n")
-cat('Final step ', as.array(step),
-  ': loss ', as.array(loss),
-  '; accuracy ', as.array(compute_accuracy$result()), "\n", sep = "")
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
+```
 
+
+### train in eager mode
+```{r, message=TRUE, warning=TRUE}
+# autograph also works in eager mode
+
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+c(model, optimizer) %<-% new_model_and_optimizer()
+c(step, loss) %<-% train(model, optimizer)
+
+cat(readLines(log_file), sep = "\n")
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
 ```
 
 
