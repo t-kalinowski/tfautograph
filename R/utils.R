@@ -9,7 +9,7 @@ is_eager <- function(x) py_has_attr(x, "numpy")
 
 is_lazy_tensor <- function(x) is_tensor(x) && !is_eager_tensor(x)
 
-
+is_op <- function(x) inherits(x, "tensorflow.python.framework.ops.Operation")
 
 ## TODO: should also return true for TensorArrays
 
