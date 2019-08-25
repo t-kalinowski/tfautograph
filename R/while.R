@@ -65,9 +65,17 @@ ag_while <- function(cond, body) {
 
 get_existing_var_nms <- function(..., env) {
   # ... should all be language objects
+  # TODO: this whould be refactored into a function named
+  # resolve_loop_vars(..., env). also, ag_loop_vars should accept
+  # dplyr::select like specs, namely `-`
+  # e.g., ag_loop_vars(-log_file)
   vars <- unique(unlist(lapply(list(...), all.vars)))
-  vars[vapply(vars, exists, TRUE, envir = env)]
-}
+  vars <- vars[vapply(vars, exists, TRUE, envir = env)]
+  vars <- mget(vars, envir = env, inherits = TRUE)
+  vars <- vars[vapply(vars, function(v) is_tensor(v) ||
+                        typeof(v) %in% valid_typeofs, TRUE)]
+  names(vars)
+  }
 
 
 get_tensor_var_nms <- function(..., env) {
@@ -132,7 +140,7 @@ warn_about_unmodified <- function(before, after, dont_check) {
     warning(sprintf("%s appear to be unnecessarily captured as a loop variable",
                     yasp::pc_and(yasp::wrap(unmod, "`"))),
             "\nSpecify loop vars with ag_loop_vars(). e.g.,\n",
-            "ag_loop_vars(", yasp::pcc(yasp::dbl_quote(mod)), ")", call. = FALSE)
+            "ag_loop_vars(", yasp::pcc(yasp::dbl_quote(mod)), ")\n", call. = FALSE)
   }
 }
 
