@@ -18,6 +18,7 @@ ag_if <- function(cond, true, false = NULL) {
   # TODO: think if something like this makes sense:
   if(is_eager_tensor(cond))
     cond <- cond$numpy()
+  # use cond$`__bool__`() here instead?
 
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")),
@@ -39,9 +40,6 @@ ag_if <- function(cond, true, false = NULL) {
 
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
-
-  if(!length(target_outcome)) # && !tf$executing_eagerly())
-    return()
 
   outcome <- tf$cond(cond,
                      function() fix_outcome(true_fn(), target_outcome, env),
@@ -141,6 +139,8 @@ fix_outcome <- function(outcome, target_outcome, env) {
   if(is.null(target_outcome))
     return(outcome)
 
+
+
   outcome$modified <- pluck_structure(target_outcome$modified,
                                       outcome$modified, env)
 
@@ -168,6 +168,9 @@ fix_outcome <- function(outcome, target_outcome, env) {
     outcome$loop_control_flow[(lo + 1):lt] <-
       rep(list(dummy_lcf), lt - lo)
   }
+
+  if(!length(outcome))
+    outcome$placeholder <- tf$constant(FALSE)
 
   outcome
 }
