@@ -24,18 +24,15 @@ Implemented so far:
 
  - [x] `if`
  - [x] `while` 
- - [x] `next` in `while` (python `continue`)
- - [x] `break` in `while`
  - [x] `for` with tensors
- - [x] `next/break` in `for` with tensors
  - [x] `for` with tf datasets
- - [x] `next/break` in `for` with tf datasets
- - [x] `stopifnot` (python `assert`)
+ - [x] `next` and `break` in `while` 
+ - [x] `next` and `break` in `for` with tensors 
+ - [x] `next` and `break` in `for` with tf datasets 
+ - [x] `stopifnot` (python `assert`); translates to `tf.Assert()`
  - [x] `switch` (autograph to `tf.switch_case`)
- - [ ] `print`, `stop` and `warning` (these fall into the same category as ops
- that need to be registered as control dependencies. Currently exploring
- (perhaps) more elegant solutions than the approach current implemented in
- `stopifnot`)
+ - [x] full compatbility with both eager and graph mode 
+ - [x] full compatability with both tf versions 1.14 and 2.0
  
  
 Additional remaining tasks:
