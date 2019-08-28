@@ -15,10 +15,8 @@ ag_if <- function(cond, true, false = NULL) {
   false <- substitute(false)
   env <- parent.frame()
 
-  # TODO: think if something like this makes sense:
   if(is_eager_tensor(cond))
-    cond <- cond$numpy()
-  # use cond$`__bool__`() here instead?
+    cond <- cond$`__bool__`()
 
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")),
@@ -30,7 +28,8 @@ ag_if <- function(cond, true, false = NULL) {
   target_outcome <- get_registered_next_if_vars()
   if (is.null(target_outcome)) {
     true_fn <- as_concrete_function(true_fn)
-    false_fn <- if(is.null(false)) null_fn else as_concrete_function(false_fn)
+    false_fn <- if(is.null(false)) null_fn else
+      as_concrete_function(false_fn)
 
     target_outcome <- build_target_outcome(
       true_fn$structured_outputs,
