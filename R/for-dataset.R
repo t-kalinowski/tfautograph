@@ -4,6 +4,10 @@
 ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
 
+    if(tf$executing_eagerly())
+      return(ag_for_impl.python.builtin.iterator(
+        as_iterator(iterable), var, body, env))
+
     body_vars <-
       get_registered_next_while_loop_vars() %||%
       get_existing_var_nms(body, var, env = env)
