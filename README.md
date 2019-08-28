@@ -16,18 +16,15 @@ Implemented so far:
 
   - \[x\] `if`
   - \[x\] `while`
-  - \[x\] `next` in `while` (python `continue`)
-  - \[x\] `break` in `while`
   - \[x\] `for` with tensors
-  - \[x\] `next/break` in `for` with tensors
   - \[x\] `for` with tf datasets
-  - \[x\] `next/break` in `for` with tf datasets
-  - \[x\] `stopifnot` (python `assert`)
+  - \[x\] `next` and `break` in `while`
+  - \[x\] `next` and `break` in `for` with tensors
+  - \[x\] `next` and `break` in `for` with tf datasets
+  - \[x\] `stopifnot` (python `assert`); translates to `tf.Assert()`
   - \[x\] `switch` (autograph to `tf.switch_case`)
-  - \[ \] `print`, `stop` and `warning` (these fall into the same
-    category as ops that need to be registered as control dependencies.
-    Currently exploring (perhaps) more elegant solutions than the
-    approach current implemented in `stopifnot`)
+  - \[x\] full compatbility with both eager and graph mode
+  - \[x\] full compatability with both tf versions 1.14 and 2.0
 
 Additional remaining tasks:
 
@@ -162,22 +159,23 @@ train_graph <- tf_function(train)
 c(step, loss) %<-% train_graph(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.72327757 ; accuracy 0.379
-#> Step 20 : loss 1.21117306 ; accuracy 0.539
-#> Step 30 : loss 0.701422334 ; accuracy 0.61833334
-#> Step 40 : loss 0.479259223 ; accuracy 0.67325
-#> Step 50 : loss 0.46734181 ; accuracy 0.708
-#> Step 60 : loss 0.366834402 ; accuracy 0.7375
-#> Step 70 : loss 0.233186334 ; accuracy 0.760428548
-#> Step 80 : loss 0.360162765 ; accuracy 0.776375
-#> Step 90 : loss 0.555048108 ; accuracy 0.788333356
-#> Step 100 : loss 0.317718416 ; accuracy 0.7974
-#> Step 103 : loss 0.244447649 ; accuracy 0.800679624
+#> Step 10 : loss 1.88018465 ; accuracy 0.325
+#> Step 20 : loss 1.32252872 ; accuracy 0.478
+#> Step 30 : loss 0.711557567 ; accuracy 0.574
+#> Step 40 : loss 0.561042607 ; accuracy 0.6345
+#> Step 50 : loss 0.542643249 ; accuracy 0.68
+#> Step 60 : loss 0.514114738 ; accuracy 0.7125
+#> Step 70 : loss 0.561607718 ; accuracy 0.734428585
+#> Step 80 : loss 0.483150125 ; accuracy 0.754625
+#> Step 90 : loss 0.251316458 ; accuracy 0.770666659
+#> Step 100 : loss 0.335043371 ; accuracy 0.7849
+#> Step 110 : loss 0.266543299 ; accuracy 0.795272708
+#> Step 116 : loss 0.278457731 ; accuracy 0.800603449
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 103: loss 0.244448; accuracy 0.800680
+#> Final step 116: loss 0.278458; accuracy 0.800603
 ```
 
 ### train in eager mode
@@ -191,21 +189,22 @@ c(model, optimizer) %<-% new_model_and_optimizer()
 c(step, loss) %<-% train(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.75092924 ; accuracy 0.764336288
-#> Step 20 : loss 1.0013392 ; accuracy 0.761951208
-#> Step 30 : loss 0.8112607 ; accuracy 0.763909757
-#> Step 40 : loss 0.592272818 ; accuracy 0.768531442
-#> Step 50 : loss 0.367938846 ; accuracy 0.774183035
-#> Step 60 : loss 0.431332469 ; accuracy 0.780122697
-#> Step 70 : loss 0.308761865 ; accuracy 0.785722554
-#> Step 80 : loss 0.283011258 ; accuracy 0.791967213
-#> Step 90 : loss 0.238270551 ; accuracy 0.796528518
-#> Step 97 : loss 0.433700532 ; accuracy 0.80025
+#> Step 10 : loss 1.8785491 ; accuracy 0.770952404
+#> Step 20 : loss 1.1685828 ; accuracy 0.763308823
+#> Step 30 : loss 0.719277322 ; accuracy 0.762465775
+#> Step 40 : loss 0.594832361 ; accuracy 0.76679486
+#> Step 50 : loss 0.383325577 ; accuracy 0.772590339
+#> Step 60 : loss 0.521231592 ; accuracy 0.778636336
+#> Step 70 : loss 0.449629933 ; accuracy 0.784516156
+#> Step 80 : loss 0.258993387 ; accuracy 0.789540827
+#> Step 90 : loss 0.529866576 ; accuracy 0.793932
+#> Step 100 : loss 0.335116088 ; accuracy 0.798472226
+#> Step 104 : loss 0.255132794 ; accuracy 0.800454557
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 97: loss 0.433701; accuracy 0.800250
+#> Final step 104: loss 0.255133; accuracy 0.800455
 ```
 
 ## Installation
