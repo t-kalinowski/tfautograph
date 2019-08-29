@@ -69,7 +69,7 @@ is_same_structure <- function(x, y) {
     return(FALSE)
 
   tryCatch({
-    tf$python$util$nest$assert_same_structure(x, y)
+    tf$nest$assert_same_structure(x, y)
     TRUE
   },
   error = function(e) {
