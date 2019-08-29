@@ -25,24 +25,10 @@ library(tensorflow)
 library(tfautograph)
 ```
 
-We'll enable eager execution for demonstration purposes, but AutoGraph works in both eager and graph execution environments:
-
-```{r}
-tfe_enable_eager_execution()
-```
-
-> **Note**: AutoGraph converted code is designed to run during graph execution. When 
-eager exectuon is enabled, use explicit graphs (as this example shows) or 
-____tf.contrib.eager.defun____.
 
 ## Automatically convert R control flow
 
-AutoGraph will convert much of the Python language into the equivalent TensorFlow graph building code.
-
-> **Note**: In real applications batching is essential for performance. The best 
-code to convert to AutoGraph is code where the control flow is decided at the batch 
-level. If making decisions at the individual example level, you must index and 
-batch the examples to maintain performance while applying the control flow logic.
+AutoGraph will convert much of the R language into the equivalent TensorFlow graph building code.
 
 AutoGraph converts a function like:
 
