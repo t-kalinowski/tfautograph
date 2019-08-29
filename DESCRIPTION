@@ -3,7 +3,7 @@ Title: Autograph R functions for tensorflow
 Version: 0.0.0.9000
 Authors@R: person("Tomasz", "Kalinowski", email = "kalinowskit@gmail.com", role = c("aut", "cre"))
 Description: Translate R functions into tensorflow graphs.
-Depends: R (>= 3.6.0)
+Depends: R (>= 3.5.0)
 Imports:
     tensorflow,
     reticulate,

@@ -1,5 +1,4 @@
 
-
 Stack <- function() {
   stack <- new.env(parent = emptyenv())
 
@@ -30,3 +29,7 @@ length.Stack <- function(x)
   parent.env(x)$stack[[as.character(idx)]]
 }
 
+as.list.Stack <- function(x) {
+  x <- parent.env(x)$stack
+  unname(mget(as.character(seq_along(x)), envir = x))
+}

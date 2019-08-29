@@ -37,6 +37,9 @@ test_that("if basic", {
     list(a, b)
   }
   ag_fn <- autograph(fn)
+  n <- as_tensor(1L)
+  res <- ag_fn(n)
+  grab(res)
 
   expect_result(ag_fn, as_tensor(1L), list(-1, 0))
   expect_result(ag_fn, as_tensor(-1L), list(0, -2))
@@ -69,14 +72,44 @@ test_that("if complex outputs", {
 test_that("if single output", {
 
   fn <- function(n) {
-    if(n > 0L)
+    if(n > 0L) {
       n <- -n
+    }
     n
   }
   ag_fn <- autograph(fn)
 
   expect_result(ag_fn, as_tensor(1L), -1L)
 })
+
+
+test_that("if single output - inline expr", {
+
+  n <- local({
+    n <- as_tensor(1L)
+    autograph({
+      if (n > 0L)
+        n <- -n
+    })
+    n
+  })
+
+  expect_equal(grab(n), -1L)
+
+  n <- local({
+    n <- as_tensor(-2L)
+    autograph({
+      if (n > 0L)
+        n <- n*n
+    })
+    n
+  })
+  expect_equal(grab(n), -2L)
+
+})
+
+
+
 
 
 test_that("if single semi", {
@@ -106,6 +139,41 @@ test_that("if local var", {
 
   expect_result(ag_fn, as_tensor(1L), 5L)
   expect_result(ag_fn, as_tensor(-1L), -1L)
+
+
+  fn <- function(n) {
+    if(n > 0L) {
+      b <- 4L
+      n <- b + 1L
+    }
+    b
+  }
+  ag_fn <- autograph(fn)
+  # expect_error(ag_fn(as_tensor(1L)), "b")
+  if(tf$executing_eagerly()) {
+    # no undefineds produced in eager mode
+    expect_equal(ag_fn(as_tensor(1L)), 4L)
+    ag_fn <- tf_function(ag_fn, autograph = FALSE)
+  }
+  expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
+  class = if(!tf$executing_eagerly()) "access_undefined")
+
+
+  if (!tf$executing_eagerly()) {
+    local({
+      n <- as_tensor(1L)
+
+      autograph(if (n > 0L) {
+        b <- 4L
+        n <- b + 1L
+      })
+
+      expect_equal(grab(n), 5L)
+      # expect_error(b, "b")
+      expect_error(b, "Symbol `b` is \\*undefined\\*",
+                   class = "access_undefined")
+    })
+  }
 })
 
 
@@ -215,20 +283,22 @@ test_that("can call from another functions", {
   expect_result(g, as_tensor(-1L), list(0, -2))
 })
 
-test_that("can early return", {
-  skip("early return not yet implemented")
 
-  fn <- function(n) {
-    if (n > 0)
-      return(1)
+# TODO: test if control dependencies are properly captured in an `ag_if`
 
-
-    n + 1
-  }
-
-  fn <- autograph(fn)
-
-  expect_result(fn, as_tensor(1L), 1)
-  expect_result(fn, as_tensor(-1L), 0)
-})
+# test_that("can early return", {
+#   skip("early return not yet implemented")
+#
+#   fn <- function(n) {
+#     if (n > 0)
+#       return(1)
+#
+#     n + 1
+#   }
+#
+#   fn <- autograph(fn)
+#
+#   expect_result(fn, as_tensor(1L), 1)
+#   expect_result(fn, as_tensor(-1L), 0)
+# })
 

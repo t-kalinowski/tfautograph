@@ -7,112 +7,179 @@ ag_while <- function(cond, body) {
   body <- substitute(body)
   env <- parent.frame()
 
+  # TODO: rename consuming getters to `consume_*`, eg, `consume_next_ag_name()`
+
   # TODO: revisit this after `append<-` is handled. Dispatching to standard R
   # control flow may no always be the right choise.
-  if (!any_tensors_in(cond, env))
+
+
+  cond_tensor_types <- sym_tensor_types(cond, env)
+  if(cond_tensor_types == "eager") {
+    cond <- substitute(as.logical(cond), list(cond = cond))
+    cond_tensor_types <- "none"
+  }
+
+  if (cond_tensor_types == "none")
     return(eval(as.call(list(quote(.Primitive("while")), cond, body)), env))
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
 
-  loop_vars <- unique(c(all.vars(cond), all.vars(body)))
+  # TODO: consider tracing with as_concrete_fn() here for better inference of
+  # loop_vars here. Downside is slight bloat of overall graph in tf v1, but in
+  # tf v2 the traced graph will be able to be garbage collected. Worth tradeoff?
+  loop_vars <-
+    get_registered_next_while_loop_vars() %||%
+    get_existing_var_nms(cond, body, env = env)
 
-  # TODO: take the undefined loop_vars and bury then in the body_fn function env
-  # as active bindings, and if they are accessed throw a nicer error message for
-  # test_while_local_composite_complex_illegal
-  loop_vars <- loop_vars[vapply(loop_vars, exists, TRUE, envir = env)]
-
-  cond_fn <- new_function(as_args(loop_vars), cond, env)
+  cond_fn <- as_loop_cond_fn(cond, loop_vars, env)
   body_fn <- as_loop_body_fn(body, loop_vars, env)
 
-  loop_vars <- mget(loop_vars, envir = env, inherits = TRUE)
+  loop_vars <- dict(mget(loop_vars, envir = env, inherits = TRUE))
 
+  if (can_break) {
+    did_break <- FALSE
+    loop_vars <- tuple(loop_vars, did_break)
+  } else
+    loop_vars <- tuple(loop_vars)
 
-  tf_while <- if(can_break) while_with_break else while_no_break
+  while_loop_args <- c(
+    list(
+      cond = cond_fn,
+      body = body_fn,
+      loop_vars = loop_vars,
+      return_same_structure = TRUE
+    ),
+    name = get_next_ag_name(),
+    get_registered_next_while_loop_opts()
+  )
+  if(tf_v2())
+    while_loop_args$return_same_structure <- NULL
 
-  loop_vars <- tf_while(cond_fn, body_fn, loop_vars)
+  res <- do.call(tf$while_loop, while_loop_args)
 
+  loop_vars <- res[[1]]
   list2env(loop_vars, env)
 
   invisible()
 }
 
-while_no_break <- function(cond_fn, body_fn, loop_vars) {
-  res <- tf$while_loop(
-    cond = cond_fn,
-    body = function(...) tuple(body_fn(...)),
-    loop_vars = tuple(loop_vars),
-    return_same_structure = TRUE
-  )
-  names(res) <- names(loop_vars)
-  res
-}
+get_existing_var_nms <- function(..., env) {
+  # ... should all be language objects
+  # TODO: this whould be refactored into a function named
+  # resolve_loop_vars(..., env). also, ag_loop_vars should accept
+  # dplyr::select like specs, namely `-`
+  # e.g., ag_loop_vars(-log_file)
+  vars <- unique(unlist(lapply(list(...), all.vars)))
+  vars <- vars[vapply(vars, exists, TRUE, envir = env)]
+  vars <- mget(vars, envir = env, inherits = TRUE)
+  vars <- vars[vapply(vars, function(v) is_tensor(v) ||
+                        typeof(v) %in% valid_typeofs, TRUE)]
+  names(vars)
+  }
 
-while_with_break <- function(cond_fn, body_fn, loop_vars) {
 
-  establish_cond_registry()
-  on.exit(remove_cond_registry())
-
-  .cond_fn <- cond_fn
-  cond_fn <- function(did_break, loop_vars)
-    !did_break & do.call(.cond_fn, loop_vars)
-
-  .body_fn <- body_fn
-  body_fn <- wrap_fn_with_loop_control_flow_handlers(.body_fn)
-
-  did_break <- FALSE
-  res <- tf$while_loop(
-    cond = cond_fn,
-    body = body_fn,
-    loop_vars = list(did_break, loop_vars),
-    return_same_structure = TRUE
-  )
-
-  res[[2L]]
+get_tensor_var_nms <- function(..., env) {
+  existing <- get_existing_var_nms(..., env = env)
+  existing[vapply(mget(existing, envir = env, inherits = TRUE),
+                  is_tensor, TRUE)]
 }
 
 
 
+as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
 
-as_loop_body_fn <- function(body_expr, loop_vars, env) {
-  args <- as_args(names(loop_vars) %||% loop_vars)
+  .cond_fn <- new_function(as_args(loop_vars), cond_expr, env)
 
-  body_w_ret <- substitute({
-    body_expr
-    mget(loop_vars)
-  }, list(body_expr = body_expr, loop_vars = loop_vars))
+  function(loop_vars, did_break = NULL) {
+    continue <- do.call(.cond_fn, loop_vars)
+    if (!is.null(did_break))
+      continue <- !did_break & continue
 
-  new_function(args, body_w_ret, env)
+    continue
+  }
 }
+
+
+as_loop_body_fn <- function(body_expr, loop_vars, env,
+                            dont_check = NULL,
+                            call = sys.call(-1)) {
+  force(call)
+
+  loop_vars <- names(loop_vars) %||% loop_vars
+  outcome_fn <- as_outcome_fn(body_expr, env, args = as_args(loop_vars))
+
+  fn <- function(...) {
+    loop_vars_in <- list(...)
+
+    outcome <- outcome_fn(...)
+
+    if (length(undefs <- setdiff(names(outcome$modified), loop_vars)))
+      export_undefs(as.list(undefs), env, call)
+
+    if (!tf$executing_eagerly())
+      warn_about_unmodified(before = loop_vars_in,
+                            after = outcome$modified[loop_vars],
+                            dont_check = dont_check)
+
+    outcome$modified[loop_vars]
+  }
+
+  fn <- wrap_fn_with_loop_control_flow_handlers(fn)
+  fn
+}
+
+warn_about_unmodified <- function(before, after, dont_check) {
+  unmodified <- vapply(
+    setdiff(names(before), dont_check),
+    function(nm)  identical(before[[nm]], after[[nm]]),
+    FALSE)
+
+  if(any(unmodified)) {
+    unmod <- names(unmodified[unmodified])
+    mod   <- names(unmodified[!unmodified])
+    warning(sprintf("%s appear to be unnecessarily captured as a loop variable",
+                    yasp::pc_and(yasp::wrap(unmod, "`"))),
+            "\nSpecify loop vars with ag_loop_vars(). e.g.,\n",
+            "ag_loop_vars(", yasp::pcc(yasp::dbl_quote(mod)), ")\n", call. = FALSE)
+  }
+}
+
 
 
 wrap_fn_with_loop_control_flow_handlers <- function(body_fn) {
   force(body_fn)
 
-  function(did_break, loop_vars) {
-    uncaught_loop_control_flow_registry <- Stack()
+  function(loop_vars, did_break = NULL) {
 
-    withCallingHandlers(
-      loop_vars <- do.call(body_fn, loop_vars),
+    loop_control_flow_registry <-
+      establish_control_flow_registry(
+        loop_vars = names(loop_vars),
+        can_break = !is.null(did_break),
+        graph = tf$compat$v1$get_default_graph()
+      )
 
-      uncaught_loop_control_flow = function(lcf) {
-        uncaught_loop_control_flow_registry$push(
-          list(
-            is_break = class(lcf)[1] == "break",
-            loop_vars = mget(names(loop_vars), lcf$env, inherits = TRUE),
-            registered_conds = reduce_registered_conds()
-          )
-        )
-      }
-    )
+    establish_cond_registry()
 
-    while (length(uncaught_loop_control_flow_registry)) {
-      lcf <- uncaught_loop_control_flow_registry$pop()
-      c(did_break, loop_vars) %<-%
-        tf$cond(lcf$registered_conds,
-                function() list(lcf$is_break, lcf$loop_vars),
-                function() list(FALSE, loop_vars))
+    on.exit({
+      remove_control_flow_registry()
+      remove_cond_registry()
+    }, add = TRUE)
+
+    loop_vars <- do.call(body_fn, loop_vars)
+
+    out <- drop_empty(list(loop_vars = loop_vars, did_break = did_break))
+
+    while (length(loop_control_flow_registry$recorded_conditions)) {
+      lcf <- compact_lcf(loop_control_flow_registry$recorded_conditions$pop())
+
+      out <- tf$cond(
+        lcf$reduced_conds,
+        function() drop_empty(list(loop_vars = lcf$loop_vars,
+                                   did_break = lcf$is_break)),
+        function() out)
     }
-    list(did_break, loop_vars)
+
+    unname(drop_empty(out[c('loop_vars', 'did_break')]))
   }
 }
 

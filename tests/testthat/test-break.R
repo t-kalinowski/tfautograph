@@ -7,12 +7,16 @@ if(interactive()) {
 test_that("break basic", {
   fn <- function(n) {
     while (n > 0L) {
-      if (n %% 2L == 0L)
+      if (n %% 2L == 0L) {
         break
+      }
       subtract(n) <- 1L
     }
     n
   }
+  # debugonce(ag_if)
+  autograph(fn)(as_tensor(4L))
+  autograph(fn)(as_tensor(1L))
 
   expect_ag_equivalent(fn, 0L)
   expect_ag_equivalent(fn, 4L)
@@ -24,14 +28,23 @@ test_that("break and next basic", {
     x <- 0
     while (n > 0L) {
       subtract(n) <- 1L
-      if (n %% 5L == 0L)
+      if (n %% 5L == 0L) {
+        # print("hi")
+
         break
-      else if (n %% 2L == 0L)
-        next
+      } else {
+        if (n %% 2L == 0L)
+          next
+      }
       add(x) <- 1
     }
     list(n, x)
   }
+
+  # debugonce(ag_next)
+  autograph(fn)(as_tensor(3L))
+
+
 
   # fn(3) # 0 1
   # fn(4) # 0 2
@@ -42,6 +55,7 @@ test_that("break and next basic", {
   expect_ag_equivalent(fn, 4)
   expect_ag_equivalent(fn, 6)
   expect_ag_equivalent(fn, 9)
+
 })
 
 #
@@ -71,12 +85,65 @@ test_that("break and next basic", {
 # })
 
 
+
+
+
+
+test_that("next in for", {
+  fn <- function(l) {
+    x <- 0
+    y <- 0
+    z <- 0
+    for (i in l) {
+      add(x) <- 1L
+      if (i %% 2L == 0L) {
+        add(y) <- 1
+        next
+      }
+      add(z) <- 1
+    }
+    list(x, y, z)
+  }
+  ag_fn <- autograph(fn)
+
+  for (n in 0:6) {
+    l <- array(seq_len(n))
+    expect_equal(fn(l), grab(ag_fn(as_tensor(l))))
+
+    ds <- tf$data$Dataset$range(n)
+    expect_equal(fn(seq_len0(n)), grab(ag_fn(ds)))
+  }
+
+
+  fn <- function(l) {
+    o <- 0L
+    for (e in l) {
+      if (e %% 2L == 0L)
+        next
+      add(o) <- 1L
+    }
+    o
+  }
+  ag_fn <- autograph(fn)
+
+  for (n in 0:6) {
+    l <- array(seq_len0(n))
+    expect_equal(fn(l), grab(ag_fn(as_tensor(l))))
+
+    # ds <- tf$data$Dataset$from_tensor_slices(as_tensor(l))
+    ds <- tf$data$Dataset$range(n)
+    expect_equal(fn(l), grab(ag_fn(ds)))
+  }
+})
+
+
+
 test_that("break and next in simple for", {
   fn <- function(l) {
     x <- 0
     y <- 0
     z <- 0
-    for(i in l) {
+    for (i in l) {
       add(x) <- 1L
       if (i %% 5L == 0L)
         break
@@ -88,8 +155,16 @@ test_that("break and next in simple for", {
     }
     list(x, y, z)
   }
+  ag_fn <- autograph(fn)
 
 
-  for (n in 0:6)
-    expect_ag_equivalent(fn, array(seq_len(n)))
+  for (n in 0:6) {
+    l <- array(seq_len0(n))
+    expect_equal(fn(l), grab(ag_fn(as_tensor(l))))
+
+    # ds <- tf$data$Dataset$from_tensor_slices(as_tensor(l))
+    ds <- tf$data$Dataset$range(n)
+    expect_equal(fn(l), grab(ag_fn(ds)))
+  }
+
 })

@@ -1,6 +1,5 @@
 
 
-
 ag_for <- function(var, iterable, body) {
   var  <- substitute(var)
   body <- substitute(body)
@@ -17,87 +16,47 @@ ag_for_impl.default <- function(iterable, var, body, env) {
 }
 
 
+did_not_raise_StopIteration <- function(expr) {
+  tryCatch({
+    force(expr)
+    TRUE
+  },
+  error = function(e)
+    grepl("StopIteration", e))
+}
 
-dataset_for_loop_with_potential_break <-
-  function(iterable, var, body_fn, body_vars, env) {
-    .NotYetImplemented()
+#' @importFrom reticulate iter_next
+active_iterator_get_next <- function() {
+  # it <- peek_active_iterator()
+  # it$`__next__`()
+  iter_next(peek_active_iterator())
+}
 
-    establish_cond_registry()
-    on.exit(remove_cond_registry())
-
-    did_break <- FALSE
-    initial_state <- tuple(did_break, body_vars)
-
-    ds_scan <- function(ds, ...) ds$apply(tf$data$experimental$scan(...))
-    ds_take_while <- function(ds, ...) ds$apply(tf$data$experimental$take_while(...))
-
-    scan_fn <- function(...) .NotYetImplemented()
-    predicate_fn <- function(...) .NotYetImplemented()
-
-    iterable <- ds_scan(iterable, initial_state, scan_fn)
-    iterable <- ds_take_while(iterable, predicate_fn)
-
-    c(., final_state) %<-%
-      iterable$reduce(initial_state,
-                      function(current_state, next_ds_elem) {
-                        c(did_break, body_vars) %<-% current_state
-                        body_fn <- env_bury(body_fn,!!var := next_ds_elem)
-                        body_fn <- wrap_fn_with_loop_control_flow_handlers(body_fn)
-                        do.call(body_fn, list(did_break, body_vars))
-                      })
-
-    list2env(final_state, env)
-  }
-
-
-dataset_for_loop_no_break <-
-  function(iterable, var, body_fn, body_vars, env) {
-    initial_state <- body_vars
-
-    reduce_func <- function(current_state, next_ds_elem) {
-      body_fn <- env_bury(body_fn,!!var := next_ds_elem)
-      do.call(body_fn, current_state)
-    }
-    final_state <- iterable$reduce(initial_state, reduce_func)
-    final_state
-  }
-
-#' @importFrom reticulate tuple
-ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
+#' @importFrom reticulate as_iterator
+ag_for_impl.python.builtin.iterator <-
   function(iterable, var, body, env) {
-    body_vars <- setdiff(all.vars(body), deparse(var))
-    body_vars <- body_vars[vapply(body_vars, exists, TRUE, envir = env)]
+    register_active_iterator(as_iterator(iterable))
+    on.exit(pop_registered_active_iterator())
 
-    body_fn <- as_loop_body_fn(body, body_vars, env)
-    body_vars <- mget(body_vars, env, inherits = TRUE)
+    # expr <- substitute(
+    #   while (tfautograph:::did_not_raise_StopIteration(
+    #     var <- tfautograph:::active_iterator_get_next()))
+    #   body, list(var = var, body = body))
 
-    can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
+    expr <- substitute(
+      while (!is.null(var <- tfautograph:::active_iterator_get_next()))
+        body, list(var = var, body = body))
 
-    final_state <- if(can_break)
-      dataset_for_loop_with_potential_break(iterable, var, body_fn, body_vars, env)
-     else
-      dataset_for_loop_no_break(iterable, var, body_fn, body_vars, env)
-
-    list2env(final_state, env)
-    invisible()
+    eval(expr, env)
   }
 
-ag_for_impl.tensorflow.python.data.ops.iterator_ops.IteratorV2 <-
-  function(iterable, var, body, env) {
-    .NotYetImplemented()
-  }
 
 #' @importFrom zeallot %->%
 ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
-  # modeled after _known_len_tf_for_stmt()
-  body_vars <- setdiff(all.vars(body), deparse(var))
 
-  # TODO: take the undefined body_vars and bury then in the body_fn function env
-  # as active bindings, and if they are accessed throw a nicer error message for
-  # test_while_local_composite_complex_illegal
-  body_vars <- body_vars[vapply(body_vars, exists, TRUE, envir = env)]
-
-  body_fn <- as_loop_body_fn(body, body_vars, env)
+  if(tf$executing_eagerly() && is_eager(iterable))
+    return(ag_for_impl.python.builtin.iterator(
+      as_iterator(iterable), var, body, env))
 
   # track python tensorflow TODO, reimplement here if implementation there changes:
   ## TODO(b/117628877): Revisit performance once XLA has the necessary support.
@@ -107,48 +66,63 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   ta <- tf$TensorArray(iterable$dtype, size = n)
   iter <- ta$unstack(iterable)
 
-  establish_cond_registry()
-  on.exit(remove_cond_registry())
+  loop_vars <-
+    get_registered_next_while_loop_vars() %||%
+    get_existing_var_nms(body, var, env = env)
 
-  while_body <- function(index, did_break, body_args = NULL) {
-    elem <- iter$read(index)
-    body_fn <- env_bury(body_fn, !!var := elem)
-    body_fn <- wrap_fn_with_loop_control_flow_handlers(body_fn)
-    do.call(body_fn, list(did_break, body_args)) %->%
-      c(did_break, body_state)
-    list(index + 1L, did_break, body_state)
+  var <- deparse(var)
+
+  .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env,
+                              dont_check = var)
+
+  body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
+    loop_vars[[var]] <- iter$read(index)
+    res <- .body_fn(loop_vars, did_break)
+    if(!exists(var, envir = env))
+      res[[1]][[var]] <- NULL
+
+    c(index + 1L, res)
   }
 
-  while_cond <- function(index, did_break, body_args = NULL) index < n & !did_break
+  cond_fn <- function(index, loop_vars = NULL, did_break = NULL) {
+    continue <- index < n
+    if (!is.null(did_break))
+      continue <- !did_break & continue
+    continue
+  }
 
-  did_break <- FALSE
+  can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
+  did_break <- if(can_break) FALSE else NULL
+
   index <- 0L
-  body_vars <- mget(body_vars, envir = env, inherits = TRUE)
 
-  c(index, did_break, body_vars) %<-%
-    tf$while_loop(
-      cond = while_cond,
-      body = while_body,
-      loop_vars = list(index, did_break, body_vars),
+  loop_vars <- mget(loop_vars, env, inherits = TRUE)
+
+  while_loop_args <- c(
+    list(
+      cond = cond_fn,
+      body = body_fn,
+      loop_vars = drop_empty(list(index, loop_vars, did_break)),
       return_same_structure = TRUE
-    )
+    ),
+    name = get_next_ag_name(),
+    get_registered_next_while_loop_opts()
+  )
 
-  # TODO: rethink if this is worth it. python tensorflows autograph punts on
-  # this. The `var` for loop symbol does not persist in the environment after
-  # the loop exits in python autographed functions, unlike what happens when in
-  # this is done in the standard python interperter. Also, doing this for
-  # datasets or iterators is also going to be somewhat expensive. Commenting out
-  # for now
+  if(tf_v2())
+    while_loop_args$return_same_structure <- NULL
 
-  # if(iterable$shape$as_list()[1] > 0)
-  #   body_vars[[deparse(var)]] <- iterable$`__getitem__`(index-1L)
-  # # alternatively to calling __getitem__, it might make more sense to call
-  # # `ta$read(index-1L)`, however then you run into an issue where the
-  # # TensorArray element might have been cleared from memory already, having
-  # # already been read once in the loop. Having to set TensorArray(...,
-  # # clear_after_read = FALSE) is probably more expensive than this.
-  list2env(body_vars, envir = env)
+  res <- do.call(tf$while_loop, while_loop_args)
+
+  # activate_undefs(undefs, sym)
+  loop_vars <- res[[2]]
+  if(length(loop_vars))
+    list2env(loop_vars, envir = env)
 
   invisible()
 }
+
+#' @importFrom tensorflow tf_version
+tf_v2 <- function() package_version(tf_version()) >= "2"
+tf_v1 <- function() package_version(tf_version()) < "2"
 

@@ -4,12 +4,19 @@ Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 
 tf <- tensorflow::tf
+tf_function <- tensorflow::tf_function
 tuple <- reticulate::tuple
 
 as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
 
 .SESS <- NULL
 grab <- function(x) {
+  if(tf$executing_eagerly()) {
+    return(rapply(list(x), function(tensor) tensor$numpy(),
+                  classes = "tensorflow.tensor",
+                  how = "replace")[[1]])
+  }
+
   if(is.null(.SESS))
     .SESS <<- tf$compat$v1$Session()
   .SESS$run(x)
@@ -27,7 +34,7 @@ expect_result <- function(fun, inputs, expected) {
 expect_grabbed_result_equal <- function(tensor, value)
   expect_equal(grab(tensor), value)
 
-seq_len0 <- function(x) 0L:(x - 1L)
+seq_len0 <- function(x) if(x == 0L) integer() else 0L:(x - 1L)
 
 `add<-`      <- function(x, value) x + value
 `subtract<-` <- function(x, value) x - value

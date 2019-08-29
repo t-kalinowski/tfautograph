@@ -1,4 +1,6 @@
 
+
+
 ag_stopifnot <- function(..., exprs, local = TRUE) {
   if(missing(exprs)) {
     dots <- eval(substitute(alist(...)))
@@ -13,8 +15,12 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
       stop("`local` must be TRUE or an environment")
   }
 
+
+  # TODO: how to pass in custom messages? custom names?
   call_stack <- pretty_call_stack()
 
+  # TODO: this will fail if the symbols are objects with methods,
+  # e.g, loss_object$result()
   dots_vars <- lapply(dots, all.vars)
 
   all_vars <- mget(unique(unlist(dots_vars)), envir = env, inherits = TRUE)
@@ -40,20 +46,52 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     list(op = op, var_nms = var_nms)
   }))
 
+  if(tf$executing_eagerly() ||
+     tf$compat$v1$get_default_graph()$building_function)
+    return(invisible())
+  # our work is done
 
-  names(all_var_nms) <- all_var_nms
-  vars_w_ctrl_deps <- lapply(all_var_nms, function(var_nm) {
-    var <- all_vars[[var_nm]]
-    var_ops <- drop_empty(lapply(assert_ops, function(op) {
-      if (var_nm %in% op$var_nms)
-        op$op
-    }))
-    with(tf$control_dependencies(var_ops), tf$identity(var))
-  })
+  # in tf.function contexts all ops are executed sequentially, so the mere act
+  # of creating them with tf$Assert() is enough (no need for control
+  # dependencies). If executing eagerly, similarly tf$Assert() would have raised
+  # an error upon being called.
 
-  list2env(vars_w_ctrl_deps, envir = env)
+  # At this point, we're essentially only in tensorflow v1 executing normally,
+  # not in eager mode and not tracing a function.
+
+  if (length(assert_ops)) {
+    ops <- lapply(assert_ops, function(op) op$op)
+
+    control_dependencies_context <- tf$control_dependencies(ops)
+    control_dependencies_context$`__enter__`()
+    vars_w_ctrl_deps <- lapply(all_vars, tf$identity)
+    list2env(vars_w_ctrl_deps, envir = env)
+
+    if (identical(env, topenv(env))) {
+      # is this even ever going to be TRUE, isn't this always going to be run
+      # either from an autographed function or an as_outcome_fn()?
+      control_dependencies_context$`__exit__`(NULL, NULL, NULL)
+    } else {
+      register_frame_context(control_dependencies_context, env)
+      on.exit.elsewhere(return(
+        tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
+      ), add = TRUE, after = TRUE, envir = env)
+    }
+
+  }
+
   invisible()
 }
+
+identity_op_tensors_and_close_contexts <- function(value) {
+  on.exit(close_and_clear_registered_contexts(parent.frame()))
+  robust_tf_identity(value)
+}
+
+robust_tf_identity <- function(x) {
+  rapply(list(x), tf$identity, classes = "tensorflow.tensor", how = "replace")[[1]]
+}
+
 
 pretty_call_stack <- function() {
   calls <- rev(sys.calls())[-1]
