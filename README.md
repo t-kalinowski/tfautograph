@@ -21,13 +21,14 @@ Implemented so far:
   - \[x\] `next` and `break` in `while`
   - \[x\] `next` and `break` in `for` with tensors
   - \[x\] `next` and `break` in `for` with tf datasets
-  - \[x\] `stopifnot` (python `assert`); translates to `tf.Assert()`
   - \[x\] `switch` (autograph to `tf.switch_case`)
-  - \[x\] full compatbility with both eager and graph mode
-  - \[x\] full compatability with both tf versions 1.14 and 2.0
+  - \[x\] `stopifnot` (python `assert`); translates to `tf.Assert()`
+    (mostly useful for tensorflow v1 code)
 
 Additional remaining tasks:
 
+  - \[x\] full compatability with both tf versions 1.14 and 2.0
+  - \[x\] full compatbility with both eager and graph mode
   - \[x\] autograph inline expressions also, in addition to functions
   - \[x\] nice informative error messages warning about undefined
     symbols and unbalanced branches
@@ -43,6 +44,7 @@ Planned for CRAN release \#2
 
   - \[ \] early `return` in `while` and `for`
   - \[ \] autograph `if ... else if ... else if` chains into `tf.case`
+  - \[ \] an ergonomic API around `TensorArray`s and `TensorList`s
   - \[ \] `recursive` support
 
 # Quick Demo
@@ -62,7 +64,7 @@ library(tfautograph)
 
 # All of tfautograph works in tf 1.14 also, but this readme expects 2.0.
 tf$version$VERSION
-#> [1] "2.0.0-beta1"
+#> [1] "2.0.0-rc0"
 stopifnot(tf_version() >= "2")
 ```
 
@@ -124,12 +126,12 @@ train_one_step <- function(model, optimizer, x, y) {
   loss
 }
 
+
 train <- autograph(function(model, optimizer) {
-  train_ds <- mnist_dataset()
   step <- 0L
   loss <- 0
   ag_loop_vars("step", "loss") # to prevent `log_file` from being captured
-  for (batch in train_ds) {
+  for (batch in train_dataset) {
     c(x, y) %<-% batch
     step %<>% add(1L)
     loss <- train_one_step(model, optimizer, x, y)
@@ -159,23 +161,22 @@ train_graph <- tf_function(train)
 c(step, loss) %<-% train_graph(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.88018465 ; accuracy 0.325
-#> Step 20 : loss 1.32252872 ; accuracy 0.478
-#> Step 30 : loss 0.711557567 ; accuracy 0.574
-#> Step 40 : loss 0.561042607 ; accuracy 0.6345
-#> Step 50 : loss 0.542643249 ; accuracy 0.68
-#> Step 60 : loss 0.514114738 ; accuracy 0.7125
-#> Step 70 : loss 0.561607718 ; accuracy 0.734428585
-#> Step 80 : loss 0.483150125 ; accuracy 0.754625
-#> Step 90 : loss 0.251316458 ; accuracy 0.770666659
-#> Step 100 : loss 0.335043371 ; accuracy 0.7849
-#> Step 110 : loss 0.266543299 ; accuracy 0.795272708
-#> Step 116 : loss 0.278457731 ; accuracy 0.800603449
+#> Step 10 : loss 1.86508906 ; accuracy 0.355
+#> Step 20 : loss 1.23046172 ; accuracy 0.525
+#> Step 30 : loss 0.752179921 ; accuracy 0.609333336
+#> Step 40 : loss 0.689547718 ; accuracy 0.6615
+#> Step 50 : loss 0.440382183 ; accuracy 0.6996
+#> Step 60 : loss 0.460933238 ; accuracy 0.724166691
+#> Step 70 : loss 0.327962488 ; accuracy 0.747
+#> Step 80 : loss 0.393846691 ; accuracy 0.76525
+#> Step 90 : loss 0.376492083 ; accuracy 0.77922225
+#> Step 100 : loss 0.406526923 ; accuracy 0.7925
+#> Step 108 : loss 0.343511343 ; accuracy 0.800092578
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 116: loss 0.278458; accuracy 0.800603
+#> Final step 108: loss 0.343511; accuracy 0.800093
 ```
 
 ### train in eager mode
@@ -189,22 +190,23 @@ c(model, optimizer) %<-% new_model_and_optimizer()
 c(step, loss) %<-% train(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.8785491 ; accuracy 0.770952404
-#> Step 20 : loss 1.1685828 ; accuracy 0.763308823
-#> Step 30 : loss 0.719277322 ; accuracy 0.762465775
-#> Step 40 : loss 0.594832361 ; accuracy 0.76679486
-#> Step 50 : loss 0.383325577 ; accuracy 0.772590339
-#> Step 60 : loss 0.521231592 ; accuracy 0.778636336
-#> Step 70 : loss 0.449629933 ; accuracy 0.784516156
-#> Step 80 : loss 0.258993387 ; accuracy 0.789540827
-#> Step 90 : loss 0.529866576 ; accuracy 0.793932
-#> Step 100 : loss 0.335116088 ; accuracy 0.798472226
-#> Step 104 : loss 0.255132794 ; accuracy 0.800454557
+#> Step 10 : loss 1.74904215 ; accuracy 0.761694908
+#> Step 20 : loss 1.13440621 ; accuracy 0.754531264
+#> Step 30 : loss 0.737210751 ; accuracy 0.75557971
+#> Step 40 : loss 0.57017678 ; accuracy 0.761283755
+#> Step 50 : loss 0.486070752 ; accuracy 0.765126586
+#> Step 60 : loss 0.575892091 ; accuracy 0.772142828
+#> Step 70 : loss 0.327947319 ; accuracy 0.77831459
+#> Step 80 : loss 0.400503427 ; accuracy 0.784680843
+#> Step 90 : loss 0.419900507 ; accuracy 0.789697
+#> Step 100 : loss 0.278181255 ; accuracy 0.794567287
+#> Step 110 : loss 0.508931816 ; accuracy 0.799633
+#> Step 111 : loss 0.352785826 ; accuracy 0.800182641
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 104: loss 0.255133; accuracy 0.800455
+#> Final step 111: loss 0.352786; accuracy 0.800183
 ```
 
 ## Installation
