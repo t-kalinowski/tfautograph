@@ -13,6 +13,8 @@ as_outcome_fn <- function(expr, env, args = NULL) {
   fn <- as.function.default(c(args, list(expr)), envir = env)
 
   function(...) {
+    # TODO: use withVisible(fn(...)) here, preserve the visiblitiy of
+    # outcome$returned
     returned <- fn(...)
     outcome_env <- get_registered_outcome_env()
 
