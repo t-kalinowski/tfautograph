@@ -76,12 +76,18 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
                               dont_check = var)
 
   body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
+
     loop_vars[[var]] <- iter$read(index)
     res <- .body_fn(loop_vars, did_break)
-    if(!exists(var, envir = env))
-      res[[1]][[var]] <- NULL
 
-    c(index + 1L, res)
+    names(res) <- c("loop_vars", "did_break")[seq_len(length(res))]
+    loop_vars <- res$loop_vars
+    did_break <- res$did_break
+
+    if(!exists(var, envir = env))
+      loop_vars[[var]] <- NULL
+
+    drop_empty(list(index + 1L, loop_vars, did_break))
   }
 
   cond_fn <- function(index, loop_vars = NULL, did_break = NULL) {
@@ -113,9 +119,12 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
     while_loop_args$return_same_structure <- NULL
 
   res <- do.call(tf$while_loop, while_loop_args)
-
+  names(res) <- c("index", "loop_vars", "did_break")[seq_len(length(res))]
+  # loop_vars <- res$loop_vars
+  # did_break <- res$did_break
   # activate_undefs(undefs, sym)
-  loop_vars <- res[[2]]
+
+  loop_vars <- res$loop_vars
   if(length(loop_vars))
     list2env(loop_vars, envir = env)
 
