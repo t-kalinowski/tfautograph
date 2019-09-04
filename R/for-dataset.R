@@ -83,17 +83,36 @@ dataset_for_loop_no_break <-
   function(iterable, var, body_fn, body_vars, env) {
 
     initial_state <- body_vars
+    using_placeholder  <- length(initial_state) == 0
+
+    if (using_placeholder)
+      initial_state$placeholder <- tf$constant(FALSE)
 
     reduce_func <- function(current_state, next_ds_elem) {
+
+      if(using_placeholder) {
+        placeholder <- current_state$placeholder
+        current_state$placeholder <- NULL
+      }
+
       current_state[[var]] <- next_ds_elem
       new_state <- body_fn(current_state)[[1]]
 
+      # TODO: should there be a better heuristic here?
+      # maybe: if (var %in% names(formals(body_fn))) ?
       if(!exists(var, envir = env))
         new_state[[var]] <- NULL
 
+      if(using_placeholder)
+        new_state$placeholder <- placeholder
+
       new_state
     }
+
     final_state <- iterable$reduce(initial_state, reduce_func)
+    if(using_placeholder)
+      final_state$placeholder <- NULL
+
     final_state
   }
 
