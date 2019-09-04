@@ -16,11 +16,12 @@ ag_while <- function(cond, body) {
   cond_tensor_types <- sym_tensor_types(cond, env)
   if(cond_tensor_types == "eager") {
     cond <- substitute(as.logical(cond), list(cond = cond))
+    # cond <- substitute((cond)$`__bool__`, list(cond = cond)) ??
     cond_tensor_types <- "none"
   }
 
   if (cond_tensor_types == "none")
-    return(eval(as.call(list(quote(.Primitive("while")), cond, body)), env))
+    return(invisible(eval(as.call(list(quote(.Primitive("while")), cond, body)), env)))
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
 
