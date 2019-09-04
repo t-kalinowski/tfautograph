@@ -16,12 +16,15 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(magrittr)
+# library(listarrays)
+# library(purrr)
+library(reticulate)
 library(tensorflow)
 library(tfautograph)
-# library(purrr)
+library(tfdatasets)
 ```
 
-The R package `tfautograph` helps to translate R code to tensorflow. It allows you to write R code as you would naturally, when then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little. 
+The R package `tfautograph` helps you write nautral R code with tensorflow. It allows you to write R code as you would naturally, which then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little. 
 
 
 ### Usage
@@ -138,7 +141,7 @@ tf_sign <- tf_function(autograph(function(x) {
   if (x > 0)
     1
   else if (x < 0)
-    - 1
+    -1
   else
     0
 }))
@@ -159,13 +162,13 @@ naive_factorial <- tf_function(autograph(function(x) {
     x %<>% subtract(tf_sign(x))
   }
   total
-  }))
+}))
 
 naive_factorial(x)
 naive_factorial(y)
 ```
 
-In eager mode, `while(eagor_tensor)` is translated to `while(as.logical(eager_tensor))`. (The tensorflow package provides tensor methods for many S3 generics, including `as.logical()`).
+In eager mode, `while(eagor_tensor)` is translated to `while(as.logical(eager_tensor))`. (The `tensorflow` R package provides tensor methods for many S3 generics, including `as.logical()`).
 
 Here is an example of an autographed `while` expression being evaluated eagerly. Remember, `autograph()` is not just for functions!
 
@@ -191,7 +194,8 @@ total
 naive_factorial_serial <- tf_function(autograph(function(x) {
   total <- 1
   
-  ag_while_opts(parallel_iterations = 1)
+  ag_while_opts(parallel_iterations = 1,
+                back_prop = FALSE)
   while (x != 0) {
     message("Evaluating while body R expression")
     total %<>% multiply_by(x)
@@ -201,4 +205,140 @@ naive_factorial_serial <- tf_function(autograph(function(x) {
   }))
 naive_factorial(y)
 ```
+
+
+#### `for`
+Autographed `for` loops build ontop of while loops. Presently, `autograph` adds support for new types of values passed to `for`: tfdatasets, tensors, and (in eager mode only) python iterators 
+
+In eager mode, both datasets and tensors are coerced to iterators (via ```iterable$`__iter__`()```, through the ergonomic wrapper `reticulate::as_iterator()`). The arguments are then iterated over until the iterable is finished. Essentially, a call like
+
+```{r, eval = FALSE}
+for(elem in iterable) {...}
+```
+gets translated to
+
+```{r, eval = FALSE}
+iterator <- as_iterator(iterable)
+while(!is.null(elem <- iter_next(iterable))) {...}
+```
+
+Note, that tensors are iterated over their first dimension.
+```{r}
+m <- tf$convert_to_tensor(matrix(1:12, nrow = 3, byrow = TRUE))
+m
+autograph({
+  for (elem in m)
+    print(elem)
+})
+```
+
+
+In graph mode, tensors are iterated over within a `tf$while_loop()`. As such,
+you can pass additional options via `ag_while_opts()` just as you would to an
+autographed `while()` expression.
+
+
+In graph mode, datasets passed to `for` are translated to a `dataset$reduce()`
+call.
+
+```{r}
+niave_reduce_sum <- tf_function(autograph(function(ds) {
+  sum <- tf$zeros(ds$element_spec$shape, dtype = ds$element_spec$dtype)
+  for (elem in ds) {
+    message("Tracing for loop body")
+    sum %<>% add(elem)
+  }
+  sum
+}))
+
+ds <- tensor_slices_dataset(m)
+niave_reduce_sum(ds) # loop body is only traced just once on first call
+niave_reduce_sum(ds)
+```
+
+Be careful to not pass a dataset that repeats forever! One way to guard against
+iterating forever is to use `take()`.
+ 
+ 
+```{r}
+safe_niave_reduce_sum <- tf_function(autograph(function(ds, max_iter = 2) {
+  sum <- tf$zeros(ds$element_spec$shape, dtype = ds$element_spec$dtype)
+  for (elem in ds$take(as.integer(max_iter))) {
+    message("Tracing for loop body")
+    sum %<>% add(elem)
+  }
+  sum
+}))
+
+ds %>% 
+  dataset_repeat() %>% # repeats infinitly!
+  safe_niave_reduce_sum(max_iter = 6)
+```
+
+Lets tie some concepts together to write fizzbuzz! Before we do that, we'll
+write a helper `knitr_log`, that will help us capture the output from `tf.print`
+in this Rmarkdown vignetter. (If we don't redirect output to a file, then it
+would show up in the rendering console and not in the vignette)
+
+```{r}
+temp_knitr_logfile <- local({
+  LOGFILE <- NULL
+  function(what = c("get", "reset")) {
+    if (is.null(LOGFILE))
+      LOGFILE <<- sprintf("file://%s", tempfile())
+    
+    what <- match.arg(what)
+    if (what == "reset")
+      on.exit({
+        unlink(LOGFILE)
+        LOGFILE <<- NULL
+      })
+    
+    LOGFILE
+  }
+})
+
+print_temp_knitr_logfile <- function(reset = TRUE) {
+  filepath <- temp_knitr_logfile(if(reset) "reset" else "get")
+  output <- readLines(filepath, warn = FALSE)
+  writeLines(strwrap(output))
+}
+
+```
+
+
+```{r}
+fizzbuzz <- autograph(function(n) {
+  for (i in range_dataset(from = 1L, to = n)) {
+    if (i %% 15L == 0L)
+      tf$print("FizzBuzz", end = "", output_stream = temp_knitr_logfile())
+    else if (i %% 3L == 0L)
+      tf$print("Fizz", end = "", output_stream = temp_knitr_logfile())
+    else if (i %% 5L == 0L)
+      tf$print("Buzz", end = "", output_stream = temp_knitr_logfile())
+    else
+      tf$print(i, end = "", output_stream = temp_knitr_logfile())
+    
+    if(i < tf$cast(n-1L, i$dtype))
+      tf$print(", ", end = "", output_stream = temp_knitr_logfile())
+  }
+})
+```
+
+First, lets run it in eager mode.
+```{r}
+fizzbuzz(tf$constant(25L))
+print_temp_knitr_logfile()
+```
+And now in graph mode.
+```{r}
+fizzbuzz <- tf_function(fizzbuzz)
+fizzbuzz(tf$constant(25L))
+print_temp_knitr_logfile()
+```
+
+#### `break` / `next`
+
+`while` and `for` both can accept `break` and `next` statements, both in eager
+mode and in graph mode.
 
