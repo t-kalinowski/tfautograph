@@ -40,6 +40,9 @@ ag_if <- function(cond, true, false = NULL) {
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
 
+  # TODO, the `placeholder` tensor returned should be the same, i.e., not
+  # recreated separatly in each branch, but made before the branch is traced
+  # then just grabbed
   outcome <- tf$cond(cond,
                      function() fix_outcome(true_fn(), target_outcome, env),
                      function() fix_outcome(false_fn(), target_outcome, env))

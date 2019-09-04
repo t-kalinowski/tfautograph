@@ -31,6 +31,10 @@ ag_while <- function(cond, body) {
     get_registered_next_while_loop_vars() %||%
     get_existing_var_nms(cond, body, env = env)
 
+  # TODO: the loop vars selector should work the same as ag_if. it should handle
+  # nested structures similarily, and the user-specificaiton function should
+  # have the same mechanics.
+
   cond_fn <- as_loop_cond_fn(cond, loop_vars, env)
   body_fn <- as_loop_body_fn(body, loop_vars, env)
 

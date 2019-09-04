@@ -83,6 +83,12 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
   invisible()
 }
 
+
+ag_stop <- function(...) {
+  .NotYetImplemented()
+  tf$errors$UnknownError(...)
+}
+
 identity_op_tensors_and_close_contexts <- function(value) {
   on.exit(close_and_clear_registered_contexts(parent.frame()))
   robust_tf_identity(value)
