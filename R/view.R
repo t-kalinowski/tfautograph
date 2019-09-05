@@ -4,7 +4,8 @@
 #' @param args arguments passed to `fun`
 #' @param ... other arguments passed to [tensorflow::tensorboard()]
 #'
-#' @export
+#' @keywords internal
+#'
 view_function_graph <- function(fn, args, ...) {
 
   if (!tf$executing_eagerly())
