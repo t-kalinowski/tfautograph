@@ -79,4 +79,8 @@ is_autographed <- function(fn) {
 }
 
 
+#' @export
+attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
+  attach(ag_mask_list, pos = pos, name = "tfautograph:mask",
+         warn.conflicts = warn.conflicts)
 
