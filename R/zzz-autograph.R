@@ -1,43 +1,50 @@
 
 
+
+
+ag_mask_list <- list(
+  `if`        = ag_if,
+  `while`     = ag_while,
+  `for`       = ag_for,
+  `break`     = ag_break,
+  `next`      = ag_next,
+  `stopifnot` = ag_stopifnot,
+  `switch`    = ag_switch,
+  `on.exit`   = ag_on.exit
+)
+
+
+
 #' @importFrom tensorflow tf
 #' @export
 autograph <- function(x) {
-  x <- substitute(x)
+  xe <- substitute(x)
   env <- parent.frame()
 
-  if (is.symbol(x)) {
+  if (is.symbol(xe)) {
     # function or something with `environment<-` method
-    x <- get(deparse(x), envir = env)
     environment(x) <- new_ag_mask(parent = environment(x))
     return(x)
   }
 
   # in line expression
-  ag_mask <- new_ag_mask(parent = env)
-  fn <- as_outcome_fn(x, ag_mask)
+  fn <- as_outcome_fn(xe, new_ag_mask(parent = env))
   outcome <- fn()
 
   export_modified(outcome$modified, env)
 
-  outcome$returned
+
+  if(isFALSE(outcome$visible))
+    invisible(outcome$returned)
+  else
+    outcome$returned
 }
 
 
-new_ag_mask <- function(parent) {
+new_ag_mask <- function(parent = parent.frame()) {
 
-  ag_mask <- list(
-    `if`        = ag_if,
-    `while`     = ag_while,
-    `for`       = ag_for,
-    `break`     = ag_break,
-    `next`      = ag_next,
-    `stopifnot` = ag_stopifnot,
-    `switch`    = ag_switch,
-    `on.exit`   = ag_on.exit
-  )
 
-  ag_mask <- list2env(ag_mask, parent = parent)
+  ag_mask <- list2env(ag_mask_list, parent = parent)
 
   attr(ag_mask, "name") <-
     sprintf("package:tfautograph:ag_mask\n parent: %s", format(parent))
