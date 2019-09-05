@@ -13,12 +13,12 @@ view_function_graph <- function(fn, args, ...) {
   logdir <- tempfile(pattern = "tflogdir")
   writer <- tf$summary$create_file_writer(logdir)
 
-  # make sure fn is autographed
-  if(!is_autographed(fn))
-    fn <- autograph(fn)
+  ## Needs a rethink. what is fn already had `tf.function()` called on it?
+  # if(!is_autographed(fn))
+    # fn <- tf$`function`(autograph(fn), autograph = FALSE)
 
   # enable tracing
-  tf$summary$trace_on(graph=TRUE, profiler=TRUE)
+  tf$compat$v2$summary$trace_on(graph=TRUE, profiler=TRUE)
 
   do.call(fn, args)
 
