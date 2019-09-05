@@ -215,11 +215,12 @@ In eager mode, both datasets and tensors are coerced to iterators (via ```iterab
 ```{r, eval = FALSE}
 for(elem in iterable) {...}
 ```
+
 gets translated to
 
 ```{r, eval = FALSE}
 iterator <- as_iterator(iterable)
-while(!is.null(elem <- iter_next(iterable))) {...}
+while(!is.null(elem <- iter_next(iterator))) {...}
 ```
 
 Note, that tensors are iterated over their first dimension.
