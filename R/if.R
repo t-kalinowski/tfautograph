@@ -84,6 +84,9 @@ as_cond_branch_fn <- function(cond, branch_expr, branch, env) {
       }
     )
 
+    # strip withVisible(), don't bloat graph
+    outcome$visible <- NULL
+
     outcome <- prune_ops(outcome)
     # return object from an eager defun can't be a bare op, must be a tensor.
 
