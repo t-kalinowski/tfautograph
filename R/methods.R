@@ -5,9 +5,17 @@
 
 #' @export
 `[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` <-
+  function(ta, i, ..., value,  name = NULL) {
+    if(...length())
+      stop("TensorArrays can only be written to along the first dimension (Think of them as a list())")
+    ta$write(tf$cast(i, tf$int32), value, name = name)
+  }
+
+`[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` <-
   function(ta, i, value, ..., name = NULL) {
     ta$write(tf$cast(i, tf$int32), value, name = name)
   }
+
 
 # train_losses     %<>% {.$write(i, step_train_loss)}
 # test_losses      %<>% {.$write(i, step_test_loss)}

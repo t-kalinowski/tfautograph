@@ -26,15 +26,12 @@ get_active_cond_registry <- function() {
 
 # tensor_hash
 unique_tensor_id <- function(x) {
-  # TODO: this should probably also hash + concat the graph id, and also the
-  # tensor$name
-
-  # as.character(x$`__hash__`()) #  `__hash__`() no longer works in
-  # tf2, but they don't have a non-experiemental replacement...
+  # as.character(x$`__hash__`())
+  ##  x$`__hash__`() no longer works in tf2, but they don't have a
+  ## non-experiemental replacement...
   sprintf("%s:%i", x$name, x$graph$`__hash__`())
 }
 
-#' @importFrom rlang is_bool
 register_cond <- function(cond, branch, registry = get_active_cond_registry()) {
   if(!is_cond_registry_established()) return()
 
@@ -93,7 +90,7 @@ register_next_ag_name <- function(nm) {
   .registries$next_ag_name <- nm
 }
 
-# TODO: rename stack based establish/remove funcs to push/pop
+# TODO: rename Stack based establish/remove funcs to push/pop
 # e.g., push_new_control_flow_registry() / pop_control_flow_registry()
 
 .registries$frame_context_registries <- new.env(parent = emptyenv())
