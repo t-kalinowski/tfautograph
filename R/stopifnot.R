@@ -17,6 +17,10 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
 
 
   # TODO: how to pass in custom messages? custom names?
+  #
+  # TODO: consider exporting pretty_call_stack() or pretty_tf_assert_data() for
+  # cases when you want to write tf$Assert()? Or maybe export an ergonomic
+  # minimal wrapper tf_assert() ?
   call_stack <- pretty_call_stack()
 
   # TODO: this will fail if the symbols are objects with methods,
@@ -33,7 +37,7 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
 
     if (!is_tensor(val)) {
       if (is.logical(val) && !anyNA(val) && all(val))
-        return(NULL) # not need to evaluate expr twice if not error
+        return(NULL) # no need to evaluate expr twice if not error
       else
         # route through the same error signaling path if not all true
         return(eval(substitute(base::stopifnot(expr), list(expr = expr)), envir = env))
@@ -56,7 +60,7 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
   # dependencies). If executing eagerly, similarly tf$Assert() would have raised
   # an error upon being called.
 
-  # At this point, we're essentially only in tensorflow v1 executing normally,
+  # At this point, we're essentially only in vanilla tensorflow v1 executing normally,
   # not in eager mode and not tracing a function.
 
   if (length(assert_ops)) {
@@ -70,6 +74,7 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     if (identical(env, topenv(env))) {
       # is this even ever going to be TRUE, isn't this always going to be run
       # either from an autographed function or an as_outcome_fn()?
+      ## actually, yes it can be if exporting attach_ag_mask()
       control_dependencies_context$`__exit__`(NULL, NULL, NULL)
     } else {
       register_frame_context(control_dependencies_context, env)

@@ -1,5 +1,15 @@
 
-
+# TODO: rename this to ag_switch_case, make room for ag_switch() that instead
+# handles if elif chains
+#
+# TODO: consider just exporting this as a minimal ergomomic wrapper, perhaps
+# called tf_switch_case() or ag_switch_case() that mostly drops the need to wrap
+# all branches in functions. As it stands, autographing base::switch() is a
+# little tricky because base::switch does 1-based counting while tf$switch_case
+# does 0-based counting, and that's a recipe for confusion if someone's trying
+# to write one code path for tensors and non-tensors.... It's probaby simpler to
+# have tf_switch_case() just alwasys use 0-based counting, but perhaps have it
+# dispatch to base::switch() if executing eagerly.
 ag_switch <- function(EXPR, ..., default = NULL) {
   if (!is_tensor(EXPR))
     return(base::switch(EXPR, ...))

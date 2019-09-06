@@ -9,7 +9,6 @@ ag_if_vars <- function(..., modified = list(...), return = FALSE,
 
 
 #' @importFrom reticulate dict
-#' @importFrom rlang %||%
 ag_if <- function(cond, true, false = NULL) {
   true <- substitute(true)
   false <- substitute(false)
@@ -22,7 +21,12 @@ ag_if <- function(cond, true, false = NULL) {
     return(eval(as.call(list(quote(.Primitive("if")),
                              cond, true, false)), env))
 
+
   true_fn <- as_cond_branch_fn(cond, true, TRUE, env)
+  # TODO: if false[[1]] == quote(`if`) && is_tensor(eval(false[[2]]), env)
+  # return ag_elif(...)
+  # But, need to be careful about not forcing cond #2 twice
+
   false_fn <- as_cond_branch_fn(cond, false, FALSE, env)
 
   target_outcome <- get_registered_next_if_vars()

@@ -122,6 +122,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   names(res) <- c("index", "loop_vars", "did_break")[seq_len(length(res))]
   # loop_vars <- res$loop_vars
   # did_break <- res$did_break
+  # TODO: export undefs here
   # activate_undefs(undefs, sym)
 
   loop_vars <- res$loop_vars

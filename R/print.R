@@ -1,5 +1,10 @@
 
 ag_print <- function(x) {
+  .NotYetImplemented()
+  # Questioning if this is even a good idea to implement. It would only really
+  # be useful in tensorflow v1 outside of a tf.function() context. Everywhere
+  # else, tf$print() gets the job done with would the need to manage any
+  # tf.control_dependencies() contexts.
   env <- parent.frame()
   x_expr <- substitute(x)
   sym_nms <- all.vars(x_expr)

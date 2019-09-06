@@ -1,7 +1,5 @@
 
 
-#' @importFrom rlang new_function
-#' @importFrom zeallot %<-%
 ag_while <- function(cond, body) {
   cond <- substitute(cond)
   body <- substitute(body)
@@ -93,7 +91,9 @@ get_tensor_var_nms <- function(..., env) {
 
 as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
 
-  .cond_fn <- new_function(as_args(loop_vars), cond_expr, env)
+  .cond_fn <-
+    as.function.default(c(as_args(loop_vars), cond_expr), envir = env)
+    # rlang::new_function(as_args(loop_vars), cond_expr, env)
 
   function(loop_vars, did_break = NULL) {
     continue <- do.call(.cond_fn, loop_vars)
