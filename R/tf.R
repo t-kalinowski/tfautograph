@@ -104,6 +104,9 @@ tf_case <-
     if (!is.null(default))
       default <- as.function(default)
 
+    # TODO, if the branch is known already because we have a know TRUE pred,
+    # then we should bypass tf$case here and just call the fn() directly
+
     tf$case(
       pred_fn_pairs,
       default = default,
@@ -190,15 +193,19 @@ tf_switch <- function(branch_index, ...,
   full_seq <- seq.int(from = 0L, along.with = branch_fns)
   fill <- setdiff(full_seq, ints)
   ints[is.na(ints)] <- fill
+  branch_fns <- branch_fns[order(ints)]
 
   stopifnot(full_seq %in% ints)
 
   if(!is.null(default))
     default <- as.function(default)
 
+  # TODO: dispatch to the right branch_fn if branch_index is known, bypass
+  # calling tf$switch_case()
+
   tf$switch_case(
     branch_index,
-    branch_fns = branch_fns[order(ints)],
+    branch_fns = branch_fns,
     default = default,
     name = name
   )

@@ -9,7 +9,6 @@ ag_mask_list <- list(
   `break`     = ag_break,
   `next`      = ag_next,
   `stopifnot` = ag_stopifnot,
-  `switch`    = ag_switch,
   `on.exit`   = ag_on.exit
 )
 
