@@ -37,7 +37,7 @@
 
 <meta property="og:title" content="Autograph R code — autograph" />
 <meta property="og:description" content="Note, this documentation page is meant to serve as a technical reference, not
-an introduction to `autograph`. For the latter, please visit the
+an introduction to autograph. For the latter, please visit the
 documentation website: (https://t-kalinowski.github.io/tfautograph/) or see
 the package vignettes." />
 <meta name="twitter:card" content="summary" />
@@ -122,7 +122,7 @@ the package vignettes." />
 
     <div class="ref-description">
     <p>Note, this documentation page is meant to serve as a technical reference, not
-an introduction to `autograph`. For the latter, please visit the
+an introduction to <code>autograph</code>. For the latter, please visit the
 documentation website: (https://t-kalinowski.github.io/tfautograph/) or see
 the package vignettes.</p>
     </div>
@@ -140,16 +140,16 @@ the package vignettes.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>if `x` is a function, then the the same function with a new parent
-  environment, `package:tfautograph:ag_mask`, which is the autograph mask
-  that contains implementations of R control flow primitives that are capable
-  of handling tensorflow tensors. The parent of the
-  `package:tfautograph:ag_mask` in turn is the original environemnt of `x`.</p>
-<p>if `x` is an expression, then that expression is evaluated in a special
-  environment with the autogrpah mask `ag_mask` active. If the result of that
-  expression included local assignment or modifications of variables, (for
-  example, via `&lt;-`), those modified variables are then exported into the
-  current frame. The return value of the expression is then returned.</p>
+    <p>if <code>x</code> is a function, then the the same function with a new parent
+environment, <code>package:tfautograph:ag_mask</code>, which is the autograph mask
+that contains implementations of R control flow primitives that are capable
+of handling tensorflow tensors. The parent of the
+<code>package:tfautograph:ag_mask</code> in turn is the original environemnt of <code>x</code>.</p>
+<p>if <code>x</code> is an expression, then that expression is evaluated in a special
+environment with the autogrpah mask <code>ag_mask</code> active. If the result of that
+expression included local assignment or modifications of variables, (for
+example, via <code>&lt;-</code>), those modified variables are then exported into the
+current frame. The return value of the expression is then returned.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

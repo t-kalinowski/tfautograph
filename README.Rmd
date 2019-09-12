@@ -20,6 +20,8 @@ knitr::opts_chunk$set(
 
 This package implements autograph for R. It can be used to translate R control flow statements like `if` into tensorflow graphs.
 
+Checkout a work-in-progress draft of the [intro vignette](https://t-kalinowski.github.io/tfautograph/articles/autograph-basics.html)
+
 Implemented so far:
 
  - [x] `if`
@@ -40,10 +42,10 @@ Additional remaining tasks:
  - [x] autograph inline expressions also, in addition to functions
  - [x] nice informative error messages warning about undefined symbols and unbalanced branches
  - [x] a way to pass through additional options to `tf.while_loop`
+ - [ ] R function documentation (in progress)
+ - [ ] vignette / README (in progress)
  - [ ] an escape hatch to prevent a specific statement from being autographed
  - [ ] a verbose/debug mode that logs what autograph is doing
- - [ ] R function documentation
- - [ ] vignette / README
  - [ ] submit to CRAN
 
 

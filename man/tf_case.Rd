@@ -8,24 +8,25 @@ tf_case(..., pred_fn_pairs = list(...), default = NULL,
   exclusive = FALSE, name = "case")
 }
 \arguments{
-\item{..., pred_fn_pairs}{a list `pred_fn_pairs` supplied with the `~` like
-so: `pred ~ fn_body`}
+\item{..., pred_fn_pairs}{a list \code{pred_fn_pairs} supplied with the \code{~} like
+so: \code{pred ~ fn_body}}
 
-\item{default}{a function, optionally specifed with the `~`, (or something
-coercable to a function via `as.function()`)}
+\item{default}{a function, optionally specifed with the \code{~}, (or something
+coercable to a function via \code{as.function()})}
 
-\item{exclusive}{bool, whether to evaluate all `preds` and ensure only one is
-true. If `FALSE` (the default), then the `preds` are evaluated in the order
-supplied until the first `TRUE` value is encountered (effectively, acting
-as an `if()... else if() ... else if() ...` chain)}
+\item{exclusive}{bool, whether to evaluate all \code{preds} and ensure only one is
+true. If \code{FALSE} (the default), then the \code{preds} are evaluated in the order
+supplied until the first \code{TRUE} value is encountered (effectively, acting
+as an \code{if()... else if() ... else if() ...} chain)}
 
-\item{name}{a string, passed on to `tf.case()`}
+\item{name}{a string, passed on to \code{tf.case()}}
 }
 \value{
-The result from `tf$case()`
+The result from \code{tf$case()}
 }
 \description{
-tf.case
+This is a minimal wrapper around \code{tf.case()} that allows you to supply the
+\code{pred_fn_pairs} using the \code{~}.
 }
 \examples{
 fizz_buzz_one <- function(x) {

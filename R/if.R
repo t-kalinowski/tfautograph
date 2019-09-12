@@ -24,7 +24,7 @@ ag_if <- function(cond, true, false = NULL) {
 
   true_fn <- as_cond_branch_fn(cond, true, TRUE, env)
   # TODO: if false[[1]] == quote(`if`) && is_tensor(eval(false[[2]]), env)
-  # return ag_elif(...)
+  # return ag_case(...)
   # But, need to be careful about not forcing cond #2 twice
 
   false_fn <- as_cond_branch_fn(cond, false, FALSE, env)

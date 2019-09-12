@@ -5,14 +5,9 @@
 
 #' @export
 `[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` <-
-  function(ta, i, ..., value,  name = NULL) {
+  function(ta, i, ..., value, name = NULL) {
     if(...length())
       stop("TensorArrays can only be written to along the first dimension (Think of them as a list())")
-    ta$write(tf$cast(i, tf$int32), value, name = name)
-  }
-
-`[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` <-
-  function(ta, i, value, ..., name = NULL) {
     ta$write(tf$cast(i, tf$int32), value, name = name)
   }
 
@@ -27,16 +22,31 @@
 tensorflow::tf_function
 
 
+#' @importFrom tensorflow tf
+#' @export
+tensorflow::tf
 
 
 
 as.function.formula <- function(x) {
   envir <- environment(x)
   body <- list(x[[length(x)]])
-  if(length(x) == 3L) {
-    args <- x[[2]]
-    if(is.call(args))
-      args[[1]] <- NULL
+  if (length(x) == 3L) {
+    args <- x[[2L]]
+    if (is.call(args))
+      args[[1L]] <- NULL
+    if(!is.list(args))
+      args <- pairlist(args)
+
+    # args <- as.pairlist(args)
+    nms <- rlang::names2(args)
+    for (i in seq_along(args))
+      if (nms[[i]] == "") {
+        stopifnot(is.name(args[[i]]))
+        nms[[i]] <- as.character(args[[i]])
+        args[[i]] <- quote(expr =)
+      }
+    names(args) <- nms
   } else
     args <- NULL
 
