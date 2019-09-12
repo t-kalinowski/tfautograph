@@ -112,7 +112,7 @@ test_that("for with tf Dataset", {
 
   expect_result(ag_fn, ds, list(15, 55))
 
-
+  `%<-%` <- zeallot::`%<-%`
   fn <- function(ds) {
     h1 <- h2 <- h3 <- 0
     for (b in ds) {

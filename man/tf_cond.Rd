@@ -9,19 +9,19 @@ tf_cond(cond, true_fn, false_fn, name = NULL)
 \arguments{
 \item{cond}{R logical or a tensor.}
 
-\item{true_fn, false_fn}{a `~` function, or something coercable to a function
-via `as.function`}
+\item{true_fn, false_fn}{a \code{~} function, or something coercable to a function
+via \code{as.function}}
 
-\item{name}{a string, passed on to `tf.cond()`}
+\item{name}{a string, passed on to \code{tf.cond()}}
 }
 \value{
-if cond is a tensor, then the result of `tf.cond()`. Otherwise, if
-  `cond` is an `EagerTensor` or an R logical, then the result of either
-  `true_fn()` or `false_fn()`
+if cond is a tensor, then the result of \code{tf.cond()}. Otherwise, if
+\code{cond} is an \code{EagerTensor} or an R logical, then the result of either
+\code{true_fn()} or \code{false_fn()}
 }
 \description{
-This is a minimal wrapper around `tf$cond()` that allows you to supply
-`true_fn` and `false_fn` as lambda functions defined using the tilde `~`.
+This is a minimal wrapper around \code{tf$cond()} that allows you to supply
+\code{true_fn} and \code{false_fn} as lambda functions defined using the tilde \code{~}.
 }
 \examples{
 ## square if positive

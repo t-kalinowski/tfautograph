@@ -12,6 +12,9 @@
 This package implements autograph for R. It can be used to translate R
 control flow statements like `if` into tensorflow graphs.
 
+Checkout a work-in-progress draft of the [intro
+vignette](https://t-kalinowski.github.io/tfautograph/articles/autograph-basics.html)
+
 Implemented so far:
 
   - \[x\] `if`
@@ -33,11 +36,11 @@ Additional remaining tasks:
   - \[x\] nice informative error messages warning about undefined
     symbols and unbalanced branches
   - \[x\] a way to pass through additional options to `tf.while_loop`
+  - \[ \] R function documentation (in progress)
+  - \[ \] vignette / README (in progress)
   - \[ \] an escape hatch to prevent a specific statement from being
     autographed
   - \[ \] a verbose/debug mode that logs what autograph is doing
-  - \[ \] R function documentation
-  - \[ \] vignette / README
   - \[ \] submit to CRAN
 
 Planned for CRAN release \#2
@@ -64,7 +67,7 @@ library(tfautograph)
 
 # All of tfautograph works in tf 1.14 also, but this readme expects 2.0.
 tf$version$VERSION
-#> [1] "2.0.0-rc0"
+#> [1] "2.0.0-rc1"
 stopifnot(tf_version() >= "2")
 ```
 
@@ -161,22 +164,21 @@ train_graph <- tf_function(train)
 c(step, loss) %<-% train_graph(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.86508906 ; accuracy 0.355
-#> Step 20 : loss 1.23046172 ; accuracy 0.525
-#> Step 30 : loss 0.752179921 ; accuracy 0.609333336
-#> Step 40 : loss 0.689547718 ; accuracy 0.6615
-#> Step 50 : loss 0.440382183 ; accuracy 0.6996
-#> Step 60 : loss 0.460933238 ; accuracy 0.724166691
-#> Step 70 : loss 0.327962488 ; accuracy 0.747
-#> Step 80 : loss 0.393846691 ; accuracy 0.76525
-#> Step 90 : loss 0.376492083 ; accuracy 0.77922225
-#> Step 100 : loss 0.406526923 ; accuracy 0.7925
-#> Step 108 : loss 0.343511343 ; accuracy 0.800092578
+#> Step 10 : loss 1.72580707 ; accuracy 0.388
+#> Step 20 : loss 1.15646017 ; accuracy 0.5455
+#> Step 30 : loss 0.692385852 ; accuracy 0.627333343
+#> Step 40 : loss 0.427241474 ; accuracy 0.68175
+#> Step 50 : loss 0.504995584 ; accuracy 0.7136
+#> Step 60 : loss 0.454384565 ; accuracy 0.7395
+#> Step 70 : loss 0.56522727 ; accuracy 0.760714293
+#> Step 80 : loss 0.306616366 ; accuracy 0.779
+#> Step 90 : loss 0.369266748 ; accuracy 0.790777802
+#> Step 99 : loss 0.299376488 ; accuracy 0.800202
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 108: loss 0.343511; accuracy 0.800093
+#> Final step 99: loss 0.299376; accuracy 0.800202
 ```
 
 ### train in eager mode
@@ -190,23 +192,22 @@ c(model, optimizer) %<-% new_model_and_optimizer()
 c(step, loss) %<-% train(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.74904215 ; accuracy 0.761694908
-#> Step 20 : loss 1.13440621 ; accuracy 0.754531264
-#> Step 30 : loss 0.737210751 ; accuracy 0.75557971
-#> Step 40 : loss 0.57017678 ; accuracy 0.761283755
-#> Step 50 : loss 0.486070752 ; accuracy 0.765126586
-#> Step 60 : loss 0.575892091 ; accuracy 0.772142828
-#> Step 70 : loss 0.327947319 ; accuracy 0.77831459
-#> Step 80 : loss 0.400503427 ; accuracy 0.784680843
-#> Step 90 : loss 0.419900507 ; accuracy 0.789697
-#> Step 100 : loss 0.278181255 ; accuracy 0.794567287
-#> Step 110 : loss 0.508931816 ; accuracy 0.799633
-#> Step 111 : loss 0.352785826 ; accuracy 0.800182641
+#> Step 10 : loss 1.81553054 ; accuracy 0.761192679
+#> Step 20 : loss 1.09497 ; accuracy 0.755042
+#> Step 30 : loss 0.894336 ; accuracy 0.757519364
+#> Step 40 : loss 0.618781805 ; accuracy 0.760575533
+#> Step 50 : loss 0.445437253 ; accuracy 0.767315447
+#> Step 60 : loss 0.293311477 ; accuracy 0.774528325
+#> Step 70 : loss 0.631719947 ; accuracy 0.780414224
+#> Step 80 : loss 0.438341171 ; accuracy 0.786424577
+#> Step 90 : loss 0.257332981 ; accuracy 0.792063475
+#> Step 100 : loss 0.407562673 ; accuracy 0.797839224
+#> Step 105 : loss 0.280542284 ; accuracy 0.800441206
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 111: loss 0.352786; accuracy 0.800183
+#> Final step 105: loss 0.280542; accuracy 0.800441
 ```
 
 ## Installation

@@ -150,7 +150,7 @@ tf_case <-
 #'             ~ x * x * x,
 #'             default = ~ -1)
 #' }
- #'
+#'
 #' # supply just some of the ints to override the default order
 #' tf_pow <- function(x, pow) {
 #'   tf_switch(pow,

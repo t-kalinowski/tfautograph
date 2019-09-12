@@ -10,16 +10,16 @@ tf_switch(branch_index, ..., branch_fns = list(...), default = NULL,
 \arguments{
 \item{branch_index}{an integer tensor}
 
-\item{..., branch_fns}{a list of function bodies specified with a `~`,
+\item{..., branch_fns}{a list of function bodies specified with a \code{~},
 optionally supplied with a branch index on the left hand side. See examples}
 
-\item{default}{A function defined with a `~`, or something coercable via
+\item{default}{A function defined with a \code{~}, or something coercable via
 `as.function()``}
 
-\item{name}{a string, passed on to `tf.switch_case()`}
+\item{name}{a string, passed on to \code{tf.switch_case()}}
 }
 \value{
-The result from `tf.switch_case()`
+The result from \code{tf.switch_case()}
 }
 \description{
 tf.switch_case
@@ -36,24 +36,24 @@ tf_pow <- tf_function(function(x, pow) {
 
 # can optionally also omit the left hand side int, in which case the order of
 # the functions is used.
-tf_pow <- tf_function(function(x, pow) {
+tf_pow <- function(x, pow) {
   tf_switch(pow,
             ~ 1,
             ~ x
             ~ x * x
             ~ x * x * x,
             default = ~ -1)
-})
+}
 
 # supply just some of the ints to override the default order
-tf_pow <- tf_function(function(x, pow) {
+tf_pow <- function(x, pow) {
   tf_switch(pow,
             3 ~ x * x * x,
             2 ~ x * x
             ~ 1,
             ~ x
             default = ~ -1)
-})
+}
 
 # A slightly less contrived example:
 tf_norm <- tf_function(function(x, l) {

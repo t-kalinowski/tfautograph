@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • tfautograph</title>
+<title>tf.switch_case — tf_switch • tfautograph</title>
 
 
 <!-- jquery -->
@@ -35,7 +35,9 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="tf.switch_case — tf_switch" />
+<meta property="og:description" content="tf.switch_case" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -54,7 +56,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,60 +110,58 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>tf.switch_case</h1>
+    
+    <div class="hidden name"><code>tf_switch.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>tf.switch_case</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>tf_switch</span>(<span class='no'>branch_index</span>, <span class='no'>...</span>, <span class='kw'>branch_fns</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>), <span class='kw'>default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"switch_case"</span>)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="autograph.html">autograph()</a></code> </p>
-        </td>
-        <td><p>Autograph R code</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tf_case.html">tf_case()</a></code> </p>
-        </td>
-        <td><p>tf.case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tf_cond.html">tf_cond()</a></code> </p>
-        </td>
-        <td><p>tf.cond</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tf_switch.html">tf_switch()</a></code> </p>
-        </td>
-        <td><p>tf.switch_case</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>branch_index</th>
+      <td><p>an integer tensor</p></td>
+    </tr>
+    <tr>
+      <th>..., branch_fns</th>
+      <td><p>a list of function bodies specified with a <code>~</code>,
+optionally supplied with a branch index on the left hand side. See examples</p></td>
+    </tr>
+    <tr>
+      <th>default</th>
+      <td><p>A function defined with a <code>~</code>, or something coercable via
+`as.function()``</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>a string, passed on to <code>tf.switch_case()</code></p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The result from <code>tf.switch_case()</code></p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 

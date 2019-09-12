@@ -7,9 +7,9 @@
 view_function_graph(fn, args, ...)
 }
 \arguments{
-\item{args}{arguments passed to `fun`}
+\item{args}{arguments passed to \code{fun}}
 
-\item{...}{other arguments passed to [tensorflow::tensorboard()]}
+\item{...}{other arguments passed to \code{\link[tensorflow:tensorboard]{tensorflow::tensorboard()}}}
 
 \item{fun}{TensorFlow function}
 }
