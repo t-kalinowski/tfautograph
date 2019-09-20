@@ -9,7 +9,7 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
         as_iterator(iterable), var, body, env))
 
     body_vars <-
-      get_registered_next_while_loop_vars() %||%
+      next_loop_vars$pop() %||%
       get_existing_var_nms(body, var, env = env)
     var <- deparse(var)
 

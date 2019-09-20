@@ -1,6 +1,4 @@
 
-
-
 ag_stopifnot <- function(..., exprs, local = TRUE) {
   if(missing(exprs)) {
     dots <- eval(substitute(alist(...)))
@@ -77,7 +75,7 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
       ## actually, yes it can be if exporting attach_ag_mask()
       control_dependencies_context$`__exit__`(NULL, NULL, NULL)
     } else {
-      register_frame_context(control_dependencies_context, env)
+      push_frame_context_manager(control_dependencies_context, env)
       on.exit.elsewhere(return(
         tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
       ), add = TRUE, after = TRUE, envir = env)
@@ -95,7 +93,7 @@ ag_stop <- function(...) {
 }
 
 identity_op_tensors_and_close_contexts <- function(value) {
-  on.exit(close_and_clear_registered_contexts(parent.frame()))
+  on.exit(exit_and_pop_frame_context_managers(parent.frame()))
   robust_tf_identity(value)
 }
 
@@ -110,6 +108,24 @@ pretty_call_stack <- function() {
   calls <- sprintf("<R call %i>: %s", seq_along(calls), calls)
   calls <- c("R call stack:", calls)
   as.list(calls)
+
+
+frame_context_manager_registries <- new.env(parent = emptyenv())
+
+peek_or_create_frame_contexts_registry <- function(env) {
+  env_id <- format(env)
+
+  registry <- frame_context_manager_registries[[env_id]]
+
+  if (is.null(registry))
+    registry <- frame_context_manager_registries[[env_id]] <- Stack()
+
+  registry
+}
+
+push_frame_context_manager <- function(ctxt, env) {
+  registry <- peek_or_create_frame_contexts_registry(env)
+  registry$push(ctxt)
 }
 
 pretty_tf_assert_data <- function(expr, vars, call_stack = NULL) {
@@ -119,5 +135,13 @@ pretty_tf_assert_data <- function(expr, vars, call_stack = NULL) {
                 deparse.level = 0)
   dim(data) <- NULL
   drop_empty(c(expr, data, call_stack))
+
+exit_and_pop_frame_context_managers <- function(env) {
+  registry <- peek_or_create_frame_contexts_registry(env)
+
+  while(length(registry))
+    registry$pop()$`__exit__`(NULL, NULL, NULL)
+
+  rm(list = format(env), envir = frame_context_manager_registries)
 }
 

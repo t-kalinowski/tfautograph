@@ -29,7 +29,7 @@ ag_if <- function(cond, true, false = NULL) {
 
   false_fn <- as_cond_branch_fn(cond, false, FALSE, env)
 
-  target_outcome <- get_registered_next_if_vars()
+  target_outcome <- next_if_vars$pop()
   if (is.null(target_outcome)) {
     true_fn <- as_concrete_function(true_fn)
     false_fn <- if(is.null(false)) null_fn else
@@ -233,4 +233,46 @@ leaf_names <- function(x) {
 
   as.list(unlist(n, recursive = FALSE, use.names = FALSE))
 }
+
+
+
+new_cond_registry <- function() {
+  registry <- new.env(parent = emptyenv())
+  registry$true <- new.env(parent = emptyenv())
+  registry$false <- new.env(parent = emptyenv())
+  registry
+}
+
+
+
+# tensor_hash
+unique_tensor_id <- function(x) {
+  # as.character(x$`__hash__`())
+  ##  x$`__hash__`() no longer works in tf2, but they don't have a
+  ## non-experiemental replacement...
+  sprintf("%s:%i", x$name, x$graph$`__hash__`())
+}
+
+register_cond <- function(cond, branch, registry = cond_registries$peek()) {
+  if(is.null(registry)) return()
+
+  stopifnot(is_tensor(cond), is_bool(branch))
+  branch <- if(branch) "true" else "false"
+  registry[[branch]][[unique_tensor_id(cond)]] <- cond
+}
+
+
+deregister_cond <- function(cond, registry = cond_registries$peek()) {
+  if(is.null(registry)) return()
+  tensor_id <- unique_tensor_id(cond)
+  for (branch in c("true", "false"))
+    if (exists(tensor_id, registry[[branch]]))
+      rm(list = tensor_id, envir = registry[[branch]])
+}
+
+reduce_registered_conds <- function(registry = cond_registries$peek()) {
+  conds <- c(as.list(registry$true), lapply(registry$false, `!`))
+  Reduce(`&`, conds)
+}
+
 

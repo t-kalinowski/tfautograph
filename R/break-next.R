@@ -1,9 +1,8 @@
 
 
-
 uncaught_loop_control_flow_condition <-
   function(type, env) {
-    registry <- get_active_control_flow_registry()
+    registry <- control_flow_registries$peek()
     structure(
       class = c(type, "uncaught_loop_control_flow", "error", "condition"),
       drop_empty(
@@ -53,7 +52,7 @@ compact_lcf <- function(x)
 
 
 dummy_compact_lcf <- function(env) {
-  registry <- get_active_control_flow_registry()
+  registry <- control_flow_registries$peek()
   drop_empty(list(
     loop_vars = mget(registry$loop_vars, envir = env, inherits = TRUE),
     reduced_conds = FALSE,
@@ -76,7 +75,7 @@ can_register_loop_control_flow <- function(lcf) {
   if(tf$executing_eagerly())
     return(TRUE)
 
-  registry <- get_active_control_flow_registry()
+  registry <- control_flow_registries$peek()
 
   for (x in unlist(compact_lcf(lcf))) {
     if(!is_tensor(x))
@@ -94,7 +93,7 @@ can_register_loop_control_flow <- function(lcf) {
 register_loop_control_flow <- function(lcf) {
   # if(is_eager_tensor(lcf$reduced_conds))
   #   signalCondition()
-  registry <- get_active_control_flow_registry()
+  registry <- control_flow_registries$peek()
   registry$recorded_conditions$push(compact_lcf(lcf))
 }
 
@@ -112,27 +111,37 @@ try_register_or_signal_error_with_restart <- function(lcf) {
 }
 
 
-establish_control_flow_registry <-
+new_control_flow_registry <-
   function(loop_vars, can_break, graph = tf$compat$v1$get_default_graph()) {
-    reg <- list2env(
-      list(
-        loop_vars = as.character(loop_vars),
-        can_break = can_break,
-        graph = graph,
-        recorded_conditions = Stack()
-      ),
-      parent = emptyenv()
-    )
-
-    .registries$control_flow_registries$push(reg)
-  }
-
-remove_control_flow_registry <- function()
-  .registries$control_flow_registries$pop()
+  registry <- list2env(
+    list(
+      loop_vars = as.character(loop_vars),
+      can_break = can_break,
+      graph = graph,
+      recorded_conditions = Stack()
+    ),
+    parent = emptyenv()
+  )
+  registry
+}
 
 
-get_active_control_flow_registry <- function()
-  .registries$control_flow_registries$peek()
+# establish_control_flow_registry <-
+#   function(loop_vars, can_break, graph = tf$compat$v1$get_default_graph()) {
+#     reg <- list2env(
+#       list(
+#         loop_vars = as.character(loop_vars),
+#         can_break = can_break,
+#         graph = graph,
+#         recorded_conditions = Stack()
+#       ),
+#       parent = emptyenv()
+#     )
+#
+#     .registries$control_flow_registries$push(reg)
+#   }
+
+
 
 do_return <- function(env, value = NULL) {
   eval(as.call(list(quote(.Primitive("return")), value)), env)

@@ -29,14 +29,16 @@ did_not_raise_StopIteration <- function(expr) {
 active_iterator_get_next <- function() {
   # it <- peek_active_iterator()
   # it$`__next__`()
-  iter_next(peek_active_iterator())
+  iter_next(active_iterators$peek())
 }
+
+active_iterators <- Stack()
 
 #' @importFrom reticulate as_iterator
 ag_for_impl.python.builtin.iterator <-
   function(iterable, var, body, env) {
-    register_active_iterator(as_iterator(iterable))
-    on.exit(pop_registered_active_iterator())
+    active_iterators$push(as_iterator(iterable))
+    on.exit(active_iterators$pop())
 
     # expr <- substitute(
     #   while (tfautograph:::did_not_raise_StopIteration(
@@ -67,7 +69,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   iter <- ta$unstack(iterable)
 
   loop_vars <-
-    get_registered_next_while_loop_vars() %||%
+    next_loop_vars$pop() %||%
     get_existing_var_nms(body, var, env = env)
 
   var <- deparse(var)
@@ -111,8 +113,8 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
       loop_vars = drop_empty(list(index, loop_vars, did_break)),
       return_same_structure = TRUE
     ),
-    name = get_next_ag_name(),
-    get_registered_next_while_loop_opts()
+    name = next_ag_name$pop(),
+    next_while_loop_opts$pop()
   )
 
   if(tf_v2())
