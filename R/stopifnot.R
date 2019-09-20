@@ -102,12 +102,6 @@ robust_tf_identity <- function(x) {
 }
 
 
-pretty_call_stack <- function() {
-  calls <- rev(sys.calls())[-1]
-  calls <- vapply(calls, deparse, "", nlines = 1L, width.cutoff = 500L)
-  calls <- sprintf("<R call %i>: %s", seq_along(calls), calls)
-  calls <- c("R call stack:", calls)
-  as.list(calls)
 
 
 frame_context_manager_registries <- new.env(parent = emptyenv())
@@ -128,13 +122,6 @@ push_frame_context_manager <- function(ctxt, env) {
   registry$push(ctxt)
 }
 
-pretty_tf_assert_data <- function(expr, vars, call_stack = NULL) {
-  expr <- list(deparse(expr, width.cutoff = 500))
-  data <- rbind(as.list(paste(names(vars), "value:")),
-                unname(vars),
-                deparse.level = 0)
-  dim(data) <- NULL
-  drop_empty(c(expr, data, call_stack))
 
 exit_and_pop_frame_context_managers <- function(env) {
   registry <- peek_or_create_frame_contexts_registry(env)
@@ -144,4 +131,3 @@ exit_and_pop_frame_context_managers <- function(env) {
 
   rm(list = format(env), envir = frame_context_manager_registries)
 }
-
