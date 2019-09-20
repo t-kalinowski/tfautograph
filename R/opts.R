@@ -4,7 +4,7 @@
 ag_loop_vars <- function(..., list = character()) {
   vars <- as.character(eval(substitute(alist(...))))
   vars <- unique(c(vars, list))
-  register_next_while_loop_vars(vars)
+  next_loop_vars$set(vars)
   invisible()
 }
 
@@ -25,12 +25,17 @@ ag_while_opts <- function(...,
     if(eval(bquote(missing(.(as.name(a))))))
       args[[a]] <- NULL
   if(length(args))
-    register_next_while_loop_opts(args)
+    next_while_loop_opts$set(args)
   invisible()
 }
 
 
 #' @export
-ag_name <- function(x) {
-  register_next_ag_name(x)
-}
+ag_name <- function(x) next_ag_name$set(x)
+
+
+
+next_ag_name         <- Variable()
+next_if_vars         <- Variable()
+next_while_loop_opts <- Variable()
+next_loop_vars       <- Variable()
