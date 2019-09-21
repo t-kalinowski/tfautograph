@@ -1,8 +1,10 @@
-if(interactive()) {
-  devtools::load_all()
-  source("tests/testthat/utils.R")
-} else
+if(testthat::is_testing()){
   source("utils.R")
+} else {
+  source("tests/testthat/utils.R")
+  devtools::load_all()
+}
+
 
 test_that("break basic", {
   fn <- function(n) {
@@ -15,6 +17,7 @@ test_that("break basic", {
     n
   }
   # debugonce(ag_if)
+
   autograph(fn)(as_tensor(4L))
   autograph(fn)(as_tensor(1L))
 
