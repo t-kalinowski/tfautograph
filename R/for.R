@@ -53,7 +53,6 @@ ag_for_impl.python.builtin.iterator <-
   }
 
 
-#' @importFrom zeallot %->%
 ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   if(tf$executing_eagerly() && is_eager(iterable))

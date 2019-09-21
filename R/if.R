@@ -3,8 +3,12 @@
 #' @export
 ag_if_vars <- function(..., modified = list(...), return = FALSE,
                        undefs = NULL, control_flow = 0) {
-  register_if_vars(modified = modified, return = return, undefs = undefs,
-                   n_control_flow = as.integer(control_flow))
+  next_if_vars$push(list(
+    modified = modified,
+    return = return,
+    undefs = undefs,
+    n_control_flow = as.integer(control_flow)
+  ))
 }
 
 

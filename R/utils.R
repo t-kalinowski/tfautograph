@@ -108,11 +108,11 @@ valid_typeofs <- c("logical", "integer", "double", "complex", "character",
                    "raw", "list") #, "environment")
 
 
-is_gettable <- function(nm, env) {
-  # exists(nm, envir = env) &&
-  x <- get0(nm, envir = env)
-  is_tensor(x) || mode(x) %in% valid_modes
-}
+# is_gettable <- function(nm, env) {
+#   # exists(nm, envir = env) &&
+#   x <- get0(nm, envir = env)
+#   is_tensor(x) || mode(x) %in% valid_modes
+# }
 
 is_named_list <- function(x) {
   is.list(x) && !is.null(names(x))
