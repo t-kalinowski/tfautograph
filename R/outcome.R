@@ -40,7 +40,7 @@ as_outcome_fn <- function(expr, env, args = NULL) {
   }
 }
 
-
+#' @importFrom utils modifyList
 export_modified <- function(modified, env) {
   if (is_empty(modified))
     return()

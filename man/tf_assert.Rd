@@ -30,5 +30,5 @@ node is created.
 }
 \examples{
 x <- tf$constant(-1)
-tf_assert(x > 0, "oopsies! x must be greater than 0")
+try(tf_assert(x > 0, "oopsies! x must be greater than 0"))
 }
