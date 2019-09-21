@@ -4,8 +4,8 @@
 #' `true_fn` and `false_fn` as lambda functions defined using the tilde `~`.
 #'
 #' @param cond R logical or a tensor.
-#' @param true_fn,false_fn a `~` function, or something coercable to a function
-#'   via `as.function`
+#' @param true_fn,false_fn a `~` function, a function, or something coercable to
+#'   a function via `as.function`
 #' @param name a string, passed on to `tf.cond()`
 #'
 #' @return if cond is a tensor, then the result of `tf.cond()`. Otherwise, if
@@ -16,10 +16,10 @@
 #' @examples
 #' ## square if positive
 #' # using tf$cond directly:
-#' function(x) tf$cond(x > 0, function() x * x, function() x)
+#' raw <- function(x) tf$cond(x > 0, function() x * x, function() x)
 #'
 #' # using tf_cond() wrapper
-#' function(x) tf_cond(x > 0, ~ x * x, ~ x)
+#' tilde <- function(x) tf_cond(x > 0, ~ x * x, ~ x)
 tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
   env <- parent.frame()
 
@@ -134,8 +134,8 @@ tf_case <-
 #' tf_pow <- tf_function(function(x, pow) {
 #'    tf_switch(pow,
 #'    0 ~ 1,
-#'    1 ~ x
-#'    2 ~ x * x
+#'    1 ~ x,
+#'    2 ~ x * x,
 #'    3 ~ x * x * x,
 #'    default = ~ -1)
 #' })
@@ -145,8 +145,8 @@ tf_case <-
 #' tf_pow <- function(x, pow) {
 #'   tf_switch(pow,
 #'             ~ 1,
-#'             ~ x
-#'             ~ x * x
+#'             ~ x,
+#'             ~ x * x,
 #'             ~ x * x * x,
 #'             default = ~ -1)
 #' }
@@ -155,9 +155,9 @@ tf_case <-
 #' tf_pow <- function(x, pow) {
 #'   tf_switch(pow,
 #'             3 ~ x * x * x,
-#'             2 ~ x * x
+#'             2 ~ x * x,
 #'             ~ 1,
-#'             ~ x
+#'             ~ x,
 #'             default = ~ -1)
 #' }
 #'
@@ -165,8 +165,8 @@ tf_case <-
 #' tf_norm <- tf_function(function(x, l) {
 #'   tf_switch(l,
 #'             0 ~ tf$reduce_sum(tf$cast(x != 0, tf$float32)), # L0 norm
-#'             1 ~ tf$reduce_sum(tf$abs(x))                    # L1 norm
-#'             2 ~ tf$sqrt(tf$reduce_sum(tf$square(x)))        # L2 norm
+#'             1 ~ tf$reduce_sum(tf$abs(x)),                   # L1 norm
+#'             2 ~ tf$sqrt(tf$reduce_sum(tf$square(x))),       # L2 norm
 #'             default = ~ tf$reduce_max(tf$abs(x)))         # L-infinity norm
 #' })
 tf_switch <- function(branch_index, ...,

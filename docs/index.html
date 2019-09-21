@@ -101,7 +101,7 @@
 </ul>
 <p>Additional remaining tasks:</p>
 <ul>
-<li>[x] full compatability with both tf versions 1.14 and 2.0</li>
+<li>[x] full compatability with both tf versions 1.15 and 2.0</li>
 <li>[x] full compatbility with both eager and graph mode</li>
 <li>[x] autograph inline expressions also, in addition to functions</li>
 <li>[x] nice informative error messages warning about undefined symbols and unbalanced branches</li>
@@ -138,7 +138,7 @@
 <a class="sourceLine" id="cb1-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co"># All of tfautograph works in tf 1.14 also, but this readme expects 2.0.</span></a>
 <a class="sourceLine" id="cb1-11" data-line-number="11">tf<span class="op">$</span>version<span class="op">$</span>VERSION</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt; [1] "2.0.0-rc1"</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt; [1] "2.0.0-dev20190919"</span></a>
 <a class="sourceLine" id="cb1-13" data-line-number="13"><span class="kw"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_config.html">tf_version</a></span>() <span class="op">&gt;=</span><span class="st"> "2"</span>)</a></code></pre></div>
 <div id="download-data" class="section level3">
 <h3 class="hasAnchor">
@@ -200,25 +200,24 @@
 <a class="sourceLine" id="cb4-19" data-line-number="19">train &lt;-<span class="st"> </span><span class="kw"><a href="reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(model, optimizer) {</a>
 <a class="sourceLine" id="cb4-20" data-line-number="20">  step &lt;-<span class="st"> </span>0L</a>
 <a class="sourceLine" id="cb4-21" data-line-number="21">  loss &lt;-<span class="st"> </span><span class="dv">0</span></a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">  <span class="kw">ag_loop_vars</span>(<span class="st">"step"</span>, <span class="st">"loss"</span>) <span class="co"># to prevent `log_file` from being captured</span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23">  <span class="cf">for</span> (batch <span class="cf">in</span> train_dataset) {</a>
-<a class="sourceLine" id="cb4-24" data-line-number="24">    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, y) <span class="op">%&lt;-%</span><span class="st"> </span>batch</a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">    step <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(1L)</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26">    loss &lt;-<span class="st"> </span><span class="kw">train_one_step</span>(model, optimizer, x, y)</a>
-<a class="sourceLine" id="cb4-27" data-line-number="27">    <span class="cf">if</span> (compute_accuracy<span class="op">$</span><span class="kw">result</span>() <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.8</span>) {</a>
-<a class="sourceLine" id="cb4-28" data-line-number="28">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>( <span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss, <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>(),</a>
-<a class="sourceLine" id="cb4-29" data-line-number="29">        <span class="dt">output_stream =</span> log_file)</a>
-<a class="sourceLine" id="cb4-30" data-line-number="30">      <span class="co"># We direct all tf$print() outputs to a log file only so that Rmarkdown can</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31">      <span class="co"># show output that would otherwise just go to stdout</span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"Breaking early"</span>, <span class="dt">output_stream =</span> log_file)</a>
-<a class="sourceLine" id="cb4-33" data-line-number="33">      <span class="cf">break</span></a>
-<a class="sourceLine" id="cb4-34" data-line-number="34">    } <span class="cf">else</span> <span class="cf">if</span> (step <span class="op">%%</span><span class="st"> </span>10L <span class="op">==</span><span class="st"> </span>0L)</a>
-<a class="sourceLine" id="cb4-35" data-line-number="35">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss,</a>
-<a class="sourceLine" id="cb4-36" data-line-number="36">               <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>(), </a>
-<a class="sourceLine" id="cb4-37" data-line-number="37">               <span class="dt">output_stream =</span> log_file)</a>
-<a class="sourceLine" id="cb4-38" data-line-number="38">  }</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(step, loss)</a>
-<a class="sourceLine" id="cb4-40" data-line-number="40">})</a></code></pre></div>
+<a class="sourceLine" id="cb4-22" data-line-number="22">  <span class="cf">for</span> (batch <span class="cf">in</span> train_dataset) {</a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, y) <span class="op">%&lt;-%</span><span class="st"> </span>batch</a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">    step <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(1L)</a>
+<a class="sourceLine" id="cb4-25" data-line-number="25">    loss &lt;-<span class="st"> </span><span class="kw">train_one_step</span>(model, optimizer, x, y)</a>
+<a class="sourceLine" id="cb4-26" data-line-number="26">    <span class="cf">if</span> (compute_accuracy<span class="op">$</span><span class="kw">result</span>() <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.8</span>) {</a>
+<a class="sourceLine" id="cb4-27" data-line-number="27">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>( <span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss, <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>(),</a>
+<a class="sourceLine" id="cb4-28" data-line-number="28">        <span class="dt">output_stream =</span> log_file)</a>
+<a class="sourceLine" id="cb4-29" data-line-number="29">      <span class="co"># We direct all tf$print() outputs to a log file only so that Rmarkdown can</span></a>
+<a class="sourceLine" id="cb4-30" data-line-number="30">      <span class="co"># show output that would otherwise just go to stdout</span></a>
+<a class="sourceLine" id="cb4-31" data-line-number="31">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"Breaking early"</span>, <span class="dt">output_stream =</span> log_file)</a>
+<a class="sourceLine" id="cb4-32" data-line-number="32">      <span class="cf">break</span></a>
+<a class="sourceLine" id="cb4-33" data-line-number="33">    } <span class="cf">else</span> <span class="cf">if</span> (step <span class="op">%%</span><span class="st"> </span>10L <span class="op">==</span><span class="st"> </span>0L)</a>
+<a class="sourceLine" id="cb4-34" data-line-number="34">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss,</a>
+<a class="sourceLine" id="cb4-35" data-line-number="35">               <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>(), </a>
+<a class="sourceLine" id="cb4-36" data-line-number="36">               <span class="dt">output_stream =</span> log_file)</a>
+<a class="sourceLine" id="cb4-37" data-line-number="37">  }</a>
+<a class="sourceLine" id="cb4-38" data-line-number="38">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(step, loss)</a>
+<a class="sourceLine" id="cb4-39" data-line-number="39">})</a></code></pre></div>
 </div>
 <div id="train-in-graph-mode" class="section level3">
 <h3 class="hasAnchor">
@@ -230,21 +229,22 @@
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">train_graph</span>(model, optimizer)</a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(log_file), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Step 10 : loss 1.72580707 ; accuracy 0.388</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; Step 20 : loss 1.15646017 ; accuracy 0.5455</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; Step 30 : loss 0.692385852 ; accuracy 0.627333343</span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; Step 40 : loss 0.427241474 ; accuracy 0.68175</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; Step 50 : loss 0.504995584 ; accuracy 0.7136</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; Step 60 : loss 0.454384565 ; accuracy 0.7395</span></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; Step 70 : loss 0.56522727 ; accuracy 0.760714293</span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; Step 80 : loss 0.306616366 ; accuracy 0.779</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; Step 90 : loss 0.369266748 ; accuracy 0.790777802</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; Step 99 : loss 0.299376488 ; accuracy 0.800202</span></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; Breaking early</span></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
-<a class="sourceLine" id="cb5-20" data-line-number="20">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
-<a class="sourceLine" id="cb5-21" data-line-number="21">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
-<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt; Final step 99: loss 0.299376; accuracy 0.800202</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Step 10 : loss 1.73541915 ; accuracy 0.364</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; Step 20 : loss 1.05687034 ; accuracy 0.5255</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; Step 30 : loss 0.690594316 ; accuracy 0.607</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; Step 40 : loss 0.64093256 ; accuracy 0.663</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; Step 50 : loss 0.402439117 ; accuracy 0.7058</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; Step 60 : loss 0.466928661 ; accuracy 0.733666658</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; Step 70 : loss 0.537537932 ; accuracy 0.755571425</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; Step 80 : loss 0.418009192 ; accuracy 0.773</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; Step 90 : loss 0.314459115 ; accuracy 0.787555575</span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; Step 100 : loss 0.344970822 ; accuracy 0.7979</span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; Step 102 : loss 0.275335193 ; accuracy 0.80058825</span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt; Breaking early</span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
+<a class="sourceLine" id="cb5-21" data-line-number="21">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
+<a class="sourceLine" id="cb5-22" data-line-number="22">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt; Final step 102: loss 0.275335; accuracy 0.800588</span></a></code></pre></div>
 </div>
 <div id="train-in-eager-mode" class="section level3">
 <h3 class="hasAnchor">
@@ -257,22 +257,24 @@
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/train.html">train</a></span>(model, optimizer)</a>
 <a class="sourceLine" id="cb6-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb6-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(log_file), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Step 10 : loss 1.81553054 ; accuracy 0.761192679</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Step 20 : loss 1.09497 ; accuracy 0.755042</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; Step 30 : loss 0.894336 ; accuracy 0.757519364</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Step 40 : loss 0.618781805 ; accuracy 0.760575533</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Step 50 : loss 0.445437253 ; accuracy 0.767315447</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Step 60 : loss 0.293311477 ; accuracy 0.774528325</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Step 70 : loss 0.631719947 ; accuracy 0.780414224</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Step 80 : loss 0.438341171 ; accuracy 0.786424577</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Step 90 : loss 0.257332981 ; accuracy 0.792063475</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; Step 100 : loss 0.407562673 ; accuracy 0.797839224</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Step 105 : loss 0.280542284 ; accuracy 0.800441206</span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; Breaking early</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
-<a class="sourceLine" id="cb6-22" data-line-number="22">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
-<a class="sourceLine" id="cb6-23" data-line-number="23">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; Final step 105: loss 0.280542; accuracy 0.800441</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Step 10 : loss 1.84928226 ; accuracy 0.75401783</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Step 20 : loss 1.23407435 ; accuracy 0.743852437</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; Step 30 : loss 0.804253817 ; accuracy 0.74606061</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Step 40 : loss 0.652474582 ; accuracy 0.750845075</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Step 50 : loss 0.434434742 ; accuracy 0.757894754</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Step 60 : loss 0.636063337 ; accuracy 0.76432097</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Step 70 : loss 0.436043233 ; accuracy 0.770406961</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Step 80 : loss 0.428212434 ; accuracy 0.776758254</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Step 90 : loss 0.50538522 ; accuracy 0.782656252</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; Step 100 : loss 0.299005717 ; accuracy 0.788316846</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Step 110 : loss 0.216239676 ; accuracy 0.793207526</span></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; Step 120 : loss 0.218401521 ; accuracy 0.798378408</span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; Step 124 : loss 0.356895983 ; accuracy 0.80053097</span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt; Breaking early</span></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
+<a class="sourceLine" id="cb6-24" data-line-number="24">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co">#&gt; Final step 124: loss 0.356896; accuracy 0.800531</span></a></code></pre></div>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -309,7 +311,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>
