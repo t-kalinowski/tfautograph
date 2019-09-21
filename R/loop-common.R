@@ -1,25 +1,40 @@
 
 
-
-get_existing_var_nms <- function(..., env) {
-  # ... should all be language objects
-  # TODO: this whould be refactored into a function named
-  # resolve_loop_vars(..., env). also, ag_loop_vars should accept
-  # dplyr::select like specs, namely `-`
-  # e.g., ag_loop_vars(-log_file)
-  vars <- unique(unlist(lapply(list(...), all.vars)))
+statically_infer_modified_syms <- function(expr, env) {
+  vars <- unique(find_assiged_syms(expr))
   vars <- vars[vapply(vars, exists, TRUE, envir = env)]
+
+  if(!length(vars)) return(character())
   vars <- mget(vars, envir = env, inherits = TRUE)
   vars <- vars[vapply(vars, function(v) is_tensor(v) ||
                         typeof(v) %in% valid_typeofs, TRUE)]
-  names(vars)
+  names(vars) %||% character()
 }
 
+find_assiged_syms <-  function(expr) {
+  if (!is.call(expr))
+    return()
 
-get_tensor_var_nms <- function(..., env) {
-  existing <- get_existing_var_nms(..., env = env)
-  existing[vapply(mget(existing, envir = env, inherits = TRUE),
-                  is_tensor, TRUE)]
+  fn <- expr[[1]]
+  expr[[1]] <- NULL
+
+  if (fn == quote(`<-`) || fn == quote(`=`) || fn == quote(`%<>%`)) {
+    nms <- all.vars(expr[[1]])[1]
+    # take the first one in case the left hand side is a complex assignment
+    # (e.g., from a [<-, $<-, or foo<- call)
+    expr[[1]] <- NULL
+  } else if (fn == quote(`%<-%`)) {
+    nms <- all.vars(expr[[1]])
+    expr[[1]] <- NULL
+  } else if ( fn == quote(`%->%`)) {
+    nms <- all.vars(expr[[2]])
+    expr[[2]] <- NULL
+  } else
+    nms <- NULL
+
+  # TODO: also handle case when fn == quote(assign)
+
+  unlist(c(nms, lapply(expr, find_assiged_syms)), use.names = FALSE)
 }
 
 

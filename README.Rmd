@@ -37,7 +37,7 @@ Implemented so far:
  
 Additional remaining tasks:
 
- - [x] full compatability with both tf versions 1.14 and 2.0
+ - [x] full compatability with both tf versions 1.15 and 2.0
  - [x] full compatbility with both eager and graph mode 
  - [x] autograph inline expressions also, in addition to functions
  - [x] nice informative error messages warning about undefined symbols and unbalanced branches
@@ -149,7 +149,6 @@ train_one_step <- function(model, optimizer, x, y) {
 train <- autograph(function(model, optimizer) {
   step <- 0L
   loss <- 0
-  ag_loop_vars("step", "loss") # to prevent `log_file` from being captured
   for (batch in train_dataset) {
     c(x, y) %<-% batch
     step %<>% add(1L)

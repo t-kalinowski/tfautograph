@@ -70,7 +70,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   loop_vars <-
     next_loop_vars$pop() %||%
-    get_existing_var_nms(body, var, env = env)
+    statically_infer_modified_syms(body, env = env)
 
   var <- deparse(var)
 

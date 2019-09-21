@@ -28,7 +28,7 @@ ag_while <- function(cond, body) {
   # tf v2 the traced graph will be able to be garbage collected. Worth tradeoff?
   loop_vars <-
     next_loop_vars$pop() %||%
-    get_existing_var_nms(cond, body, env = env)
+    statically_infer_modified_syms(body, env = env)
 
   # TODO: the loop vars selector should work the same as ag_if. it should handle
   # nested structures similarily, and the user-specificaiton function should

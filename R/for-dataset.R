@@ -10,7 +10,8 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
 
     body_vars <-
       next_loop_vars$pop() %||%
-      get_existing_var_nms(body, var, env = env)
+      statically_infer_modified_syms(body, env = env)
+
     var <- deparse(var)
 
     body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env,
