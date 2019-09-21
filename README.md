@@ -30,7 +30,7 @@ Implemented so far:
 
 Additional remaining tasks:
 
-  - \[x\] full compatability with both tf versions 1.14 and 2.0
+  - \[x\] full compatability with both tf versions 1.15 and 2.0
   - \[x\] full compatbility with both eager and graph mode
   - \[x\] autograph inline expressions also, in addition to functions
   - \[x\] nice informative error messages warning about undefined
@@ -67,7 +67,7 @@ library(tfautograph)
 
 # All of tfautograph works in tf 1.14 also, but this readme expects 2.0.
 tf$version$VERSION
-#> [1] "2.0.0-rc1"
+#> [1] "2.0.0-dev20190919"
 stopifnot(tf_version() >= "2")
 ```
 
@@ -133,7 +133,6 @@ train_one_step <- function(model, optimizer, x, y) {
 train <- autograph(function(model, optimizer) {
   step <- 0L
   loss <- 0
-  ag_loop_vars("step", "loss") # to prevent `log_file` from being captured
   for (batch in train_dataset) {
     c(x, y) %<-% batch
     step %<>% add(1L)
@@ -164,21 +163,22 @@ train_graph <- tf_function(train)
 c(step, loss) %<-% train_graph(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.72580707 ; accuracy 0.388
-#> Step 20 : loss 1.15646017 ; accuracy 0.5455
-#> Step 30 : loss 0.692385852 ; accuracy 0.627333343
-#> Step 40 : loss 0.427241474 ; accuracy 0.68175
-#> Step 50 : loss 0.504995584 ; accuracy 0.7136
-#> Step 60 : loss 0.454384565 ; accuracy 0.7395
-#> Step 70 : loss 0.56522727 ; accuracy 0.760714293
-#> Step 80 : loss 0.306616366 ; accuracy 0.779
-#> Step 90 : loss 0.369266748 ; accuracy 0.790777802
-#> Step 99 : loss 0.299376488 ; accuracy 0.800202
+#> Step 10 : loss 1.73541915 ; accuracy 0.364
+#> Step 20 : loss 1.05687034 ; accuracy 0.5255
+#> Step 30 : loss 0.690594316 ; accuracy 0.607
+#> Step 40 : loss 0.64093256 ; accuracy 0.663
+#> Step 50 : loss 0.402439117 ; accuracy 0.7058
+#> Step 60 : loss 0.466928661 ; accuracy 0.733666658
+#> Step 70 : loss 0.537537932 ; accuracy 0.755571425
+#> Step 80 : loss 0.418009192 ; accuracy 0.773
+#> Step 90 : loss 0.314459115 ; accuracy 0.787555575
+#> Step 100 : loss 0.344970822 ; accuracy 0.7979
+#> Step 102 : loss 0.275335193 ; accuracy 0.80058825
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 99: loss 0.299376; accuracy 0.800202
+#> Final step 102: loss 0.275335; accuracy 0.800588
 ```
 
 ### train in eager mode
@@ -192,22 +192,24 @@ c(model, optimizer) %<-% new_model_and_optimizer()
 c(step, loss) %<-% train(model, optimizer)
 
 cat(readLines(log_file), sep = "\n")
-#> Step 10 : loss 1.81553054 ; accuracy 0.761192679
-#> Step 20 : loss 1.09497 ; accuracy 0.755042
-#> Step 30 : loss 0.894336 ; accuracy 0.757519364
-#> Step 40 : loss 0.618781805 ; accuracy 0.760575533
-#> Step 50 : loss 0.445437253 ; accuracy 0.767315447
-#> Step 60 : loss 0.293311477 ; accuracy 0.774528325
-#> Step 70 : loss 0.631719947 ; accuracy 0.780414224
-#> Step 80 : loss 0.438341171 ; accuracy 0.786424577
-#> Step 90 : loss 0.257332981 ; accuracy 0.792063475
-#> Step 100 : loss 0.407562673 ; accuracy 0.797839224
-#> Step 105 : loss 0.280542284 ; accuracy 0.800441206
+#> Step 10 : loss 1.84928226 ; accuracy 0.75401783
+#> Step 20 : loss 1.23407435 ; accuracy 0.743852437
+#> Step 30 : loss 0.804253817 ; accuracy 0.74606061
+#> Step 40 : loss 0.652474582 ; accuracy 0.750845075
+#> Step 50 : loss 0.434434742 ; accuracy 0.757894754
+#> Step 60 : loss 0.636063337 ; accuracy 0.76432097
+#> Step 70 : loss 0.436043233 ; accuracy 0.770406961
+#> Step 80 : loss 0.428212434 ; accuracy 0.776758254
+#> Step 90 : loss 0.50538522 ; accuracy 0.782656252
+#> Step 100 : loss 0.299005717 ; accuracy 0.788316846
+#> Step 110 : loss 0.216239676 ; accuracy 0.793207526
+#> Step 120 : loss 0.218401521 ; accuracy 0.798378408
+#> Step 124 : loss 0.356895983 ; accuracy 0.80053097
 #> Breaking early
 cat(sprintf(
   'Final step %i: loss %.6f; accuracy %.6f',
   as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-#> Final step 105: loss 0.280542; accuracy 0.800441
+#> Final step 124: loss 0.356896; accuracy 0.800531
 ```
 
 ## Installation
