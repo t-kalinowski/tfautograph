@@ -1,8 +1,9 @@
-if(interactive()) {
-  devtools::load_all()
-  source("tests/testthat/utils.R")
-} else
+if(testthat::is_testing()){
   source("utils.R")
+} else {
+  source("tests/testthat/utils.R")
+  devtools::load_all()
+}
 
 
 # these tests are all modeled after:

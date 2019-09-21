@@ -1,8 +1,10 @@
-if(interactive()) {
-  devtools::load_all()
-  source("tests/testthat/utils.R")
-} else
+if(testthat::is_testing()){
   source("utils.R")
+} else {
+  source("tests/testthat/utils.R")
+  devtools::load_all()
+}
+
 
 
 # ## TODO: use this as a template to test tf_switch()
