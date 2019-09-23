@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualizes the generated graph — view_function_graph • tfautograph</title>
+<title>specify <code>tf.while_loop</code> options — ag_while_opts • tfautograph</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Visualizes the generated graph — view_function_graph" />
-<meta property="og:description" content="Visualizes the generated graph" />
+<meta property="og:title" content="specify <code>tf.while_loop</code> options — ag_while_opts" />
+<meta property="og:description" content="See https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/while_loop
+for additional details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,40 +116,72 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualizes the generated graph</h1>
+    <h1>specify <code>tf.while_loop</code> options</h1>
     
-    <div class="hidden name"><code>view_function_graph.Rd</code></div>
+    <div class="hidden name"><code>ag_while_opts.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Visualizes the generated graph</p>
+    <p>See https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/while_loop
+for additional details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>view_function_graph</span>(<span class='no'>fn</span>, <span class='no'>args</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>ag_while_opts</span>(<span class='no'>...</span>, <span class='kw'>shape_invariants</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parallel_iterations</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
+  <span class='kw'>back_prop</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>swap_memory</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maximum_iterations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>args</th>
-      <td><p>arguments passed to <code>fun</code></p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>other arguments passed to <code><a href='https://rdrr.io/pkg/tensorflow/man/tensorboard.html'>tensorflow::tensorboard()</a></code></p></td>
+      <td><p>Ignored, used to ensure all arguments supplied are named.</p></td>
     </tr>
     <tr>
-      <th>fun</th>
-      <td><p>TensorFlow function</p></td>
+      <th>shape_invariants</th>
+      <td><p>The shape invariants for the loop variables.</p></td>
+    </tr>
+    <tr>
+      <th>parallel_iterations</th>
+      <td><p>The number of iterations allowed to run in
+parallel. It must be a positive integer.</p></td>
+    </tr>
+    <tr>
+      <th>back_prop</th>
+      <td><p>Whether backprop is enabled for this while loop.</p></td>
+    </tr>
+    <tr>
+      <th>swap_memory</th>
+      <td><p>Whether GPU-CPU memory swap is enabled for this loop.</p></td>
+    </tr>
+    <tr>
+      <th>maximum_iterations</th>
+      <td><p>Optional maximum number of iterations of the while
+loop to run. If provided, the <code>cond</code> output is AND-ed with an additional
+condition ensuring the number of iterations executed is no greater than
+<code>maximum_iterations</code>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>`NULL`` invisibly, called for it's side effect.</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Use <code><a href='ag_name.html'>ag_name()</a></code> to supply <code>name</code> and <code><a href='ag_loop_vars.html'>ag_loop_vars()</a></code> to supply
+<code>loop_vars</code> directly.</p>
+<p>This is only applicable when autograph in graph mode, otherwise this has no
+effect.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#note">Note</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

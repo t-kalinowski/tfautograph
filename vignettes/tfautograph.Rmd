@@ -24,7 +24,7 @@ library(tfautograph)
 library(tfdatasets)
 ```
 
-The R package `tfautograph` helps you write nautral R code with tensorflow. It allows you to write R code as you would naturally, which then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little. 
+The R package `tfautograph` helps you write natural R code with tensorflow. It allows you to write R code as you would naturally, which then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little. 
 
 
 ### Usage
@@ -208,7 +208,7 @@ naive_factorial(y)
 
 
 #### `for`
-Autographed `for` loops build ontop of while loops. Presently, `autograph` adds support for new types of values passed to `for`: tfdatasets, tensors, and (in eager mode only) python iterators 
+Autographed `for` loops build on top of while loops. Presently, `autograph` adds support for new types of values passed to `for`: tfdatasets, tensors, and (in eager mode only) python iterators 
 
 In eager mode, both datasets and tensors are coerced to iterators (via ```iterable$`__iter__`()```, through the ergonomic wrapper `reticulate::as_iterator()`). The arguments are then iterated over until the iterable is finished. Essentially, a call like
 
@@ -278,7 +278,7 @@ ds %>%
 
 Lets tie some concepts together to write fizzbuzz! Before we do that, we'll
 write a helper `knitr_log`, that will help us capture the output from `tf.print`
-in this Rmarkdown vignetter. (If we don't redirect output to a file, then it
+in this Rmarkdown vignette. (If we don't redirect output to a file, then it
 would show up in the rendering console and not in the vignette)
 
 ```{r}
@@ -342,4 +342,173 @@ print_temp_knitr_logfile()
 
 `while` and `for` both can accept `break` and `next` statements, both in eager
 mode and in graph mode.
+
+
+#### Passing additional options
+
+
+#### Providing hints
+
+
+#### Control Dependencies
+
+
+#### View graph
+
+
+#### Growing Objects / TensorArrays
+
+
+
+#### How it works
+
+
+
+
+
+# Demo -- Full MNIST Training Loop
+
+Here is a full MNIST training loop implemented in R using tfautograph. 
+(adapted from [here](https://www.tensorflow.org/beta/guide/autograph))
+
+
+
+```{r setup2, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(magrittr)
+library(purrr, warn.conflicts = FALSE)
+
+library(tensorflow)
+library(tfdatasets)
+library(keras)
+
+library(tfautograph)
+
+rm(list = ls()) # clear the global env
+
+# reticulate::use_virtualenv("tf2-nightly")
+
+# All of tfautograph works in tf 1.14 also, but this readme expects 2.0.
+tf$version$VERSION
+stopifnot(tf_version() >= "2")
+```
+
+
+
+### Download data
+
+
+```{r}
+prepare_mnist_features_and_labels <- function(x, y) {
+  x = tf$cast(x, tf$float32) / 255
+  y = tf$cast(y, tf$int64)
+  list(x, y)
+}
+
+mnist_dataset <- function() {
+  c(c(x, y), .) %<-% tf$keras$datasets$mnist$load_data()
+  tensor_slices_dataset(list(x, y)) %>%
+    dataset_map(prepare_mnist_features_and_labels) %>%
+    dataset_take(20000) %>%
+    dataset_shuffle(20000) %>%
+    dataset_batch(100)
+}
+
+train_dataset <- mnist_dataset()
+```
+
+
+### Define the model
+```{r}
+new_model_and_optimizer <- function() {
+  model <- keras_model_sequential() %>%
+    layer_reshape(target_shape = c(28 * 28),
+                  input_shape = shape(28, 28)) %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(10)
+  model$build()
+  optimizer <- tf$keras$optimizers$Adam()
+  list(model, optimizer)
+}
+c(model, optimizer) %<-% new_model_and_optimizer()
+```
+
+
+### Define the training loop
+```{r, message=TRUE, warning=TRUE}
+compute_loss <- tf$keras$losses$SparseCategoricalCrossentropy(from_logits = TRUE)
+compute_accuracy <- tf$keras$metrics$SparseCategoricalAccuracy()
+
+train_one_step <- function(model, optimizer, x, y) {
+  with(tf$GradientTape() %as% tape, {
+    logits <- model(x)
+    loss <- compute_loss(y, logits)
+  })
+
+  grads <- tape$gradient(loss, model$trainable_variables)
+  optimizer$apply_gradients(
+    transpose(list(grads, model$trainable_variables)))
+
+  compute_accuracy(y, logits)
+  loss
+}
+
+
+train <- autograph(function(model, optimizer) {
+  step <- 0L
+  loss <- 0
+  for (batch in train_dataset) {
+    c(x, y) %<-% batch
+    step %<>% add(1L)
+    loss <- train_one_step(model, optimizer, x, y)
+    if (compute_accuracy$result() > 0.8) {
+      tf$print( 'Step', step, ': loss', loss, '; accuracy', compute_accuracy$result(),
+        output_stream = log_file)
+      # We direct all tf$print() outputs to a log file only so that Rmarkdown can
+      # show output that would otherwise just go to stdout
+      tf$print("Breaking early", output_stream = log_file)
+      break
+    } else if (step %% 10L == 0L)
+      tf$print('Step', step, ': loss', loss,
+               '; accuracy', compute_accuracy$result(), 
+               output_stream = log_file)
+  }
+  list(step, loss)
+})
+```
+
+### train in graph mode
+```{r, message=TRUE, warning=TRUE}
+
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+train_graph <- tf_function(train)
+c(step, loss) %<-% train_graph(model, optimizer)
+
+cat(readLines(log_file), sep = "\n")
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
+```
+
+
+### train in eager mode
+```{r, message=TRUE, warning=TRUE}
+# autograph also works in eager mode
+
+log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
+
+c(model, optimizer) %<-% new_model_and_optimizer()
+c(step, loss) %<-% train(model, optimizer)
+
+cat(readLines(log_file), sep = "\n")
+cat(sprintf(
+  'Final step %i: loss %.6f; accuracy %.6f',
+  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
+```
 

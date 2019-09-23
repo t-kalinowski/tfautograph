@@ -1,16 +1,5 @@
 
 
-#' @export
-ag_if_vars <- function(..., modified = list(...), return = FALSE,
-                       undefs = NULL, control_flow = 0) {
-  next_if_vars$push(list(
-    modified = modified,
-    return = return,
-    undefs = undefs,
-    n_control_flow = as.integer(control_flow)
-  ))
-}
-
 
 #' @importFrom reticulate dict
 ag_if <- function(cond, true, false = NULL) {
@@ -45,6 +34,8 @@ ag_if <- function(cond, true, false = NULL) {
       env)
   }
 
+
+
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
 
@@ -53,7 +44,8 @@ ag_if <- function(cond, true, false = NULL) {
   # then just grabbed
   outcome <- tf$cond(cond,
                      function() fix_outcome(true_fn(), target_outcome, env),
-                     function() fix_outcome(false_fn(), target_outcome, env))
+                     function() fix_outcome(false_fn(), target_outcome, env),
+                     name = next_ag_name$pop())
 
   for(lcf in rev(outcome$loop_control_flow))
     try_register_or_signal_error_with_restart(lcf)
@@ -124,6 +116,12 @@ prune_ops <- function(x) {
 # from_concrete_fn's `structured_outputs`
 build_target_outcome <- function(true, false, env) {
 
+  # TODO: this should not just look for names and structure, but also check
+  # output shapes and dtypes. In particular when fetching from the outer scope.
+  # It should ONLY fetch from the outerscope to balance a branch if the
+  # retreived object has the correct shape, otherwise the unbalanced symbol
+  # should be exported as an undef.
+
   ret <- if(is_same_structure(true$returned, false$returned) &&
             !is_empty(true$returned) && !is_empty(false$returned))
     TRUE else NULL
@@ -138,7 +136,8 @@ build_target_outcome <- function(true, false, env) {
   modified <- union(common, unbalanced_gettable)
   undefs <- setdiff(unbalanced, unbalanced_gettable)
 
-  n_lcf <- max(length(true$loop_control_flow), length(false$loop_control_flow))
+  n_lcf <- max(length(true$loop_control_flow),
+               length(false$loop_control_flow))
   if(n_lcf == 0)
     n_lcf <- NULL
 
@@ -189,8 +188,8 @@ fix_outcome <- function(outcome, target_outcome, env) {
 }
 
 
-as_concrete_function <- function(fn) {
-  tf$`function`(fn, autograph = FALSE)$get_concrete_function()
+as_concrete_function <- function(fn, input_signature = list()) {
+  tf$`function`(fn, input_signature = input_signature, autograph = FALSE)$get_concrete_function()
 }
 
 

@@ -83,6 +83,9 @@ pred_fn_pairs using the ~." />
   </a>
 </li>
 <li>
+  <a href="../articles/tfautograph.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -93,7 +96,7 @@ pred_fn_pairs using the ~." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/autograph-basics.html">Autograph Basics</a>
+      <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
 </li>
@@ -136,8 +139,8 @@ so: <code>pred ~ fn_body</code></p></td>
     </tr>
     <tr>
       <th>default</th>
-      <td><p>a function, optionally specifed with the <code>~</code>, (or something
-coercable to a function via <code><a href='https://rdrr.io/r/base/as.function.html'>as.function()</a></code>)</p></td>
+      <td><p>a function, optionally specified with the <code>~</code>, (or something
+coercible to a function via <code><a href='https://rdrr.io/r/base/as.function.html'>as.function()</a></code>)</p></td>
     </tr>
     <tr>
       <th>exclusive</th>
@@ -172,7 +175,28 @@ as an <code>if()... else if() ... else if() ...</code> chain)</p></td>
 }))
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>16</span>)
-<span class='fu'>fn</span>(<span class='no'>x</span>)</div></pre>
+<span class='fu'>fn</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in py_call_impl(callable, dots$args, dots$keywords): RuntimeError: Evaluation error: value for ‘i’ not found.</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>Detailed traceback: </span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/def_function.py", line 506, in __call__</span>
+#&gt; <span class='error'>    result = self._call(*args, **kwds)</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/def_function.py", line 552, in _call</span>
+#&gt; <span class='error'>    self._initialize(args, kwds, add_initializers_to=initializers)</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/def_function.py", line 457, in _initialize</span>
+#&gt; <span class='error'>    *args, **kwds))</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/function.py", line 2258, in _get_concrete_function_internal_garbage_collected</span>
+#&gt; <span class='error'>    graph_function, _, _ = self._maybe_define_function(args, kwargs)</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/function.py", line 2566, in _maybe_define_function</span>
+#&gt; <span class='error'>    graph_function = self._create_graph_function(args, kwargs)</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/function.py", line 2455, in _create_graph_function</span>
+#&gt; <span class='error'>    capture_by_value=self._capture_by_value),</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/framework/func_graph.py", line 942, in func_graph_from_py_func</span>
+#&gt; <span class='error'>    func_outputs = python_func(*func_args, **func_kwargs)</span>
+#&gt; <span class='error'>  File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/eager/def_function.py", line 400, in wrapped_fn</span>
+#&gt; <span class='error'>    return weak_wrapped_fn().__wrapped__(*args, **kwds)</span>
+#&gt; <span class='error'>  File "&lt;string&gt;", line 4, in fn</span>
+#&gt; <span class='error'>  File "/home/tomasz/.local/lib/R/reticulate/python/rpytools/call.py", line 21, in python_function</span>
+#&gt; <span class='error'>    raise RuntimeError(res[kErrorKey])</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

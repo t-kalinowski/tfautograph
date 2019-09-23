@@ -1,0 +1,22 @@
+---
+title: "Autographing Tensorflow version 1.15"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Autographing Tensorflow version 1.15}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tfautograph)
+```
+
+`stopifnot`, control dependencies, minor benefits of providing hints
+

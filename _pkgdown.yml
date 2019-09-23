@@ -1,1 +1,21 @@
 destination: docs
+articles:
+  - title: "Get Started"
+    contents:
+      - tfautograph
+    toc:
+      depth: 2
+reference:
+  - title: "Autograph"
+    desc: >
+      The main workhorse of the package.
+    contents:
+      - autograph
+  - title: "Hints and Options"
+    desc: "Specify options and provide hints when autographing."
+    contents:
+      - starts_with("ag_")
+  - title: "Thin Convenience Wrappers"
+    desc: "Thin wrappers around direct tensorflow functions with easier ergonomics."
+    contents:
+      - starts_with("tf_")

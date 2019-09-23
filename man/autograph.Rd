@@ -14,10 +14,10 @@ if \code{x} is a function, then the the same function with a new parent
 environment, \code{package:tfautograph:ag_mask}, which is the autograph mask
 that contains implementations of R control flow primitives that are capable
 of handling tensorflow tensors. The parent of the
-\code{package:tfautograph:ag_mask} in turn is the original environemnt of \code{x}.
+\code{package:tfautograph:ag_mask} in turn is the original environment of \code{x}.
 
 if \code{x} is an expression, then that expression is evaluated in a special
-environment with the autogrpah mask \code{ag_mask} active. If the result of that
+environment with the autograph mask \code{ag_mask} active. If the result of that
 expression included local assignment or modifications of variables, (for
 example, via \code{<-}), those modified variables are then exported into the
 current frame. The return value of the expression is then returned.
