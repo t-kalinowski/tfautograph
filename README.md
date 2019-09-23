@@ -13,7 +13,7 @@ This package implements autograph for R. It can be used to translate R
 control flow statements like `if` into tensorflow graphs.
 
 Checkout a work-in-progress draft of the [intro
-vignette](https://t-kalinowski.github.io/tfautograph/articles/autograph-basics.html)
+vignette](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
 
 Implemented so far:
 
