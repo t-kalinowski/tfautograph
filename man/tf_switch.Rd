@@ -13,7 +13,7 @@ tf_switch(branch_index, ..., branch_fns = list(...), default = NULL,
 \item{..., branch_fns}{a list of function bodies specified with a \code{~},
 optionally supplied with a branch index on the left hand side. See examples}
 
-\item{default}{A function defined with a \code{~}, or something coercable via
+\item{default}{A function defined with a \code{~}, or something coercible via
 `as.function()``}
 
 \item{name}{a string, passed on to \code{tf.switch_case()}}

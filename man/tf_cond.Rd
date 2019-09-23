@@ -9,7 +9,7 @@ tf_cond(cond, true_fn, false_fn, name = NULL)
 \arguments{
 \item{cond}{R logical or a tensor.}
 
-\item{true_fn, false_fn}{a \code{~} function, a function, or something coercable to
+\item{true_fn, false_fn}{a \code{~} function, a function, or something coercible to
 a function via \code{as.function}}
 
 \item{name}{a string, passed on to \code{tf.cond()}}

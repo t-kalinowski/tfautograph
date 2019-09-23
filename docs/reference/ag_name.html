@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualizes the generated graph — view_function_graph • tfautograph</title>
+<title>Specify a tensor name — ag_name • tfautograph</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Visualizes the generated graph — view_function_graph" />
-<meta property="og:description" content="Visualizes the generated graph" />
+<meta property="og:title" content="Specify a tensor name — ag_name" />
+<meta property="og:description" content="This can be used before any autographed expression that results in the
+creation of a tensor or op graph node. This can be used before for (both with tensors and datasets), while, and if statements." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,40 +116,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualizes the generated graph</h1>
+    <h1>Specify a tensor name</h1>
     
-    <div class="hidden name"><code>view_function_graph.Rd</code></div>
+    <div class="hidden name"><code>ag_name.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Visualizes the generated graph</p>
+    <p>This can be used before any autographed expression that results in the
+creation of a tensor or op graph node. This can be used before <code>for</code> (both with tensors and datasets), <code>while</code>, and <code>if</code> statements.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>view_function_graph</span>(<span class='no'>fn</span>, <span class='no'>args</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>ag_name</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>args</th>
-      <td><p>arguments passed to <code>fun</code></p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>other arguments passed to <code><a href='https://rdrr.io/pkg/tensorflow/man/tensorboard.html'>tensorflow::tensorboard()</a></code></p></td>
-    </tr>
-    <tr>
-      <th>fun</th>
-      <td><p>TensorFlow function</p></td>
+      <th>x</th>
+      <td><p>A string</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p><code>x</code>, invisibly</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'>## all these examples you're in graph mode. (e.g, tf$executing_eagerly == FALSE)</span>
+
+<span class='fu'>ag_name</span>(<span class='st'>"main-training-loop"</span>)
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>dataset</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'dataset' not found</span></div><div class='input'>
+<span class='fu'>ag_name</span>(<span class='st'>"iter-along-tensor"</span>)
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'my_tensor' not found</span></div><div class='input'>
+<span class='fu'>ag_name</span>(<span class='st'>"iter-along-tensor"</span>)
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'my_tensor' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

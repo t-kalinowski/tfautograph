@@ -4,7 +4,7 @@
 #' `true_fn` and `false_fn` as lambda functions defined using the tilde `~`.
 #'
 #' @param cond R logical or a tensor.
-#' @param true_fn,false_fn a `~` function, a function, or something coercable to
+#' @param true_fn,false_fn a `~` function, a function, or something coercible to
 #'   a function via `as.function`
 #' @param name a string, passed on to `tf.cond()`
 #'
@@ -56,8 +56,8 @@ tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
 #'
 #' @param ...,pred_fn_pairs a list `pred_fn_pairs` supplied with the `~` like
 #'   so: `pred ~ fn_body`
-#' @param default a function, optionally specifed with the `~`, (or something
-#'   coercable to a function via `as.function()`)
+#' @param default a function, optionally specified with the `~`, (or something
+#'   coercible to a function via `as.function()`)
 #' @param exclusive bool, whether to evaluate all `preds` and ensure only one is
 #'   true. If `FALSE` (the default), then the `preds` are evaluated in the order
 #'   supplied until the first `TRUE` value is encountered (effectively, acting
@@ -123,7 +123,7 @@ tf_case <-
 #' @param branch_index an integer tensor
 #' @param ...,branch_fns a list of function bodies specified with a `~`,
 #'   optionally supplied with a branch index on the left hand side. See examples
-#' @param default A function defined with a `~`, or something coercable via
+#' @param default A function defined with a `~`, or something coercible via
 #'   `as.function()``
 #' @param name a string, passed on to `tf.switch_case()`
 #'

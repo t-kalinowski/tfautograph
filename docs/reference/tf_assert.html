@@ -86,6 +86,9 @@ node is created." />
   </a>
 </li>
 <li>
+  <a href="../articles/tfautograph.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -96,7 +99,7 @@ node is created." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/autograph-basics.html">Autograph Basics</a>
+      <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
 </li>
@@ -163,51 +166,58 @@ computed prior to the call</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(-<span class='fl'>1</span>)
-<span class='fu'>tf_assert</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='st'>"oopsies! x must be greater than 0"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in py_call_impl(callable, dots$args, dots$keywords): InvalidArgumentError: Expected 'tf.Tensor(False, shape=(), dtype=bool)' to be true. Summarized data: &lt;Assert condition R expression&gt;: x &gt; 0</span>
-#&gt; <span class='error'>oopsies! x must be greater than 0</span>
-#&gt; <span class='error'>`x` value:</span>
-#&gt; <span class='error'>-1.0</span>
-#&gt; <span class='error'>R call stack:</span>
-#&gt; <span class='error'>&lt;R call 1&gt;: tf_assert(x &gt; 0, "oopsies! x must be greater than 0")</span>
-#&gt; <span class='error'>&lt;R call 2&gt;: eval(expr, envir, enclos)</span>
-#&gt; <span class='error'>&lt;R call 3&gt;: eval(expr, envir, enclos)</span>
-#&gt; <span class='error'>&lt;R call 4&gt;: withVisible(eval(expr, envir, enclos))</span>
-#&gt; <span class='error'>&lt;R call 5&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)</span>
-#&gt; <span class='error'>&lt;R call 6&gt;: doTryCatch(return(expr), name, parentenv, handler)</span>
-#&gt; <span class='error'>&lt;R call 7&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])</span>
-#&gt; <span class='error'>&lt;R call 8&gt;: tryCatchList(expr, classes, parentenv, handlers)</span>
-#&gt; <span class='error'>&lt;R call 9&gt;: tryCatch(expr, error = function(e) {</span>
-#&gt; <span class='error'>&lt;R call 10&gt;: try(f, silent = TRUE)</span>
-#&gt; <span class='error'>&lt;R call 11&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))</span>
-#&gt; <span class='error'>&lt;R call 12&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))</span>
-#&gt; <span class='error'>&lt;R call 13&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)</span>
-#&gt; <span class='error'>&lt;R call 14&gt;: evaluate::evaluate(x, child_env(env), new_device = TRUE)</span>
-#&gt; <span class='error'>&lt;R call 15&gt;: highlight_examples(code, topic, env = env)</span>
-#&gt; <span class='error'>&lt;R call 16&gt;: run_examples(tags$tag_examples[[1]], env = new.env(parent = globalenv()), topic = tools::file_path_sans_ext(topic$file_in), run_examples = examples, run_dont_run = run_dont_run)</span>
-#&gt; <span class='error'>&lt;R call 17&gt;: data_reference_topic(topic, pkg, examples = examples, run_dont_run = run_dont_run)</span>
-#&gt; <span class='error'>&lt;R call 18&gt;: .f(.x[[i]], ...)</span>
-#&gt; <span class='error'>&lt;R call 19&gt;: purrr::map(topics, build_reference_topic, pkg = pkg, lazy = lazy, examples = examples, run_dont_run = run_dont_run)</span>
-#&gt; <span class='error'>&lt;R call 20&gt;: build_reference(pkg, lazy = lazy, examples = examples, run_dont_run = run_dont_run, seed = seed, override = override, preview = FALSE, devel = devel)</span>
-#&gt; <span class='error'>&lt;R call 21&gt;: build_site_local(pkg = pkg, examples = examples, run_dont_run = run_dont_run, seed = seed, lazy = lazy, override = override, preview = preview, devel = devel)</span>
-#&gt; <span class='error'>&lt;R call 22&gt;: pkgdown::build_site(...)</span>
-#&gt; <span class='error'>&lt;R call 23&gt;: (function (..., crayon_enabled, crayon_colors, pkgdown_internet) </span>
-#&gt; <span class='error'>&lt;R call 24&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) </span>
-#&gt; <span class='error'>&lt;R call 25&gt;: do.call(do.call, c(readRDS("/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmptghWVC/filec7ff7796f496"), list(envir = .GlobalEnv)), envir = .GlobalEnv)</span>
-#&gt; <span class='error'>&lt;R call 26&gt;: saveRDS(do.call(do.call, c(readRDS("/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmptghWVC/filec7ff7796f496"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = "/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmptghWVC/filec7ff5793e130")</span>
-#&gt; <span class='error'>&lt;R call 27&gt;: withCallingHandlers({</span>
-#&gt; <span class='error'>&lt;R call 28&gt;: doTryCatch(return(expr), name, parentenv, handler)</span>
-#&gt; <span class='error'>&lt;R call 29&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])</span>
-#&gt; <span class='error'>&lt;R call 30&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])</span>
-#&gt; <span class='error'>&lt;R call 31&gt;: doTryCatch(return(expr), name, parentenv, handler)</span>
-#&gt; <span class='error'>&lt;R call 32&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])</span>
-#&gt; <span class='error'>&lt;R call 33&gt;: tryCatchList(expr, classes, parentenv, handlers)</span>
-#&gt; <span class='error'>&lt;R call 34&gt;: tryCatch(withCallingHandlers({</span>
-#&gt; <span class='error'></span>
-#&gt; <span class='error'>Detailed traceback: </span>
-#&gt; <span class='error'>  File "/usr/local/opt/python@2/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/tensorflow_core/python/util/tf_should_use.py", line 198, in wrapped</span>
-#&gt; <span class='error'>    return _add_should_use_warning(fn(*args, **kwargs))</span>
-#&gt; <span class='error'>  File "/usr/local/opt/python@2/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/tensorflow_core/python/ops/control_flow_ops.py", line 156, in Assert</span>
-#&gt; <span class='error'>    (condition, "\n".join(data_str)))</span></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>tf_assert</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='st'>"oopsies! x must be greater than 0"</span>))</div><div class='output co'>#&gt; Error in py_call_impl(callable, dots$args, dots$keywords) : 
+#&gt;   InvalidArgumentError: Expected 'tf.Tensor(False, shape=(), dtype=bool)' to be true. Summarized data: &lt;Assert condition R expression&gt;: x &gt; 0
+#&gt; oopsies! x must be greater than 0
+#&gt; `x` value:
+#&gt; -1.0
+#&gt; R call stack:
+#&gt; &lt;R call 1&gt;: tf_assert(x &gt; 0, "oopsies! x must be greater than 0")
+#&gt; &lt;R call 2&gt;: doTryCatch(return(expr), name, parentenv, handler)
+#&gt; &lt;R call 3&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; &lt;R call 4&gt;: tryCatchList(expr, classes, parentenv, handlers)
+#&gt; &lt;R call 5&gt;: tryCatch(expr, error = function(e) {
+#&gt; &lt;R call 6&gt;: try(tf_assert(x &gt; 0, "oopsies! x must be greater than 0"))
+#&gt; &lt;R call 7&gt;: eval(expr, envir, enclos)
+#&gt; &lt;R call 8&gt;: eval(expr, envir, enclos)
+#&gt; &lt;R call 9&gt;: withVisible(eval(expr, envir, enclos))
+#&gt; &lt;R call 10&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)
+#&gt; &lt;R call 11&gt;: doTryCatch(return(expr), name, parentenv, handler)
+#&gt; &lt;R call 12&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; &lt;R call 13&gt;: tryCatchList(expr, classes, parentenv, handlers)
+#&gt; &lt;R call 14&gt;: tryCatch(expr, error = function(e) {
+#&gt; &lt;R call 15&gt;: try(f, silent = TRUE)
+#&gt; &lt;R call 16&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))
+#&gt; &lt;R call 17&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))
+#&gt; &lt;R call 18&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)
+#&gt; &lt;R call 19&gt;: evaluate::evaluate(x, child_env(env), new_device = TRUE)
+#&gt; &lt;R call 20&gt;: highlight_examples(code, topic, env = env)
+#&gt; &lt;R call 21&gt;: run_examples(tags$tag_examples[[1]], env = new.env(parent = globalenv()), topic = tools::file_path_sans_ext(topic$file_in), run_examples = examples, run_dont_run = run_dont_run)
+#&gt; &lt;R call 22&gt;: data_reference_topic(topic, pkg, examples = examples, run_dont_run = run_dont_run)
+#&gt; &lt;R call 23&gt;: .f(.x[[i]], ...)
+#&gt; &lt;R call 24&gt;: purrr::map(topics, build_reference_topic, pkg = pkg, lazy = lazy, examples = examples, run_dont_run = run_dont_run)
+#&gt; &lt;R call 25&gt;: build_reference(pkg, lazy = lazy, examples = examples, run_dont_run = run_dont_run, seed = seed, override = override, preview = FALSE, devel = devel)
+#&gt; &lt;R call 26&gt;: build_site_local(pkg = pkg, examples = examples, run_dont_run = run_dont_run, seed = seed, lazy = lazy, override = override, preview = preview, devel = devel)
+#&gt; &lt;R call 27&gt;: pkgdown::build_site(...)
+#&gt; &lt;R call 28&gt;: (function (..., crayon_enabled, crayon_colors, pkgdown_internet) 
+#&gt; &lt;R call 29&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) 
+#&gt; &lt;R call 30&gt;: do.call(do.call, c(readRDS("/tmp/Rtmporewux/file2c0e6d8785da"), list(envir = .GlobalEnv)), envir = .GlobalEnv)
+#&gt; &lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS("/tmp/Rtmporewux/file2c0e6d8785da"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = "/tmp/Rtmporewux/file2c0e2bdd1502")
+#&gt; &lt;R call 32&gt;: withCallingHandlers({
+#&gt; &lt;R call 33&gt;: doTryCatch(return(expr), name, parentenv, handler)
+#&gt; &lt;R call 34&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; &lt;R call 35&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
+#&gt; &lt;R call 36&gt;: doTryCatch(return(expr), name, parentenv, handler)
+#&gt; &lt;R call 37&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])
+#&gt; &lt;R call 38&gt;: tryCatchList(expr, classes, parentenv, handlers)
+#&gt; &lt;R call 39&gt;: tryCatch(withCallingHandlers({
+#&gt; 
+#&gt; Detailed traceback: 
+#&gt;   File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/util/tf_should_use.py", line 198, in wrapped
+#&gt;     return _add_should_use_warning(fn(*args, **kwargs))
+#&gt;   File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/ops/control_flow_ops.py", line 156, in Assert
+#&gt;     (condition, "\n".join(data_str)))
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

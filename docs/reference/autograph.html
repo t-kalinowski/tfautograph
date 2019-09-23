@@ -85,6 +85,9 @@ the package vignettes." />
   </a>
 </li>
 <li>
+  <a href="../articles/tfautograph.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -95,7 +98,7 @@ the package vignettes." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/autograph-basics.html">Autograph Basics</a>
+      <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
 </li>
@@ -144,9 +147,9 @@ the package vignettes.</p>
 environment, <code>package:tfautograph:ag_mask</code>, which is the autograph mask
 that contains implementations of R control flow primitives that are capable
 of handling tensorflow tensors. The parent of the
-<code>package:tfautograph:ag_mask</code> in turn is the original environemnt of <code>x</code>.</p>
+<code>package:tfautograph:ag_mask</code> in turn is the original environment of <code>x</code>.</p>
 <p>if <code>x</code> is an expression, then that expression is evaluated in a special
-environment with the autogrpah mask <code>ag_mask</code> active. If the result of that
+environment with the autograph mask <code>ag_mask</code> active. If the result of that
 expression included local assignment or modifications of variables, (for
 example, via <code>&lt;-</code>), those modified variables are then exported into the
 current frame. The return value of the expression is then returned.</p>

@@ -7,4 +7,5 @@ library(tfautograph)
 
 message("Testing Against Tensorflow Version: ", tf$version$VERSION)
 
+# test_dir("tests/testthat/")
 test_check("tfautograph")

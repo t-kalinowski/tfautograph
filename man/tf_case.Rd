@@ -11,8 +11,8 @@ tf_case(..., pred_fn_pairs = list(...), default = NULL,
 \item{..., pred_fn_pairs}{a list \code{pred_fn_pairs} supplied with the \code{~} like
 so: \code{pred ~ fn_body}}
 
-\item{default}{a function, optionally specifed with the \code{~}, (or something
-coercable to a function via \code{as.function()})}
+\item{default}{a function, optionally specified with the \code{~}, (or something
+coercible to a function via \code{as.function()})}
 
 \item{exclusive}{bool, whether to evaluate all \code{preds} and ensure only one is
 true. If \code{FALSE} (the default), then the \code{preds} are evaluated in the order
