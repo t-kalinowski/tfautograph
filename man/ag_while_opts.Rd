@@ -39,6 +39,7 @@ This is only applicable when autograph in graph mode, otherwise this has no
 effect.
 }
 \examples{
+\dontrun{
 ## use tf_function() to enter graph mode:
 tf_function(autograph(function(n) {
   ag_name("silly-example")
@@ -46,4 +47,5 @@ tf_function(autograph(function(n) {
   while(n > 0)
     n <- n - 1
 })
+}
 }

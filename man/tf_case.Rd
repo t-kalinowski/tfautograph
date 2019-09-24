@@ -29,6 +29,7 @@ This is a minimal wrapper around \code{tf.case()} that allows you to supply the
 \code{pred_fn_pairs} using the \code{~}.
 }
 \examples{
+#' \dontrun{
 fizz_buzz_one <- function(x) {
   tf_case(
     x \%\% 15 == 0 ~ "FizzBuzz",
@@ -45,4 +46,5 @@ fn <- tf_function(autograph(function(n) {
 
 x <- tf$constant(16)
 fn(x)
+}
 }

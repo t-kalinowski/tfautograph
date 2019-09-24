@@ -153,12 +153,7 @@ a function via <code>as.function</code></p></td>
 <code>true_fn()</code> or <code>false_fn()</code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## square if positive</span>
-<span class='co'># using tf$cond directly:</span>
-<span class='no'>raw</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>tf</span>$<span class='fu'>cond</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>function</span>() <span class='no'>x</span> * <span class='no'>x</span>, <span class='kw'>function</span>() <span class='no'>x</span>)
-
-<span class='co'># using tf_cond() wrapper</span>
-<span class='no'>tilde</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>tf_cond</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, ~ <span class='no'>x</span> * <span class='no'>x</span>, ~ <span class='no'>x</span>)</div></pre>
+    <pre class="examples"></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

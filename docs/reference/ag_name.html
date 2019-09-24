@@ -142,14 +142,18 @@ creation of a tensor or op graph node. This can be used before <code>for</code> 
     <p><code>x</code>, invisibly</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## all these examples you're in graph mode. (e.g, tf$executing_eagerly == FALSE)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>## when you're in graph mode. (e.g, tf$executing_eagerly == FALSE)</span>
 
 <span class='fu'>ag_name</span>(<span class='st'>"main-training-loop"</span>)
-<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>dataset</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'dataset' not found</span></div><div class='input'>
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>dataset</span>) <span class='no'>...</span>
+
 <span class='fu'>ag_name</span>(<span class='st'>"iter-along-tensor"</span>)
-<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'my_tensor' not found</span></div><div class='input'>
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span>
+
 <span class='fu'>ag_name</span>(<span class='st'>"iter-along-tensor"</span>)
-<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'my_tensor' not found</span></div></pre>
+<span class='kw'>for</span>(<span class='no'>elem</span> <span class='kw'>in</span> <span class='no'>my_tensor</span>) <span class='no'>...</span>
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -176,7 +176,8 @@ variables that are nested within a more complex structure--passing
     <p>The semantics of this function are inspired by base::rm()</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>0L</span>)
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>0L</span>)
 
 <span class='fu'><a href='autograph.html'>autograph</a></span>({
   <span class='fu'>ag_loop_vars</span>(<span class='no'>x</span>, <span class='no'>i</span>)
@@ -185,7 +186,8 @@ variables that are nested within a more complex structure--passing
       <span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>i</span> + <span class='fl'>1L</span>
     <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> - <span class='fl'>1</span>
   }
-})</div><div class='output co'>#&gt; <span class='warning'>Warning: All symbols supplied to `ag_loop_vars()` are expected to exist</span></div><div class='output co'>#&gt; <span class='error'>Error: object 'x' not found</span></div></pre>
+})
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -59,9 +59,12 @@ named lists (python dictionaries). Unnamed lists or tuples are passed as is
 in the constructed graphs.
 }
 \examples{
+\dontrun{
 # these examples only have an effect in graph mode
+# to enter graph mode easily we'll create a few helpers
 ag <- autograph
 
+# pass which symbols you expect to be modifed or created liks this:
 ag_if_vars(x)
 ag(if (y > 0) {
   x <- y * y
@@ -69,9 +72,11 @@ ag(if (y > 0) {
   x <- y
 })
 
+# if the return value from the if expression is important, pass `return = TRUE`
 ag_if_vars(return = TRUE)
 x <- ag(if(y > 0) y * y else y)
 
+# pass complex nested structures like this
 x <- list(a = 1, b = 2)
 
 ag_if_vars(x$a)
@@ -79,6 +84,7 @@ ag(if(y > 0) {
   x$a <- y
 })
 
+# undefs are for mark branch-local variables
 ag_if_vars(y, x$a, undef = "tmp_local_var")
 ag(if(y > 0) {
   y <- y * 100
@@ -110,4 +116,5 @@ ag({
     count <- count + 1
   }
 })
+}
 }

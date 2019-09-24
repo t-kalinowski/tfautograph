@@ -14,12 +14,14 @@
 #' @export
 #'
 #' @examples
+#' #' \dontrun{
 #' ## square if positive
 #' # using tf$cond directly:
 #' raw <- function(x) tf$cond(x > 0, function() x * x, function() x)
 #'
 #' # using tf_cond() wrapper
 #' tilde <- function(x) tf_cond(x > 0, ~ x * x, ~ x)
+#' }
 tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
   env <- parent.frame()
 
@@ -68,6 +70,7 @@ tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
 #' @export
 #'
 #' @examples
+#' #' \dontrun{
 #' fizz_buzz_one <- function(x) {
 #'   tf_case(
 #'     x %% 15 == 0 ~ "FizzBuzz",
@@ -84,6 +87,7 @@ tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
 #'
 #' x <- tf$constant(16)
 #' fn(x)
+#' }
 tf_case <-
   function(...,
            pred_fn_pairs = list(...),
@@ -131,6 +135,7 @@ tf_case <-
 #' @export
 #'
 #' @examples
+#' #' \dontrun{
 #' tf_pow <- tf_function(function(x, pow) {
 #'    tf_switch(pow,
 #'    0 ~ 1,
@@ -169,6 +174,7 @@ tf_case <-
 #'             2 ~ tf$sqrt(tf$reduce_sum(tf$square(x))),       # L2 norm
 #'             default = ~ tf$reduce_max(tf$abs(x)))         # L-infinity norm
 #' })
+#' }
 tf_switch <- function(branch_index, ...,
                       branch_fns = list(...),
                       default = NULL,

@@ -11,7 +11,8 @@
 #' @export
 #'
 #' @examples
-#' ## all these examples you're in graph mode. (e.g, tf$executing_eagerly == FALSE)
+#' \dontrun{
+#' ## when you're in graph mode. (e.g, tf$executing_eagerly == FALSE)
 #'
 #' ag_name("main-training-loop")
 #' for(elem in dataset) ...
@@ -21,6 +22,7 @@
 #'
 #' ag_name("iter-along-tensor")
 #' for(elem in my_tensor) ...
+#' }
 ag_name <- function(x) next_ag_name$set(x)
 
 
@@ -72,9 +74,12 @@ ag_name <- function(x) next_ag_name$set(x)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # these examples only have an effect in graph mode
+#' # to enter graph mode easily we'll create a few helpers
 #' ag <- autograph
 #'
+#' # pass which symbols you expect to be modifed or created liks this:
 #' ag_if_vars(x)
 #' ag(if (y > 0) {
 #'   x <- y * y
@@ -82,9 +87,11 @@ ag_name <- function(x) next_ag_name$set(x)
 #'   x <- y
 #' })
 #'
+#' # if the return value from the if expression is important, pass `return = TRUE`
 #' ag_if_vars(return = TRUE)
 #' x <- ag(if(y > 0) y * y else y)
 #'
+#' # pass complex nested structures like this
 #' x <- list(a = 1, b = 2)
 #'
 #' ag_if_vars(x$a)
@@ -92,6 +99,7 @@ ag_name <- function(x) next_ag_name$set(x)
 #'   x$a <- y
 #' })
 #'
+#' # undefs are for mark branch-local variables
 #' ag_if_vars(y, x$a, undef = "tmp_local_var")
 #' ag(if(y > 0) {
 #'   y <- y * 100
@@ -123,15 +131,17 @@ ag_name <- function(x) next_ag_name$set(x)
 #'     count <- count + 1
 #'   }
 #' })
+#' }
 ag_if_vars <- function(..., modified = list(), return = FALSE,
                        undefs = NULL, control_flow = 0) {
+
 
   if (...length()) {
     modified <- c(modified,
                   strsplit(deparse(eval(substitute(alist(...)))),
                            "$", fixed = TRUE))
   }
-  next_if_vars$push(list(
+  next_if_vars$set(list(
     modified = as.list(modified),
     return = return,
     undefs = undefs,
@@ -180,6 +190,7 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' i <- tf$constant(0L)
 #'
 #' autograph({
@@ -190,6 +201,7 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
 #'     x <- x - 1
 #'   }
 #' })
+#' }
 ag_loop_vars <-
   function(..., list = character(), exclude = character(), undefs = NULL) {
     vars <- eval(substitute(alist(...)))
@@ -252,6 +264,7 @@ ag_loop_vars <-
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## use tf_function() to enter graph mode:
 #' tf_function(autograph(function(n) {
 #'   ag_name("silly-example")
@@ -259,6 +272,7 @@ ag_loop_vars <-
 #'   while(n > 0)
 #'     n <- n - 1
 #' })
+#' }
 ag_while_opts <- function(...,
                           shape_invariants = NULL,
                           parallel_iterations = 10L,
@@ -286,5 +300,4 @@ next_ag_name         <- Variable()
 next_if_vars         <- Variable()
 next_while_loop_opts <- Variable()
 next_loop_vars       <- Variable()
-
 

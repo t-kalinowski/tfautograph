@@ -17,7 +17,8 @@ This can be used before any autographed expression that results in the
 creation of a tensor or op graph node. This can be used before \code{for} (both with tensors and datasets), \code{while}, and \code{if} statements.
 }
 \examples{
-## all these examples you're in graph mode. (e.g, tf$executing_eagerly == FALSE)
+\dontrun{
+## when you're in graph mode. (e.g, tf$executing_eagerly == FALSE)
 
 ag_name("main-training-loop")
 for(elem in dataset) ...
@@ -27,4 +28,5 @@ for(elem in my_tensor) ...
 
 ag_name("iter-along-tensor")
 for(elem in my_tensor) ...
+}
 }

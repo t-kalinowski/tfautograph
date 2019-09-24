@@ -193,32 +193,50 @@ named lists (python dictionaries). Unnamed lists or tuples are passed as is
 in the constructed graphs.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># these examples only have an effect in graph mode</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># these examples only have an effect in graph mode</span>
+<span class='co'># to enter graph mode easily we'll create a few helpers</span>
 <span class='no'>ag</span> <span class='kw'>&lt;-</span> <span class='no'>autograph</span>
 
-<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='fu'>ag</span>(<span class='kw'>if</span> (<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
+<span class='co'># pass which symbols you expect to be modifed or created liks this:</span>
+<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>)
+<span class='fu'>ag</span>(<span class='kw'>if</span> (<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
   <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>y</span> * <span class='no'>y</span>
 } <span class='kw'>else</span> {
   <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>y</span>
-})</div><div class='output co'>#&gt; <span class='error'>Error in is_tensor(x): object 'y' not found</span></div><div class='input'>
-<span class='fu'>ag_if_vars</span>(<span class='kw'>return</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) <span class='no'>y</span> * <span class='no'>y</span> <span class='kw'>else</span> <span class='no'>y</span>)</div><div class='output co'>#&gt; <span class='error'>Error in is_tensor(x): object 'y' not found</span></div><div class='input'>
+})
+
+<span class='co'># if the return value from the if expression is important, pass `return = TRUE`</span>
+<span class='fu'>ag_if_vars</span>(<span class='kw'>return</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) <span class='no'>y</span> * <span class='no'>y</span> <span class='kw'>else</span> <span class='no'>y</span>)
+
+<span class='co'># pass complex nested structures like this</span>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 
-<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>$<span class='no'>a</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
+<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>$<span class='no'>a</span>)
+<span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
   <span class='no'>x</span>$<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>y</span>
-})</div><div class='output co'>#&gt; <span class='error'>Error in is_tensor(x): object 'y' not found</span></div><div class='input'>
-<span class='fu'>ag_if_vars</span>(<span class='no'>y</span>, <span class='no'>x</span>$<span class='no'>a</span>, <span class='kw'>undef</span> <span class='kw'>=</span> <span class='st'>"tmp_local_var"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
+})
+
+<span class='co'># undefs are for mark branch-local variables</span>
+<span class='fu'>ag_if_vars</span>(<span class='no'>y</span>, <span class='no'>x</span>$<span class='no'>a</span>, <span class='kw'>undef</span> <span class='kw'>=</span> <span class='st'>"tmp_local_var"</span>)
+<span class='fu'>ag</span>(<span class='kw'>if</span>(<span class='no'>y</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>y</span> * <span class='fl'>100</span>
   <span class='no'>tmp_local_var</span> <span class='kw'>&lt;-</span> <span class='no'>y</span> + <span class='fl'>1</span>
   <span class='no'>x</span>$<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>tmp_local_var</span>
-})</div><div class='output co'>#&gt; <span class='error'>Error in is_tensor(x): object 'y' not found</span></div><div class='input'>
+})
+
 <span class='co'># supplying `undef` is not necessary, it exists purely as a way to supply a</span>
 <span class='co'># guardrail for defensive programming and/or to improve code readability</span>
 
 <span class='co'>## modified vars can be supplied in `...` or as a named arg.</span>
 <span class='co'>## these paires of ag_if_vars() calls are equivalent</span>
-<span class='fu'>ag_if_vars</span>(<span class='no'>y</span>, <span class='no'>x</span>$<span class='no'>a</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='fu'>ag_if_vars</span>(<span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"y"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"a"</span>)))</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'>
-<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>z</span>)</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'><span class='fu'>ag_if_vars</span>(<span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>, <span class='st'>"z"</span>))</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div><div class='input'>
+<span class='fu'>ag_if_vars</span>(<span class='no'>y</span>, <span class='no'>x</span>$<span class='no'>a</span>)
+<span class='fu'>ag_if_vars</span>(<span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"y"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"a"</span>)))
+
+<span class='fu'>ag_if_vars</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>z</span>)
+<span class='fu'>ag_if_vars</span>(<span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>, <span class='st'>"z"</span>))
+
 
 <span class='co'>## control flow</span>
 <span class='co'># count number of odds between 0:10</span>
@@ -231,7 +249,8 @@ in the constructed graphs.</p>
       <span class='kw'>next</span>
     <span class='no'>count</span> <span class='kw'>&lt;-</span> <span class='no'>count</span> + <span class='fl'>1</span>
   }
-})</div><div class='output co'>#&gt; <span class='error'>Error in next_if_vars$push(list(modified = as.list(modified), return = return,     undefs = undefs, n_control_flow = as.integer(control_flow))): attempt to apply non-function</span></div></pre>
+})
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
