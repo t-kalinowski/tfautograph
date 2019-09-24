@@ -1,6 +1,7 @@
 if(testthat::is_testing()){
   source("utils.R")
 } else {
+  reticulate::use_virtualenv("tf2-rc", TRUE)
   source("tests/testthat/utils.R")
   devtools::load_all()
 }
@@ -14,9 +15,12 @@ test_that("for single output", {
     s
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(list(1L, 3L)), 4L)
   expect_result(ag_fn, as_tensor(   c(1L, 3L)), 4L)
+  expect_result(tf_ag_fn, as_tensor(list(1L, 3L)), 4L)
+  expect_result(tf_ag_fn, as_tensor(   c(1L, 3L)), 4L)
 })
 
 
@@ -31,9 +35,12 @@ test_that("for simple", {
     list(s1, s2)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(list(1L, 3L)), list(4, 10))
   expect_result(ag_fn, as_tensor(list(), dtype = 'int32'), list(0, 0))
+  expect_result(tf_ag_fn, as_tensor(list(1L, 3L)), list(4, 10))
+  expect_result(tf_ag_fn, as_tensor(list(), dtype = 'int32'), list(0, 0))
 })
 
 
@@ -54,8 +61,14 @@ test_that("for iterated expression", {
     s
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
+  eval_count <- 0L
   expect_equal(ag_fn(5L), 10L)
+  expect_equal(eval_count, 1)
+
+  eval_count <- 0L
+  expect_equal(grab(tf_ag_fn(5L)), 10L)
   expect_equal(eval_count, 1)
 })
 
@@ -97,8 +110,11 @@ test_that("for with tf Dataset", {
     h
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, ds, 15)
+  expect_result(tf_ag_fn, ds, 15)
+  expect_result(tf_ag_fn, ds, 15)
 
 
   fn <- function(ds) {
@@ -111,8 +127,10 @@ test_that("for with tf Dataset", {
     list(s1, s2)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, ds, list(15, 55))
+  expect_result(tf_ag_fn, ds, list(15, 55))
 
   `%<-%` <- zeallot::`%<-%`
   fn <- function(ds) {
@@ -126,11 +144,13 @@ test_that("for with tf Dataset", {
     list(h1, h2, h3)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
 
   ds <- tf$data$Dataset$from_tensor_slices(tuple(
     tf_arr(6, 5, 5), tf_arr(6, 8), tf_arr(6)))
 
   expect_result(ag_fn, ds, list(21, 21, 21))
+  expect_result(tf_ag_fn, ds, list(21, 21, 21))
 
 })

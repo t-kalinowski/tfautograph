@@ -18,9 +18,11 @@ test_that("while basic", {
     list(s, i, n)
   }
   ag_fn <- autograph(fn)
-  grab(ag_fn(as_tensor(5L)))
+  tf_ag_fn <- tf_function(ag_fn)
+  # grab(ag_fn(as_tensor(5L)))
 
   expect_result(ag_fn, as_tensor(5L), list(10L, 5L, 5L))
+  expect_result(tf_ag_fn, as_tensor(5L), list(10L, 5L, 5L))
 })
 
 
@@ -42,10 +44,12 @@ test_that("while nested", {
 
   # devtools::load_all()
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
   # res <- ag_fn(as_tensor(5L))
   # grab(res)
 
   expect_result(ag_fn, as_tensor(5L), list(25L, 5L, 0L, 5L))
+  expect_result(tf_ag_fn, as_tensor(5L), list(25L, 5L, 0L, 5L))
 
 })
 
@@ -59,10 +63,14 @@ test_that("while single output", {
 
   # devtools::load_all()
   ag_fn <- autograph(fn)
-  res <- ag_fn(as_tensor(5L))
-  grab(res)
+  tf_ag_fn <- tf_function(ag_fn)
+
+  # res <- ag_fn(as_tensor(5L))
+  # grab(res)
 
   expect_result(ag_fn, as_tensor(5L), 0L)
+  expect_result(tf_ag_fn, as_tensor(5L), 0L)
+  expect_result(tf_ag_fn, as_tensor(5L), 0L)
 
 })
 
@@ -80,8 +88,10 @@ test_that("while local composite", {
     n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(5L), 0L)
+  expect_result(tf_ag_fn, as_tensor(5L), 0L)
 })
 
 
@@ -96,8 +106,10 @@ test_that("while local composite complex nestable", {
     tc$x[[1]]
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(5L), 4L)
+  expect_result(tf_ag_fn, as_tensor(5L), 4L)
 })
 
 
@@ -113,11 +125,12 @@ test_that("while local composite complex illegal", {
     tc$x[[1]]
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   if(tf$executing_eagerly()) {
     # no undefineds produced in eager mode
     expect_equal(grab(ag_fn(as_tensor(5L))), 4L)
-    ag_fn <- tf_function(ag_fn, autograph = FALSE)
+    ag_fn <- tf_function(ag_fn)
   }
 
   # TODO: while should return a better error message
@@ -144,10 +157,13 @@ test_that("while test while dispatches by cond only", {
     s
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
-  expect_equal(ag_fn(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
+  expect_equal(ag_fn(5L, TensorIncompatibleNumeric(0L)$val), 10L)
+  expect_equal(grab(tf_ag_fn(5L, TensorIncompatibleNumeric(0L)$val)), 10L)
   # expect_result(ag_fn, list(5L,  TensorIncompatibleNumeric(0L)$val), 10L)
   expect_error(ag_fn(as_tensor(5L), TensorIncompatibleNumeric(0L)), "TypeError|ValueError")
+  expect_error(tf_ag_fn(as_tensor(5L), TensorIncompatibleNumeric(0L)), "TypeError|ValueError")
 })
 
 

@@ -4,7 +4,11 @@ Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 
 tf <- tensorflow::tf
-tf_function <- tensorflow::tf_function
+
+tf_function <- function(fn, ...)
+  tf$`function`(reticulate::py_func(fn), ..., autograph = FALSE)
+# tf_function <- tensorflow::tf_function
+# formals(tf_function)$autograph <- FALSE
 tuple <- reticulate::tuple
 
 as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
@@ -45,9 +49,15 @@ expect_ag_equivalent <- function(fn, input) {
   if (!is.list(input))
     input <- list(input)
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
+
   ag_input <- lapply(input, as_tensor)
-  expect_equal(grab(do.call(ag_fn, ag_input)),
-               do.call(fn, input))
+
+  res       <-      do.call(fn, input)
+  ag_res    <- grab(do.call(ag_fn, ag_input))
+  tf_ag_res <- grab(do.call(tf_ag_fn, ag_input))
+  expect_equal(ag_res, res)
+  expect_equal(tf_ag_res, res)
 }
 
 
