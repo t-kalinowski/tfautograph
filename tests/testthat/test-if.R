@@ -1,9 +1,11 @@
 if(testthat::is_testing()){
   source("utils.R")
 } else {
+  reticulate::use_virtualenv("tf2-rc", TRUE)
   source("tests/testthat/utils.R")
   devtools::load_all()
 }
+
 
 
 # these tests are all modeled after:
@@ -20,9 +22,12 @@ test_that("if non-tensor dispatches normally", {
     list(a, b)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_equal(ag_fn(1L), list(-1, 0))
   expect_equal(ag_fn(-1L), list(0, -2))
+  # expect_equal(tf_ag_fn(1L), list(-1, 0))
+  # expect_equal(tf_ag_fn(-1L), list(0, -2))
 })
 
 
@@ -38,12 +43,17 @@ test_that("if basic", {
     list(a, b)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
+
   n <- as_tensor(1L)
-  res <- ag_fn(n)
-  grab(res)
+  # res <- ag_fn(n)
+  # grab(res)
+
 
   expect_result(ag_fn, as_tensor(1L), list(-1, 0))
   expect_result(ag_fn, as_tensor(-1L), list(0, -2))
+  expect_result(tf_ag_fn, as_tensor(1L), list(-1, 0))
+  expect_result(tf_ag_fn, as_tensor(-1L), list(0, -2))
 })
 
 
@@ -59,13 +69,21 @@ test_that("if complex outputs", {
     obj
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
+
 
   foo <- function(a, b) list(a = a, b = b)
 
   res_obj <- ag_fn(as_tensor(1L), foo(0L, 0L))
   expect_equal(grab(res_obj), foo(-1L, 0L))
 
+  res_obj <- tf_ag_fn(as_tensor(1L), foo(0L, 0L))
+  expect_equal(grab(res_obj), foo(-1L, 0L))
+
   res_obj <- ag_fn(as_tensor(-1L),  foo(0L, 0L))
+  expect_equal(grab(res_obj),  foo(0L,-2L))
+
+  res_obj <- tf_ag_fn(as_tensor(-1L),  foo(0L, 0L))
   expect_equal(grab(res_obj),  foo(0L,-2L))
 })
 
@@ -79,8 +97,10 @@ test_that("if single output", {
     n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(1L), -1L)
+  expect_result(tf_ag_fn, as_tensor(1L), -1L)
 })
 
 
@@ -121,9 +141,12 @@ test_that("if single semi", {
     n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(2L), 3L)
   expect_result(ag_fn, as_tensor(-3L), -3L)
+  expect_result(tf_ag_fn, as_tensor(2L), 3L)
+  expect_result(tf_ag_fn, as_tensor(-3L), -3L)
 })
 
 
@@ -137,9 +160,12 @@ test_that("if local var", {
     n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(1L), 5L)
   expect_result(ag_fn, as_tensor(-1L), -1L)
+  expect_result(tf_ag_fn, as_tensor(1L), 5L)
+  expect_result(tf_ag_fn, as_tensor(-1L), -1L)
 
 
   fn <- function(n) {
@@ -150,11 +176,13 @@ test_that("if local var", {
     b
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
+
   # expect_error(ag_fn(as_tensor(1L)), "b")
   if(tf$executing_eagerly()) {
     # no undefineds produced in eager mode
     expect_equal(ag_fn(as_tensor(1L)), 4L)
-    ag_fn <- tf_function(ag_fn, autograph = FALSE)
+    ag_fn <- tf_function(ag_fn)
   }
   expect_error(ag_fn(as_tensor(1L)), "Symbol `b` is \\*undefined\\*",
   class = if(!tf$executing_eagerly()) "access_undefined")
@@ -186,9 +214,12 @@ test_that("if no outputs", {
     n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(1L), 1L)
   expect_result(ag_fn, as_tensor(-1L), -1L)
+  expect_result(tf_ag_fn, as_tensor(1L), 1L)
+  expect_result(tf_ag_fn, as_tensor(-1L), -1L)
 })
 
 
@@ -204,11 +235,14 @@ test_that("if unbalanced multiple composites", {
     list(x$b, x$c, z)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   foo <- function() list(b=2L, c=3L)
 
   expect_result(ag_fn, list(foo(), as_tensor(TRUE)), list(7L, 11L, 13L))
   expect_result(ag_fn, list(foo(), as_tensor(FALSE)), list(2L, 3L, 5L))
+  expect_result(tf_ag_fn, list(foo(), as_tensor(TRUE)), list(7L, 11L, 13L))
+  expect_result(tf_ag_fn, list(foo(), as_tensor(FALSE)), list(2L, 3L, 5L))
 })
 
 
@@ -223,9 +257,12 @@ test_that("if unbalanced composite", {
     list(x$b, z)
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, list(list(b=2L), as_tensor(TRUE)), list(7L, 13L))
   expect_result(ag_fn, list(list(b=2L), as_tensor(FALSE)), list(2L, 5L))
+  expect_result(tf_ag_fn, list(list(b=2L), as_tensor(TRUE)), list(7L, 13L))
+  expect_result(tf_ag_fn, list(list(b=2L), as_tensor(FALSE)), list(2L, 5L))
 })
 
 test_that("if as last expression", {
@@ -236,9 +273,12 @@ test_that("if as last expression", {
       2L * n
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(1L), -1)
   expect_result(ag_fn, as_tensor(-1L), -2L)
+  expect_result(tf_ag_fn, as_tensor(1L), -1)
+  expect_result(tf_ag_fn, as_tensor(-1L), -2L)
 })
 
 test_that("nested if statement", {
@@ -256,10 +296,14 @@ test_that("nested if statement", {
     a
   }
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   expect_result(ag_fn, as_tensor(1L), 0)
   expect_result(ag_fn, as_tensor(2L), -2)
   expect_result(ag_fn, as_tensor(-1L), -2L)
+  expect_result(tf_ag_fn, as_tensor(1L), 0)
+  expect_result(tf_ag_fn, as_tensor(2L), -2)
+  expect_result(tf_ag_fn, as_tensor(-1L), -2L)
 })
 
 test_that("can call from another functions", {
@@ -275,13 +319,22 @@ test_that("can call from another functions", {
   }
 
   ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
 
   g <- function(n) {
     ag_fn(n)
   }
 
+  g_tf <- function(n) tf_ag_fn(n)
+
+  tf_g <- tf_function(g)
+
   expect_result(g, as_tensor(1L), list(-1, 0))
   expect_result(g, as_tensor(-1L), list(0, -2))
+  expect_result(tf_g, as_tensor(1L), list(-1, 0))
+  expect_result(tf_g, as_tensor(-1L), list(0, -2))
+  expect_result(g_tf, as_tensor(1L), list(-1, 0))
+  expect_result(g_tf, as_tensor(-1L), list(0, -2))
 })
 
 
