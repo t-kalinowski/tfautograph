@@ -25,6 +25,7 @@ The result from \code{tf.switch_case()}
 tf.switch_case
 }
 \examples{
+#' \dontrun{
 tf_pow <- tf_function(function(x, pow) {
    tf_switch(pow,
    0 ~ 1,
@@ -63,4 +64,5 @@ tf_norm <- tf_function(function(x, l) {
             2 ~ tf$sqrt(tf$reduce_sum(tf$square(x))),       # L2 norm
             default = ~ tf$reduce_max(tf$abs(x)))         # L-infinity norm
 })
+}
 }

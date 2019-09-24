@@ -48,6 +48,7 @@ variables that are nested within a more complex structure--passing
 The semantics of this function are inspired by base::rm()
 }
 \examples{
+\dontrun{
 i <- tf$constant(0L)
 
 autograph({
@@ -58,4 +59,5 @@ autograph({
     x <- x - 1
   }
 })
+}
 }
