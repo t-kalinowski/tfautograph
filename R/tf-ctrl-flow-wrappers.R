@@ -22,22 +22,22 @@
 #' # using tf_cond() wrapper
 #' tilde <- function(x) tf_cond(x > 0, ~ x * x, ~ x)
 #' }
-tf_cond <- function(cond, true_fn, false_fn, name = NULL) {
+tf_cond <- function(pred, true_fn, false_fn, name = NULL) {
   env <- parent.frame()
 
-  if(is_eager_tensor(cond))
-    cond <- cond$`__bool__`()
+  if(is_eager_tensor(pred))
+    pred <- pred$`__bool__`()
 
   true_fn <- as.function(true_fn)
   false_fn <- as.function(false_fn)
 
-  if(isTRUE(cond))
+  if(isTRUE(pred))
     return(true_fn())
-  if(isFALSE(cond))
+  if(isFALSE(pred))
     return(false_fn())
 
   args <- list(
-    cond = cond,
+    pred = pred,
     true_fn = true_fn,
     false_fn = false_fn
   )
