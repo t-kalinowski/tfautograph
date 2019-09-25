@@ -4,15 +4,15 @@
 \alias{tf_cond}
 \title{tf.cond}
 \usage{
-tf_cond(cond, true_fn, false_fn, name = NULL)
+tf_cond(pred, true_fn, false_fn, name = NULL)
 }
 \arguments{
-\item{cond}{R logical or a tensor.}
-
 \item{true_fn, false_fn}{a \code{~} function, a function, or something coercible to
 a function via \code{as.function}}
 
 \item{name}{a string, passed on to \code{tf.cond()}}
+
+\item{cond}{R logical or a tensor.}
 }
 \value{
 if cond is a tensor, then the result of \code{tf.cond()}. Otherwise, if
