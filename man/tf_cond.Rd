@@ -23,6 +23,10 @@ if cond is a tensor, then the result of \code{tf.cond()}. Otherwise, if
 This is a minimal wrapper around \code{tf$cond()} that allows you to supply
 \code{true_fn} and \code{false_fn} as lambda functions defined using the tilde \code{~}.
 }
+\note{
+in Tensorflow version 1, the \code{strict} keyword argument is supplied with
+a value of \code{TRUE} (different from the default)
+}
 \examples{
 #' \dontrun{
 ## square if positive
