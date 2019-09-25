@@ -11,6 +11,10 @@
 #' @return if cond is a tensor, then the result of `tf.cond()`. Otherwise, if
 #'   `cond` is an `EagerTensor` or an R logical, then the result of either
 #'   `true_fn()` or `false_fn()`
+#'
+#' @note in Tensorflow version 1, the `strict` keyword argument is supplied with
+#'   a value of `TRUE` (different from the default)
+#'
 #' @export
 #'
 #' @examples
@@ -28,18 +32,18 @@ tf_cond <- function(pred, true_fn, false_fn, name = NULL) {
   if(is_eager_tensor(pred))
     pred <- pred$`__bool__`()
 
-  true_fn <- as.function(true_fn)
-  false_fn <- as.function(false_fn)
-
-  if(isTRUE(pred))
-    return(true_fn())
-  if(isFALSE(pred))
-    return(false_fn())
+  # early return in eager mode or pred not a tensor
+  if (is.logical(pred) && length(pred) == 1L && !is.na(pred)) {
+    return(if (pred)
+      as.function(true_fn)()
+      else
+        as.function(false_fn)())
+  }
 
   args <- list(
     pred = pred,
-    true_fn = true_fn,
-    false_fn = false_fn
+    true_fn = as.function(true_fn),
+    false_fn = as.function(false_fn)
   )
 
   args$name <- name
