@@ -45,6 +45,13 @@ export_modified <- function(modified, env) {
   if (is_empty(modified))
     return()
 
+  # TODO, this FAILS if nm is an empty unnamed list in env
+  # e.g, this fails
+  # x <- list()
+  # autograph(for(i in 1:10) x[[i]] <- i)
+
+  # at the end of this x is still an empty list() because `modifyList()` only
+  # knows how to handle named lists.
   for (nm in names(modified)) {
     if (is.list(modified[[nm]]) && exists(nm, envir = env))
       modified[[nm]] <- modifyList(get(nm, env), modified[[nm]])

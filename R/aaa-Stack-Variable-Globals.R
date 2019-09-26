@@ -38,7 +38,11 @@ Variable <- function() {
   VAL <- NULL
   structure(list2env(list(
     set = function(x) VAL <<- x,
-    pop = function() {on.exit(VAL <<- NULL); VAL},
+    pop = function() {
+      if (is.null(VAL)) return()
+      on.exit(VAL <<- NULL)
+      VAL
+    },
     peek = function() VAL
   ),
   parent = emptyenv()), class = "Variable")
@@ -46,7 +50,7 @@ Variable <- function() {
 
 
 
-set  <- function(x, val) x$set(val)
-push <- function(x, val) x$push(val)
-pop  <- function(x) x$pop()
-peek <- function(x) x$peek()
+# set  <- function(x, val) x$set(val)
+# push <- function(x, val) x$push(val)
+# pop  <- function(x) x$pop()
+# peek <- function(x) x$peek()

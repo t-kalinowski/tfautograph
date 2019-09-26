@@ -4,9 +4,13 @@
 ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
 
-    if(tf$executing_eagerly())
+    if(tf$executing_eagerly()) {
+      next_ag_name$pop()
+      next_loop_vars$pop()
+      # TODO: aren't there other options to pass to dataset$reduce() ?
       return(ag_for_impl.python.builtin.iterator(
         as_iterator(iterable), var, body, env))
+    }
 
     body_vars <-
       next_loop_vars$pop() %||%

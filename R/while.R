@@ -13,6 +13,9 @@ ag_while <- function(cond, body) {
 
   cond_tensor_types <- sym_tensor_types(cond, env)
   if(cond_tensor_types == "eager") {
+    next_ag_name$pop()
+    next_loop_vars$pop()
+    next_while_loop_opts$pop()
     cond <- substitute(as.logical(cond), list(cond = cond))
     # cond <- substitute((cond)$`__bool__`, list(cond = cond)) ??
     cond_tensor_types <- "none"
@@ -25,7 +28,7 @@ ag_while <- function(cond, body) {
 
   # TODO: consider tracing with as_concrete_fn() here for better inference of
   # loop_vars here. Downside is slight bloat of overall graph in tf v1, but in
-  # tf v2 the traced graph will be able to be garbage collected. Worth tradeoff?
+  # tf v2 the traced graph will be able to be garbage collected. right?
   loop_vars <-
     next_loop_vars$pop() %||%
     statically_infer_modified_syms(body, env = env)
