@@ -7,8 +7,11 @@ ag_if <- function(cond, true, false = NULL) {
   false <- substitute(false)
   env <- parent.frame()
 
-  if(is_eager_tensor(cond))
+  if(is_eager_tensor(cond)) {
+    next_ag_name$pop()
+    next_if_vars$pop()
     cond <- cond$`__bool__`()
+  }
 
   if (!is_tensor(cond))
     return(eval(as.call(list(quote(.Primitive("if")),

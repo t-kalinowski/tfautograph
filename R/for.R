@@ -55,9 +55,13 @@ ag_for_impl.python.builtin.iterator <-
 
 ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
-  if(tf$executing_eagerly() && is_eager(iterable))
+  if(tf$executing_eagerly() && is_eager(iterable)) {
+    next_loop_vars$pop()
+    next_ag_name$pop()
+    next_while_loop_opts$pop()
     return(ag_for_impl.python.builtin.iterator(
       as_iterator(iterable), var, body, env))
+  }
 
   # track python tensorflow TODO, reimplement here if implementation there changes:
   ## TODO(b/117628877): Revisit performance once XLA has the necessary support.
