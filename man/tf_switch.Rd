@@ -25,7 +25,7 @@ The result from \code{tf.switch_case()}
 tf.switch_case
 }
 \examples{
-#' \dontrun{
+\dontrun{
 tf_pow <- tf_function(function(x, pow) {
    tf_switch(pow,
    0 ~ 1,

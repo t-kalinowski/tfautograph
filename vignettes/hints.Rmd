@@ -12,9 +12,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
-```{r setup}
 reticulate::use_virtualenv("tf2")
+```
+
+```{r setup}
 library(tensorflow)
 library(keras)
 

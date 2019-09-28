@@ -44,14 +44,15 @@ pretty_call_stack <- function(n=1) {
   calls <- rev(sys.calls())[-seq_len(n)]
   calls <- vapply(calls, deparse, "", nlines = 1L, width.cutoff = 500L)
   calls <- sprintf("<R call %i>: %s", seq_along(calls), calls)
-  calls <- c("R call stack:", calls)
+  calls <- c("<R call stack>:", calls)
   as.list(calls)
 }
 
 pretty_tf_assert_data <- function(expr, vars, call_stack = NULL, ...) {
-  expr <- list(deparse(expr, width.cutoff = 500))
-  expr <- sprintf("<Assert condition R expression>: %s",
-                  paste0(expr, collapse = "\n"))
+  expr <- deparse(expr, width.cutoff = 500)
+  if(length(expr) > 1)
+    expr <- paste0(expr[1], "...TRUNCATED")
+  expr <- sprintf("<Assert condition R expression>: `%s`", expr)
   data <- rbind(as.list(sprintf("`%s` value:", names(vars))),
                 unname(vars),
                 deparse.level = 0)

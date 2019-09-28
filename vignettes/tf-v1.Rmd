@@ -12,15 +12,77 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(knitr)
+.hook_error <- knit_hooks$get('error')
+knit_hooks$set(error = function(x, options) {
+  x <- strsplit(x, "[<", fixed = TRUE)
+  x <- lapply(x, function(.) paste0("# [<", .))
+  x <- unlist(x, FALSE, FALSE)
+  .hook_error(x, options)
+})
+
 ```
 
 ```{r setup}
+reticulate::use_virtualenv("tf1", TRUE)
+library(tensorflow)
 library(tfautograph)
+
+tf$version$VERSION
+tf <- tf$compat$v1
 ```
 
-# control dependencies, `stopifnot()`
+`autograph()` has complete compatibility with both Tensorflow version 2.0.0+ and 1.15.0+. For the most part, there are no difference between how `autograph()` work in both version, either in eager mode or graph mode. 
+
+One thing to be aware of however is how control dependencies are registered. In Tensorflow version 2, all ops created inside a traced `tf.function()` are executed sequentially. That means that simply inlining a call to `tf$print()` or `tf$Assert()` is sufficient to ensure that the op is executed, and is executed in the intended order in a sequence of operations.
+
+However, when tensorflow is not executing eagerly and outside a `tf.function()` context (that is, the default behavior of Tensorflow version 1, but also possible in version 2 after a call to `tf.compat.v1.disable_eager_execution()`), then created ops are only typically only evaluated if they are manually registered as control dependencies of other tensors.
+
+For example, this block of code never throws an error:
+```{r}
+sess <- tf$Session()
+x <- tf$constant(-1)
+
+stop_if_negative <- function(x) {
+  tf_assert(x > 0, "x is positive")
+  x
+}
+sess$run(stop_if_negative(x))
+```
+
+There are two straight forward solutions to this. One is to wrap the block of code in an `tf.function()`
+```{r, error = TRUE}
+stop_if_negative2 <- tf_function(stop_if_negative)
+sess$run(stop_if_negative2(x))
+```
 
 
-# hints 
-minor benefits of providing hints
+The other is to capture the assert operation as a control dependency of the evaluated tensor.
+```{r, error = TRUE}
+stop_if_negative3 <- function(x) {
+  assert_op <- tf_assert(x > 0, "x is positive")
+  with(tf$control_dependencies(list(assert_op)), {
+    y <- tf$identity(x)
+  })
+  y
+}
 
+sess$run(stop_if_negative3(x))
+```
+
+Because the latter approach in `stop_if_negative3` is so common and so cumbersome, `autograph` takes care of it for you when autographing `stopifnot()` calls.
+
+```{r, error = TRUE}
+stop_if_negative4 <- function(x) {
+  autograph(stopifnot(x > 0))
+  x
+}
+sess$run(stop_if_negative4(x))
+```
+Note that the error was thrown even though we are not using `tf.function()`. How does `autograph(stopifnot(...))` guarantee that the created `tf$Assert()` Op is evaluated? With a multi-pronged, belt-and-suspenders approach:
+
++  it calls `tf$identity()` on every symbol involved in the assert expression and then replaces those symbols in the current scope.
++  it leaves a `tf$control_dependency()` context open for the rest of the current execution scope.
++  it registers a frame exit hook with `on.exit()` that calls `tf$identity()` on the return value and then closes the control dependency context.
+
+`autograph(stopifnot(...))` only does these additional things outside of a `tf$function()` and when not executing eagerly. In side a `tf.function()` or when executing eagerly, `stopifnot()` merely calls `tf$Assert()`, and doesn't attempt to manually open and capture the ops as control dependencies.

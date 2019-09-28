@@ -7,16 +7,16 @@
 tf_cond(pred, true_fn, false_fn, name = NULL)
 }
 \arguments{
+\item{pred}{R logical or a tensor.}
+
 \item{true_fn, false_fn}{a \code{~} function, a function, or something coercible to
 a function via \code{as.function}}
 
 \item{name}{a string, passed on to \code{tf.cond()}}
-
-\item{cond}{R logical or a tensor.}
 }
 \value{
 if cond is a tensor, then the result of \code{tf.cond()}. Otherwise, if
-\code{cond} is an \code{EagerTensor} or an R logical, then the result of either
+\code{pred} is an \code{EagerTensor} or an R logical, then the result of either
 \code{true_fn()} or \code{false_fn()}
 }
 \description{
@@ -28,7 +28,7 @@ in Tensorflow version 1, the \code{strict} keyword argument is supplied with
 a value of \code{TRUE} (different from the default)
 }
 \examples{
-#' \dontrun{
+\dontrun{
 ## square if positive
 # using tf$cond directly:
 raw <- function(x) tf$cond(x > 0, function() x * x, function() x)
