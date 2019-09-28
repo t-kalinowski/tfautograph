@@ -4,14 +4,25 @@
 \alias{view_function_graph}
 \title{Visualizes the generated graph}
 \usage{
-view_function_graph(fn, args, ...)
+view_function_graph(fn, args, ..., name = deparse(substitute(fn)),
+  profiler = FALSE, concrete_fn = do.call(fn$get_concrete_fn, args),
+  graph = concrete_fn$graph)
 }
 \arguments{
+\item{fn}{TensorFlow function (returned from \code{tf.function()})}
+
 \item{args}{arguments passed to \code{fun}}
 
 \item{...}{other arguments passed to \code{\link[tensorflow:tensorboard]{tensorflow::tensorboard()}}}
 
-\item{fun}{TensorFlow function}
+\item{profiler}{logical, passed on to \code{tf.compat.v2.summary.trace_on()} (only
+used in eager mode)}
+
+\item{concrete_fn}{a \code{ConcreteFunction} (only used in graph mode, ignored
+with a warning if executing eagerly)}
+
+\item{graph}{a tensorflow graph (only used in graph mode, ignored with a
+warning if executing eagerly)}
 }
 \description{
 Visualizes the generated graph

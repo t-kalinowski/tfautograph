@@ -1,38 +1,47 @@
 #' Visualizes the generated graph
 #'
-#' @param fun TensorFlow function
+#' @param fn TensorFlow function (returned from `tf.function()`)
 #' @param args arguments passed to `fun`
 #' @param ... other arguments passed to [tensorflow::tensorboard()]
+#' @param profiler logical, passed on to `tf.compat.v2.summary.trace_on()` (only
+#'   used in eager mode)
+#' @param concrete_fn a `ConcreteFunction` (only used in graph mode, ignored
+#'   with a warning if executing eagerly)
+#' @param graph a tensorflow graph (only used in graph mode, ignored with a
+#'   warning if executing eagerly)
 #'
 #' @keywords internal
-#'
-view_function_graph <- function(fn, args, ...) {
+view_function_graph <- function(fn, args, ...,
+                                name = deparse(substitute(fn)),
+                                profiler=FALSE,
+                                concrete_fn = do.call(fn$get_concrete_fn, args),
+                                graph = concrete_fn$graph
+                                ) {
 
-  if (!tf$executing_eagerly())
-    stop("Eager execution is required.")
 
   logdir <- tempfile(pattern = "tflogdir")
-  writer <- tf$summary$create_file_writer(logdir)
+  if (tf$executing_eagerly()) {
+    stopifnot(inherits(fn, "tensorflow.python.eager.def_function.Function"))
+    if(!missing(concrete_fn) || !missing(graph))
+      warning("`concrete_fn` and `graph` ignored if `tf$executing_eagerly == TRUE`")
+    writer <- tf$summary$create_file_writer(logdir)
 
-  ## Needs a rethink. what is fn already had `tf.function()` called on it?
-  # if(!is_autographed(fn))
-    # fn <- tf$`function`(autograph(fn), autograph = FALSE)
+    tf$compat$v2$summary$trace_on(graph = TRUE, profiler = profiler)
+    do.call(fn, args)
 
-  # enable tracing
-  tf$compat$v2$summary$trace_on(graph=TRUE, profiler=TRUE)
+    with(writer$as_default(), {
+      tf$summary$trace_export(
+        name = name,
+        step = 0L,
+        profiler_outdir = logdir
+      )
+    })
 
-  do.call(fn, args)
+  } else {
+    tf$compat$v1$summary$FileWriter(logdir, graph = graph)
+    names(logdir) <- name
+  }
 
-  # write the graph and profiling
-  with(writer$as_default(), {
-    tensorflow::tf$summary$trace_export(
-      name = "function",
-      step = 0L,
-      profiler_outdir = logdir
-    )
-  })
-
-  # launch tensorboard
   tensorflow::tensorboard(log_dir = logdir, ...)
 }
 
