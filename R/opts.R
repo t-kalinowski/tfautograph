@@ -166,7 +166,7 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
 #' package:magrittr (`%<>%`).
 #'
 #' In certain circumstances, this approach may capture variables that are
-#' intended to be local varialbes only. In those circumstances it is also
+#' intended to be local variables only. In those circumstances it is also
 #' possible to specify them preceded with a `-`.
 #'
 #' Note, the specified loop vars are expected to exist before the autographed
@@ -203,7 +203,20 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
 #' })
 #' }
 ag_loop_vars <-
-  function(..., list = character(), exclude = character(), undefs = NULL) {
+  function(..., list = character(),
+           include = character(),
+           exclude = character(),
+           undefs = exclude) {
+
+    # TODO: behavior:
+    # ag_loop_vars( +x) :
+    # adds `x` in addition to whatever is statically infered
+    #
+    # ag_loop_vars( x)
+    # overrides static inference, `x` is the only loop var
+    #
+    # ag_loop_vars()
+
     vars <- eval(substitute(alist(...)))
     exclude <-
       unique(c(
@@ -230,6 +243,8 @@ ag_loop_vars <-
   if(!all(vapply(vars, exists, TRUE, envir = parent.frame())))
     warning("All symbols supplied to `ag_loop_vars()` are expected to exist")
   # TODO: handle undefs
+  if(is_empty(undefs))
+    undefs <- NULL
   if(!is.null(undefs))
     .NotYetImplemented()
   # next_loop_vars$set(list(loop_vars = vars, undefs = undefs)

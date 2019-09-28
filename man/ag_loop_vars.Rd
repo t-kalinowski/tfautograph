@@ -4,8 +4,8 @@
 \alias{ag_loop_vars}
 \title{Specify loop variables}
 \usage{
-ag_loop_vars(..., list = character(), exclude = character(),
-  undefs = NULL)
+ag_loop_vars(..., list = character(), include = character(),
+  exclude = character(), undefs = exclude)
 }
 \arguments{
 \item{...}{Variables as bare symbol names}
@@ -32,7 +32,7 @@ from base R (\code{<-}, \code{->}, \code{=}), from package:zeallot (\code{\%<-\%
 package:magrittr (\code{\%<>\%}).
 
 In certain circumstances, this approach may capture variables that are
-intended to be local varialbes only. In those circumstances it is also
+intended to be local variables only. In those circumstances it is also
 possible to specify them preceded with a \code{-}.
 
 Note, the specified loop vars are expected to exist before the autographed

@@ -95,6 +95,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/hints.html">Giving `autograph` hints</a>
+    </li>
+    <li>
       <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
@@ -124,11 +127,17 @@
     <p>Visualizes the generated graph</p>
     </div>
 
-    <pre class="usage"><span class='fu'>view_function_graph</span>(<span class='no'>fn</span>, <span class='no'>args</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>view_function_graph</span>(<span class='no'>fn</span>, <span class='no'>args</span>, <span class='no'>...</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/deparse.html'>deparse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>fn</span>)),
+  <span class='kw'>profiler</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>concrete_fn</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>fn</span>$<span class='no'>get_concrete_fn</span>, <span class='no'>args</span>),
+  <span class='kw'>graph</span> <span class='kw'>=</span> <span class='no'>concrete_fn</span>$<span class='no'>graph</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>fn</th>
+      <td><p>TensorFlow function (returned from <code>tf.function()</code>)</p></td>
+    </tr>
     <tr>
       <th>args</th>
       <td><p>arguments passed to <code>fun</code></p></td>
@@ -138,8 +147,19 @@
       <td><p>other arguments passed to <code><a href='https://rdrr.io/pkg/tensorflow/man/tensorboard.html'>tensorflow::tensorboard()</a></code></p></td>
     </tr>
     <tr>
-      <th>fun</th>
-      <td><p>TensorFlow function</p></td>
+      <th>profiler</th>
+      <td><p>logical, passed on to <code>tf.compat.v2.summary.trace_on()</code> (only
+used in eager mode)</p></td>
+    </tr>
+    <tr>
+      <th>concrete_fn</th>
+      <td><p>a <code>ConcreteFunction</code> (only used in graph mode, ignored
+with a warning if executing eagerly)</p></td>
+    </tr>
+    <tr>
+      <th>graph</th>
+      <td><p>a tensorflow graph (only used in graph mode, ignored with a
+warning if executing eagerly)</p></td>
     </tr>
     </table>
 

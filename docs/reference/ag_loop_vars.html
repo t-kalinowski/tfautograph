@@ -98,6 +98,9 @@ dataset.reduce()." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/hints.html">Giving `autograph` hints</a>
+    </li>
+    <li>
       <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
@@ -130,8 +133,8 @@ explicitly as <code>loop_vars</code> when autographing an expression into a
 <code>dataset.reduce()</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ag_loop_vars</span>(<span class='no'>...</span>, <span class='kw'>list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>undefs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>ag_loop_vars</span>(<span class='no'>...</span>, <span class='kw'>list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>include</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>undefs</span> <span class='kw'>=</span> <span class='no'>exclude</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,7 +165,7 @@ finding the symbols that are the targets of the common assignment operators
 from base R (<code>&lt;-</code>, <code>-&gt;</code>, <code>=</code>), from package:zeallot (<code>%&lt;-%</code> and <code>%-&gt;%</code>) and
 package:magrittr (<code>%&lt;&gt;%</code>).</p>
 <p>In certain circumstances, this approach may capture variables that are
-intended to be local varialbes only. In those circumstances it is also
+intended to be local variables only. In those circumstances it is also
 possible to specify them preceded with a <code>-</code>.</p>
 <p>Note, the specified loop vars are expected to exist before the autographed
 expression, and a warning is issued otherwise (usually immediately preceding
