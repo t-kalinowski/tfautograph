@@ -93,6 +93,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/hints.html">Giving `autograph` hints</a>
+    </li>
+    <li>
       <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
@@ -141,8 +144,28 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-hints-and-options" class="hasAnchor"><a href="#section-hints-and-options" class="anchor"></a>Hints and Options</h2>
-          <p class="section-desc"><p>Specify options and provide hints when autographing.</p></p>
+          <h2 id="section-options" class="hasAnchor"><a href="#section-options" class="anchor"></a>Options</h2>
+          <p class="section-desc"><p>Specify additional options when autographing.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="ag_name.html">ag_name()</a></code> </p>
+        </td>
+        <td><p>Specify a tensor name</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ag_while_opts.html">ag_while_opts()</a></code> </p>
+        </td>
+        <td><p>specify <code>tf.while_loop</code> options</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-hints" class="hasAnchor"><a href="#section-hints" class="anchor"></a>Hints</h2>
+          <p class="section-desc"><p>Provide hints to <code><a href="../reference/autograph.html">autograph()</a></code></p></p>
         </th>
       </tr>
       <tr>
@@ -157,18 +180,6 @@
           <p><code><a href="ag_loop_vars.html">ag_loop_vars()</a></code> </p>
         </td>
         <td><p>Specify loop variables</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ag_name.html">ag_name()</a></code> </p>
-        </td>
-        <td><p>Specify a tensor name</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ag_while_opts.html">ag_while_opts()</a></code> </p>
-        </td>
-        <td><p>specify <code>tf.while_loop</code> options</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -210,7 +221,8 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-autograph">Autograph</a></li>
-      <li><a href="#section-hints-and-options">Hints and Options</a></li>
+      <li><a href="#section-options">Options</a></li>
+      <li><a href="#section-hints">Hints</a></li>
       <li><a href="#section-thin-convenience-wrappers">Thin Convenience Wrappers</a></li>
     </ul>
   </div>

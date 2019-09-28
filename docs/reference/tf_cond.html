@@ -96,6 +96,9 @@ true_fn and false_fn as lambda functions defined using the tilde ~." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/hints.html">Giving `autograph` hints</a>
+    </li>
+    <li>
       <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
@@ -126,15 +129,11 @@ true_fn and false_fn as lambda functions defined using the tilde ~." />
 <code>true_fn</code> and <code>false_fn</code> as lambda functions defined using the tilde <code>~</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tf_cond</span>(<span class='no'>cond</span>, <span class='no'>true_fn</span>, <span class='no'>false_fn</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>tf_cond</span>(<span class='no'>pred</span>, <span class='no'>true_fn</span>, <span class='no'>false_fn</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>cond</th>
-      <td><p>R logical or a tensor.</p></td>
-    </tr>
     <tr>
       <th>true_fn, false_fn</th>
       <td><p>a <code>~</code> function, a function, or something coercible to
@@ -144,6 +143,10 @@ a function via <code>as.function</code></p></td>
       <th>name</th>
       <td><p>a string, passed on to <code>tf.cond()</code></p></td>
     </tr>
+    <tr>
+      <th>cond</th>
+      <td><p>R logical or a tensor.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -151,6 +154,10 @@ a function via <code>as.function</code></p></td>
     <p>if cond is a tensor, then the result of <code>tf.cond()</code>. Otherwise, if
 <code>cond</code> is an <code>EagerTensor</code> or an R logical, then the result of either
 <code>true_fn()</code> or <code>false_fn()</code></p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>in Tensorflow version 1, the <code>strict</code> keyword argument is supplied with
+a value of <code>TRUE</code> (different from the default)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"></pre>
@@ -160,6 +167,7 @@ a function via <code>as.function</code></p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#note">Note</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

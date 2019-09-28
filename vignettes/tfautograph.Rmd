@@ -16,20 +16,33 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(magrittr)
-# library(listarrays)
-# library(purrr)
 library(reticulate)
 library(tensorflow)
-library(tfautograph)
 library(tfdatasets)
+
+library(tfautograph)
 ```
 
-The R package `tfautograph` helps you write natural R code with tensorflow. It allows you to write R code as you would naturally, which then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little. 
+The R package `tfautograph` helps you write natural R code for tensorflow. 
 
+It allows you to use tensors in R control flow expressions like `if`, `while`,
+`for`, `break`, and `next`, which can automatically be translated to build a
+tensorflow graph  (hence the name, __auto__ __graph__). 
+
+However tfautograph doesn't just work in graph mode--it also works in eager mode. In addition, it provides a handful of thin wrappers around tensorflow control primitives
+and some S3 methods for `TensorArrays` that make their use from R a little more
+ergonomic.
+
+This vignette goes through some of the main features and then goes into how it
+works a little.
 
 ### Usage
 
-The primary interface to autograph is the function `autograph()`. It can either take a function or an expression. The following two uses are equivalent. 
+The primary workhorse function of the package is the function `autograph()`. For
+most use-cases, this is the only function from the package you will need or want
+to call. It can either take a function or an expression. The following two uses
+are equivalent.
+
 ```{r}
 # pass a function to autograph()
 fn <- function(x) if(x > 0) x * x else x

@@ -57,6 +57,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/hints.html">Giving `autograph` hints</a>
+    </li>
+    <li>
       <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
     </li>
   </ul>
@@ -86,17 +89,19 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co"># library(listarrays)</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># library(purrr)</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reticulate)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a></code></pre></div>
-<p>The R package <code>tfautograph</code> helps you write natural R code with tensorflow. It allows you to write R code as you would naturally, which then gets translated to tensorflow equivalent control flow statements. This vignette goes through some of the main features and then goes into how it works a little.</p>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reticulate)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</a></code></pre></div>
+<p>The R package <code>tfautograph</code> helps you write natural R code for tensorflow.</p>
+<p>It allows you to use tensors in R control flow expressions like <code>if</code>, <code>while</code>, <code>for</code>, <code>break</code>, and <code>next</code>, which can automatically be translated to build a tensorflow graph (hence the name, <strong>auto</strong> <strong>graph</strong>).</p>
+<p>However tfautograph doesn’t just work in graph mode–it also works in eager mode. In addition, it provides a handful of thin wrappers around tensorflow control primitives and some S3 methods for <code>TensorArrays</code> that make their use from R a little more ergonomic.</p>
+<p>This vignette goes through some of the main features and then goes into how it works a little.</p>
 <div id="usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h3>
-<p>The primary interface to autograph is the function <code><a href="../reference/autograph.html">autograph()</a></code>. It can either take a function or an expression. The following two uses are equivalent.</p>
+<p>The primary workhorse function of the package is the function <code><a href="../reference/autograph.html">autograph()</a></code>. For most use-cases, this is the only function from the package you will need or want to call. It can either take a function or an expression. The following two uses are equivalent.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># pass a function to autograph()</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">fn &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="cf">if</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) x <span class="op">*</span><span class="st"> </span>x <span class="cf">else</span> x</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">square_if_positive &lt;-<span class="st"> </span><span class="kw"><a href="../reference/autograph.html">autograph</a></span>(fn) </a>
@@ -552,21 +557,23 @@
 <a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">train_graph</span>(model, optimizer)</a>
 <a class="sourceLine" id="cb24-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb24-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(log_file), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; Step 10 : loss 1.71696961 ; accuracy 0.396</span></a>
-<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">#&gt; Step 20 : loss 1.12985873 ; accuracy 0.539</span></a>
-<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="co">#&gt; Step 30 : loss 0.807974398 ; accuracy 0.623</span></a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="co">#&gt; Step 40 : loss 0.524974704 ; accuracy 0.67575</span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="co">#&gt; Step 50 : loss 0.520884752 ; accuracy 0.714</span></a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="co">#&gt; Step 60 : loss 0.458511651 ; accuracy 0.740833342</span></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="co">#&gt; Step 70 : loss 0.324195504 ; accuracy 0.761285722</span></a>
-<a class="sourceLine" id="cb24-15" data-line-number="15"><span class="co">#&gt; Step 80 : loss 0.458639175 ; accuracy 0.776125</span></a>
-<a class="sourceLine" id="cb24-16" data-line-number="16"><span class="co">#&gt; Step 90 : loss 0.353348166 ; accuracy 0.789111137</span></a>
-<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="co">#&gt; Step 100 : loss 0.242915615 ; accuracy 0.8004</span></a>
-<a class="sourceLine" id="cb24-18" data-line-number="18"><span class="co">#&gt; Breaking early</span></a>
-<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
-<a class="sourceLine" id="cb24-20" data-line-number="20">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
-<a class="sourceLine" id="cb24-21" data-line-number="21">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
-<a class="sourceLine" id="cb24-22" data-line-number="22"><span class="co">#&gt; Final step 100: loss 0.242916; accuracy 0.800400</span></a></code></pre></div>
+<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; Step 10 : loss 1.80793667 ; accuracy 0.282</span></a>
+<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">#&gt; Step 20 : loss 1.20960116 ; accuracy 0.4785</span></a>
+<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="co">#&gt; Step 30 : loss 0.787529051 ; accuracy 0.572333336</span></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="co">#&gt; Step 40 : loss 0.758900225 ; accuracy 0.632</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="co">#&gt; Step 50 : loss 0.447593868 ; accuracy 0.679</span></a>
+<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="co">#&gt; Step 60 : loss 0.405499876 ; accuracy 0.713333309</span></a>
+<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="co">#&gt; Step 70 : loss 0.422978312 ; accuracy 0.738428593</span></a>
+<a class="sourceLine" id="cb24-15" data-line-number="15"><span class="co">#&gt; Step 80 : loss 0.399909973 ; accuracy 0.75575</span></a>
+<a class="sourceLine" id="cb24-16" data-line-number="16"><span class="co">#&gt; Step 90 : loss 0.296842396 ; accuracy 0.769888878</span></a>
+<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="co">#&gt; Step 100 : loss 0.477244735 ; accuracy 0.7815</span></a>
+<a class="sourceLine" id="cb24-18" data-line-number="18"><span class="co">#&gt; Step 110 : loss 0.349450082 ; accuracy 0.791818202</span></a>
+<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="co">#&gt; Step 119 : loss 0.279264063 ; accuracy 0.80058825</span></a>
+<a class="sourceLine" id="cb24-20" data-line-number="20"><span class="co">#&gt; Breaking early</span></a>
+<a class="sourceLine" id="cb24-21" data-line-number="21"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
+<a class="sourceLine" id="cb24-22" data-line-number="22">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
+<a class="sourceLine" id="cb24-23" data-line-number="23">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
+<a class="sourceLine" id="cb24-24" data-line-number="24"><span class="co">#&gt; Final step 119: loss 0.279264; accuracy 0.800588</span></a></code></pre></div>
 </div>
 <div id="train-in-eager-mode" class="section level3">
 <h3 class="hasAnchor">
@@ -579,21 +586,22 @@
 <a class="sourceLine" id="cb25-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/train.html">train</a></span>(model, optimizer)</a>
 <a class="sourceLine" id="cb25-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb25-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(log_file), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co">#&gt; Step 10 : loss 1.80083776 ; accuracy 0.766454518</span></a>
-<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="co">#&gt; Step 20 : loss 1.07346976 ; accuracy 0.76325</span></a>
-<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="co">#&gt; Step 30 : loss 0.848561704 ; accuracy 0.765153825</span></a>
-<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="co">#&gt; Step 40 : loss 0.486573756 ; accuracy 0.769857168</span></a>
-<a class="sourceLine" id="cb25-13" data-line-number="13"><span class="co">#&gt; Step 50 : loss 0.483680546 ; accuracy 0.776133358</span></a>
-<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="co">#&gt; Step 60 : loss 0.334350437 ; accuracy 0.781812489</span></a>
-<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="co">#&gt; Step 70 : loss 0.445258 ; accuracy 0.788</span></a>
-<a class="sourceLine" id="cb25-16" data-line-number="16"><span class="co">#&gt; Step 80 : loss 0.391721427 ; accuracy 0.793555558</span></a>
-<a class="sourceLine" id="cb25-17" data-line-number="17"><span class="co">#&gt; Step 90 : loss 0.316059411 ; accuracy 0.798894763</span></a>
-<a class="sourceLine" id="cb25-18" data-line-number="18"><span class="co">#&gt; Step 93 : loss 0.287982225 ; accuracy 0.800466299</span></a>
-<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="co">#&gt; Breaking early</span></a>
-<a class="sourceLine" id="cb25-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
-<a class="sourceLine" id="cb25-21" data-line-number="21">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
-<a class="sourceLine" id="cb25-22" data-line-number="22">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
-<a class="sourceLine" id="cb25-23" data-line-number="23"><span class="co">#&gt; Final step 93: loss 0.287982; accuracy 0.800466</span></a></code></pre></div>
+<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co">#&gt; Step 10 : loss 1.76990664 ; accuracy 0.76852715</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="co">#&gt; Step 20 : loss 1.15191507 ; accuracy 0.763597131</span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="co">#&gt; Step 30 : loss 0.577690482 ; accuracy 0.766308725</span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="co">#&gt; Step 40 : loss 0.612824857 ; accuracy 0.769685507</span></a>
+<a class="sourceLine" id="cb25-13" data-line-number="13"><span class="co">#&gt; Step 50 : loss 0.522536516 ; accuracy 0.774023652</span></a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="co">#&gt; Step 60 : loss 0.330333263 ; accuracy 0.777988851</span></a>
+<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="co">#&gt; Step 70 : loss 0.4626275 ; accuracy 0.783121705</span></a>
+<a class="sourceLine" id="cb25-16" data-line-number="16"><span class="co">#&gt; Step 80 : loss 0.417443693 ; accuracy 0.788090467</span></a>
+<a class="sourceLine" id="cb25-17" data-line-number="17"><span class="co">#&gt; Step 90 : loss 0.622333586 ; accuracy 0.792057395</span></a>
+<a class="sourceLine" id="cb25-18" data-line-number="18"><span class="co">#&gt; Step 100 : loss 0.360636026 ; accuracy 0.796301365</span></a>
+<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="co">#&gt; Step 108 : loss 0.268226713 ; accuracy 0.800352395</span></a>
+<a class="sourceLine" id="cb25-20" data-line-number="20"><span class="co">#&gt; Breaking early</span></a>
+<a class="sourceLine" id="cb25-21" data-line-number="21"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(</a>
+<a class="sourceLine" id="cb25-22" data-line-number="22">  <span class="st">'Final step %i: loss %.6f; accuracy %.6f'</span>,</a>
+<a class="sourceLine" id="cb25-23" data-line-number="23">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(step), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(loss), <span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(compute_accuracy<span class="op">$</span><span class="kw">result</span>())))</a>
+<a class="sourceLine" id="cb25-24" data-line-number="24"><span class="co">#&gt; Final step 108: loss 0.268227; accuracy 0.800352</span></a></code></pre></div>
 </div>
 </div>
   </div>

@@ -56,7 +56,8 @@ autograph <- function(x) {
   export_modified(outcome$modified, env)
 
 
-  if(isFALSE(outcome$visible))
+  if(isFALSE(outcome$visible) ||
+     is.null(outcome$returned) && !tf$executing_eagerly())
     invisible(outcome$returned)
   else
     outcome$returned

@@ -11,10 +11,16 @@ reference:
       The main workhorse of the package.
     contents:
       - autograph
-  - title: "Hints and Options"
-    desc: "Specify options and provide hints when autographing."
+  - title: "Options"
+    desc: "Specify additional options when autographing."
     contents:
-      - starts_with("ag_")
+      - ag_name
+      - ag_while_opts
+  - title: "Hints"
+    desc: "Provide hints to `autograph()`"
+    contents:
+      - ag_if_vars
+      - ag_loop_vars
   - title: "Thin Convenience Wrappers"
     desc: "Thin wrappers around direct tensorflow functions with easier ergonomics."
     contents:
