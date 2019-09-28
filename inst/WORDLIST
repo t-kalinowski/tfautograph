@@ -6,6 +6,7 @@ cond
 fizzbuzz
 github
 https
+inlining
 invariants
 io
 iterable

@@ -170,11 +170,11 @@ computed prior to the call</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(-<span class='fl'>1</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>tf_assert</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='st'>"oopsies! x must be greater than 0"</span>))</div><div class='output co'>#&gt; Error in py_call_impl(callable, dots$args, dots$keywords) : 
-#&gt;   InvalidArgumentError: Expected 'tf.Tensor(False, shape=(), dtype=bool)' to be true. Summarized data: &lt;Assert condition R expression&gt;: x &gt; 0
+#&gt;   InvalidArgumentError: Expected 'tf.Tensor(False, shape=(), dtype=bool)' to be true. Summarized data: &lt;Assert condition R expression&gt;: `x &gt; 0`
 #&gt; oopsies! x must be greater than 0
 #&gt; `x` value:
 #&gt; -1.0
-#&gt; R call stack:
+#&gt; &lt;R call stack&gt;:
 #&gt; &lt;R call 1&gt;: tf_assert(x &gt; 0, "oopsies! x must be greater than 0")
 #&gt; &lt;R call 2&gt;: doTryCatch(return(expr), name, parentenv, handler)
 #&gt; &lt;R call 3&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])
@@ -204,8 +204,8 @@ computed prior to the call</p></td>
 #&gt; &lt;R call 27&gt;: pkgdown::build_site(...)
 #&gt; &lt;R call 28&gt;: (function (..., crayon_enabled, crayon_colors, pkgdown_internet) 
 #&gt; &lt;R call 29&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) 
-#&gt; &lt;R call 30&gt;: do.call(do.call, c(readRDS("/tmp/RtmpCfowcM/file409f756f9b8"), list(envir = .GlobalEnv)), envir = .GlobalEnv)
-#&gt; &lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS("/tmp/RtmpCfowcM/file409f756f9b8"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = "/tmp/RtmpCfowcM/file409f6569d293")
+#&gt; &lt;R call 30&gt;: do.call(do.call, c(readRDS("/tmp/Rtmp2LC0zF/file4e5f5ba242ef"), list(envir = .GlobalEnv)), envir = .GlobalEnv)
+#&gt; &lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS("/tmp/Rtmp2LC0zF/file4e5f5ba242ef"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = "/tmp/Rtmp2LC0zF/file4e5f65d8c7ed")
 #&gt; &lt;R call 32&gt;: withCallingHandlers({
 #&gt; &lt;R call 33&gt;: doTryCatch(return(expr), name, parentenv, handler)
 #&gt; &lt;R call 34&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])
@@ -216,9 +216,9 @@ computed prior to the call</p></td>
 #&gt; &lt;R call 39&gt;: tryCatch(withCallingHandlers({
 #&gt; 
 #&gt; Detailed traceback: 
-#&gt;   File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/util/tf_should_use.py", line 198, in wrapped
+#&gt;   File "/home/tomasz/.virtualenvs/tf2/lib/python2.7/site-packages/tensorflow_core/python/util/tf_should_use.py", line 198, in wrapped
 #&gt;     return _add_should_use_warning(fn(*args, **kwargs))
-#&gt;   File "/usr/local/lib/python2.7/dist-packages/tensorflow_core/python/ops/control_flow_ops.py", line 156, in Assert
+#&gt;   File "/home/tomasz/.virtualenvs/tf2/lib/python2.7/site-packages/tensorflow_core/python/ops/control_flow_ops.py", line 156, in Assert
 #&gt;     (condition, "\n".join(data_str)))
 #&gt; </div></pre>
   </div>

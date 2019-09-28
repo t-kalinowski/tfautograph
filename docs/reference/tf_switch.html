@@ -158,7 +158,46 @@ optionally supplied with a branch index on the left hand side. See examples</p><
     <p>The result from <code>tf.switch_case()</code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
+   <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
+   <span class='fl'>0</span> ~ <span class='fl'>1</span>,
+   <span class='fl'>1</span> ~ <span class='no'>x</span>,
+   <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
+   <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
+   <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
+})
+
+<span class='co'># can optionally also omit the left hand side int, in which case the order of</span>
+<span class='co'># the functions is used.</span>
+<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
+  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
+            ~ <span class='fl'>1</span>,
+            ~ <span class='no'>x</span>,
+            ~ <span class='no'>x</span> * <span class='no'>x</span>,
+            ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
+            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
+}
+
+<span class='co'># supply just some of the ints to override the default order</span>
+<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
+  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
+            <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
+            <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
+            ~ <span class='fl'>1</span>,
+            ~ <span class='no'>x</span>,
+            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
+}
+
+<span class='co'># A slightly less contrived example:</span>
+<span class='no'>tf_norm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>l</span>) {
+  <span class='fu'>tf_switch</span>(<span class='no'>l</span>,
+            <span class='fl'>0</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>cast</span>(<span class='no'>x</span> <span class='kw'>!=</span> <span class='fl'>0</span>, <span class='no'>tf</span>$<span class='no'>float32</span>)), <span class='co'># L0 norm</span>
+            <span class='fl'>1</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)),                   <span class='co'># L1 norm</span>
+            <span class='fl'>2</span> ~ <span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>square</span>(<span class='no'>x</span>))),       <span class='co'># L2 norm</span>
+            <span class='kw'>default</span> <span class='kw'>=</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_max</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)))         <span class='co'># L-infinity norm</span>
+})
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

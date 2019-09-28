@@ -135,6 +135,10 @@ true_fn and false_fn as lambda functions defined using the tilde ~." />
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>pred</th>
+      <td><p>R logical or a tensor.</p></td>
+    </tr>
+    <tr>
       <th>true_fn, false_fn</th>
       <td><p>a <code>~</code> function, a function, or something coercible to
 a function via <code>as.function</code></p></td>
@@ -143,16 +147,12 @@ a function via <code>as.function</code></p></td>
       <th>name</th>
       <td><p>a string, passed on to <code>tf.cond()</code></p></td>
     </tr>
-    <tr>
-      <th>cond</th>
-      <td><p>R logical or a tensor.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>if cond is a tensor, then the result of <code>tf.cond()</code>. Otherwise, if
-<code>cond</code> is an <code>EagerTensor</code> or an R logical, then the result of either
+<code>pred</code> is an <code>EagerTensor</code> or an R logical, then the result of either
 <code>true_fn()</code> or <code>false_fn()</code></p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -160,7 +160,14 @@ a function via <code>as.function</code></p></td>
 a value of <code>TRUE</code> (different from the default)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>## square if positive</span>
+<span class='co'># using tf$cond directly:</span>
+<span class='no'>raw</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>tf</span>$<span class='fu'>cond</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>function</span>() <span class='no'>x</span> * <span class='no'>x</span>, <span class='kw'>function</span>() <span class='no'>x</span>)
+
+<span class='co'># using tf_cond() wrapper</span>
+<span class='no'>tilde</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>tf_cond</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, ~ <span class='no'>x</span> * <span class='no'>x</span>, ~ <span class='no'>x</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

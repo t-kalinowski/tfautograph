@@ -1,10 +1,4 @@
 destination: docs
-articles:
-  - title: "Get Started"
-    contents:
-      - tfautograph
-    toc:
-      depth: 2
 reference:
   - title: "Autograph"
     desc: >

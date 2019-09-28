@@ -4,3 +4,4 @@
 _*.R
 .DS_Store
 inst/doc
+.Rprofile
