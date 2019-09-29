@@ -10,14 +10,13 @@
 #' @param graph a tensorflow graph (only used in graph mode, ignored with a
 #'   warning if executing eagerly)
 #'
-#' @keywords internal
+#' @export
 view_function_graph <- function(fn, args, ...,
                                 name = deparse(substitute(fn)),
                                 profiler=FALSE,
                                 concrete_fn = do.call(fn$get_concrete_fn, args),
                                 graph = concrete_fn$graph
                                 ) {
-
 
   logdir <- tempfile(pattern = "tflogdir")
   if (tf$executing_eagerly()) {
@@ -42,6 +41,6 @@ view_function_graph <- function(fn, args, ...,
     names(logdir) <- name
   }
 
-  tensorflow::tensorboard(log_dir = logdir, ...)
+  tensorflow::tensorboard(log_dir = logdir, ..., reload_interval = 0L)
 }
 

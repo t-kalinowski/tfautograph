@@ -27,4 +27,3 @@ warning if executing eagerly)}
 \description{
 Visualizes the generated graph
 }
-\keyword{internal}

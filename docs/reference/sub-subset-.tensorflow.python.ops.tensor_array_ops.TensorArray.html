@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>tf.switch_case — tf_switch • tfautograph</title>
+<title><code>TensorArray.write()</code> — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray • tfautograph</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="tf.switch_case — tf_switch" />
-<meta property="og:description" content="tf.switch_case" />
+<meta property="og:title" content="<code>TensorArray.write()</code> — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray" />
+<meta property="og:description" content="TensorArray.write()" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -121,92 +121,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>tf.switch_case</h1>
+    <h1><code>TensorArray.write()</code></h1>
     
-    <div class="hidden name"><code>tf_switch.Rd</code></div>
+    <div class="hidden name"><code>sub-subset-.tensorflow.python.ops.tensor_array_ops.TensorArray.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>tf.switch_case</p>
+    <p><code>TensorArray.write()</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>tf_switch</span>(<span class='no'>branch_index</span>, <span class='no'>...</span>, <span class='kw'>branch_fns</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>), <span class='kw'>default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"switch_case"</span>)</pre>
+    <pre class="usage"># S3 method for tensorflow.python.ops.tensor_array_ops.TensorArray
+[[(ta, i, ...,
+  name = NULL) <- value</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>branch_index</th>
-      <td><p>an integer tensor</p></td>
+      <th>ta</th>
+      <td><p>a tensorflow <code>TensorArray</code></p></td>
     </tr>
     <tr>
-      <th>..., branch_fns</th>
-      <td><p>a list of function bodies specified with a <code>~</code>,
-optionally supplied with a branch index on the left hand side. See examples</p></td>
+      <th>i</th>
+      <td><p>comething castable to an int32 scalar tensor. 0-based.</p></td>
     </tr>
     <tr>
-      <th>default</th>
-      <td><p>A function defined with a <code>~</code>, or something coercible via
-`as.function()``</p></td>
+      <th>...</th>
+      <td><p>Error if anything is passed to <code>...</code></p></td>
     </tr>
     <tr>
       <th>name</th>
-      <td><p>a string, passed on to <code>tf.switch_case()</code></p></td>
+      <td><p>A scalar string, name of the op</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>The value to write.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>The result from <code>tf.switch_case()</code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-   <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-   <span class='fl'>0</span> ~ <span class='fl'>1</span>,
-   <span class='fl'>1</span> ~ <span class='no'>x</span>,
-   <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
-   <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-   <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-})
+<span class='no'>ta</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>TensorArray</span>(<span class='no'>tf</span>$<span class='no'>float32</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5L</span>)
+<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='fl'>4</span>)
+  <span class='no'>ta</span><span class='kw'>[[</span><span class='no'>i</span>]] <span class='kw'>&lt;-</span> <span class='no'>i</span>
+<span class='no'>ta</span>$<span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span>()
 
-<span class='co'># can optionally also omit the left hand side int, in which case the order of</span>
-<span class='co'># the functions is used.</span>
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-            ~ <span class='fl'>1</span>,
-            ~ <span class='no'>x</span>,
-            ~ <span class='no'>x</span> * <span class='no'>x</span>,
-            ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-}
-
-<span class='co'># supply just some of the ints to override the default order</span>
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-            <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-            <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
-            ~ <span class='fl'>1</span>,
-            ~ <span class='no'>x</span>,
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-}
-
-<span class='co'># A slightly less contrived example:</span>
-<span class='no'>tf_norm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>l</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>l</span>,
-            <span class='fl'>0</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>cast</span>(<span class='no'>x</span> <span class='kw'>!=</span> <span class='fl'>0</span>, <span class='no'>tf</span>$<span class='no'>float32</span>)), <span class='co'># L0 norm</span>
-            <span class='fl'>1</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)),                   <span class='co'># L1 norm</span>
-            <span class='fl'>2</span> ~ <span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>square</span>(<span class='no'>x</span>))),       <span class='co'># L2 norm</span>
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_max</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)))         <span class='co'># L-infinity norm</span>
-})
+<span class='co'># You can use this to grow objects in graph mode</span>
+<span class='no'>accuracies_log</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>TensorArray</span>(<span class='no'>tf</span>$<span class='no'>float32</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>0L</span>, <span class='kw'>dynamic_size</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>for</span>(<span class='no'>epoch</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='fl'>4</span>)
+  <span class='no'>accuracies_log</span><span class='kw'>[[</span><span class='no'>epoch</span>]] <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>)
+<span class='no'>acc</span> <span class='kw'>&lt;-</span> <span class='no'>accuracies_log</span>$<span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span>()
+<span class='no'>acc</span>
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

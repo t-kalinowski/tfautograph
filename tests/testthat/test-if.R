@@ -1,7 +1,6 @@
 if(testthat::is_testing()){
   source("utils.R")
 } else {
-  reticulate::use_virtualenv("tf2-rc", TRUE)
   source("tests/testthat/utils.R")
   devtools::load_all()
 }
