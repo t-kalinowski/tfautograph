@@ -99,13 +99,13 @@ graph_fn(y)
 graph_fn(y)
 ```
 
-In graph mode, both branches of the `if` expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by `tf.function()`.  Then on subsequent calls only the cached graph is evaluated.
+In graph mode, both branches of the `if` expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by `tf.function()`. Then on subsequent calls only the cached graph is evaluated.
 
 The key takeaways are that `autograph()` helps you write natural R code and use tensors in expressions where R wouldn't otherwise accept them. And that `autograph` is smart enough to do the right thing in both eager mode and graph mode. 
 
 
 ### Control Flow
-The most prominent and used feature of tfautograph is the fact that it will translate control flow statements. This includes `if`, `while`, `for`, `break`, `next`, and `switch`. Here is handy summary table of the translation endpoints.
+tfautograph will translate R control flow statements to tensorflow. This includes `if`, `while`, `for`, `break`, `next`, and `switch`. Here is handy summary table of the translation endpoints.
 
 ```{r, echo = FALSE, results = 'asis'}
 knitr::kable(matrix(
@@ -126,30 +126,11 @@ Lets go through them one at a time.
 
 #### `if`
 
-`if` statements written in R automatically get translated to a `tf.cond()` call in graph mode. Both locally modified and/or created variables, as well as the return value of the overall expression are captured as part of the constructed `tf.cond()`. Unbalanced branches are automatically balanced to satisfy the requirements of `tf.cond()`. 
 
-```{r}
-tf_sign <- tf_function(autograph(function(x) {
-  numeric_sign <- 0
-  string_sign <- if (x > 0) {
-    message("Tracing positive branch")
-    numeric_sign <- 1
-    "positive"
-  } else if (x < 0) {
-    message("Tracing negative branch")
-    numeric_sign <- -1
-    "negative"
-  } else {
-    message("Tracing zero branch")
-    "zero"
-  }
-  list(numeric_sign, string_sign)
-}))
+In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`). 
 
-tf_sign(x)
-tf_sign(y)
-tf_sign(tf$zeros(list()))
-```
+In graph mode, `if` statements written in R automatically get translated to a `tf.cond()`. `tf.cond()` requires that both branches of the conditional are balanced (meaning, both branchs return the same output structure). `autograph()` tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated  `tf.cond()`, while satisfying the requirement for balanced branches.
+
 
 ```{r}
 tf_sign <- tf_function(autograph(function(x) {
@@ -162,28 +143,23 @@ tf_sign <- tf_function(autograph(function(x) {
 }))
 ```
 
-In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`) 
-
-#### `while`
-In graph mode, `while` expressions are translated to a `tf$while_loop()` call.
-
-
-```{r}
-naive_factorial <- tf_function(autograph(function(x) {
-  total <- 1
-  while (x != 0) {
-    message("Evaluating while body R expression")
-    total %<>% multiply_by(x)
-    x %<>% subtract(tf_sign(x))
+Any variables that can't be balanced between the branches are exported as **undefined** objects (S3 class: `undef`). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the undef originated from, and suggestions for how to prevent a symbol from being an `undef`. 
+```{r, error = TRUE}
+undef_example <- tf_function(autograph(function(x) {
+  if (x > 0) {
+    branch_local_tmp <- x + 1
+    x <- branch_local_tmp + 1
+    x
   }
-  total
+  branch_local_tmp
 }))
-
-naive_factorial(x)
-naive_factorial(y)
+undef_example(tf$constant(1))
 ```
 
-In eager mode, `while(eagor_tensor)` is translated to `while(as.logical(eager_tensor))`. (The `tensorflow` R package provides tensor methods for many S3 generics, including `as.logical()`).
+
+#### `while`
+
+In eager mode, `while(eagor_tensor)` is translated to `while(as.logical(eager_tensor))`. (As a reminder, the `tensorflow` R package provides tensor methods for many S3 generics, including `as.logical()`).
 
 Here is an example of an autographed `while` expression being evaluated eagerly. Remember, `autograph()` is not just for functions!
 
@@ -201,16 +177,32 @@ x
 total
 ```
 
-[`tf.while_loop()`](https://www.tensorflow.org/api_docs/python/tf/while_loop) has many options. In order to pass those through to the call, precede the `while` expression with `ag_while_opts()`
 
+In graph mode, `while` expressions are translated to a `tf$while_loop()` call.
+```{r}
+tf_factorial <- tf_function(autograph(function(x) {
+  total <- 1
+  while (x != 0) {
+    message("Evaluating while body R expression")
+    total %<>% multiply_by(x)
+    x %<>% subtract(tf_sign(x))
+  }
+  total
+}))
+
+tf_factorial(x)
+tf_factorial(y)
+```
+
+[`tf.while_loop()`](https://www.tensorflow.org/api_docs/python/tf/while_loop)
+has many options. In order to pass those through to the call, precede the
+`while` expression with `ag_while_opts()`.
 
 
 ```{r}
-naive_factorial_serial <- tf_function(autograph(function(x) {
+tf_factorial_no_backprop <- tf_function(autograph(function(x) {
   total <- 1
-  
-  ag_while_opts(parallel_iterations = 1,
-                back_prop = FALSE)
+  ag_while_opts(back_prop = FALSE)
   while (x != 0) {
     message("Evaluating while body R expression")
     total %<>% multiply_by(x)
@@ -218,21 +210,24 @@ naive_factorial_serial <- tf_function(autograph(function(x) {
   }
   total
   }))
-naive_factorial(y)
+tf_factorial_no_backprop(y)
 ```
 
 
 #### `for`
-Autographed `for` loops build on top of while loops. Presently, `autograph` adds support for new types of values passed to `for`: tfdatasets, tensors, and (in eager mode only) python iterators 
+Autographed `for` loops build on top of while loops. `autograph` adds support for three new types of values passed to `for`: 
++  tfdatasets 
++  tensors
++  python iterators (eager mode only).
 
-In eager mode, both datasets and tensors are coerced to iterators (via ```iterable$`__iter__`()```, through the ergonomic wrapper `reticulate::as_iterator()`). The arguments are then iterated over until the iterable is finished. Essentially, a call like
-
+In eager mode, both datasets and tensors are coerced to iterators (via
+```iterable$`__iter__`()```, through the ergonomic wrapper
+`reticulate::as_iterator()`). The arguments are then iterated over until the
+iterable is finished. Essentially, a call like
 ```{r, eval = FALSE}
 for(elem in iterable) {...}
 ```
-
 gets translated to
-
 ```{r, eval = FALSE}
 iterator <- as_iterator(iterable)
 while(!is.null(elem <- iter_next(iterator))) {...}
@@ -249,77 +244,73 @@ autograph({
 ```
 
 
-In graph mode, tensors are iterated over within a `tf$while_loop()`. As such,
+In graph mode, `for` can accept a tensor or a dataset. 
+```{r}
+niave_reduce_sum <- tf_function(autograph(function(x, dtype = "int64") {
+  running_total <- tf$zeros(list(), dtype)
+  for (elem in x)
+    running_total %<>% add(elem)
+  
+  running_total
+}))
+```
+
+Works with a tensor: 
+```{r}
+niave_reduce_sum(tf$range(10L, dtype = "int64"))
+```
+and with a dataset:
+```{r}
+niave_reduce_sum(tf$data$Dataset$range(10L))
+```
+
+Since `for(var in tensor)` loops are powered by `tf$while_loop()`, 
 you can pass additional options via `ag_while_opts()` just as you would to an
 autographed `while()` expression.
-
-
-In graph mode, datasets passed to `for` are translated to a `dataset$reduce()`
-call.
-
 ```{r}
-niave_reduce_sum <- tf_function(autograph(function(ds) {
-  sum <- tf$zeros(ds$element_spec$shape, dtype = ds$element_spec$dtype)
-  for (elem in ds) {
-    message("Tracing for loop body")
-    sum %<>% add(elem)
-  }
-  sum
+niave_reduce_sum_with_opts <- tf_function(autograph(function(x) {
+  running_total <- tf$zeros(list(), x$dtype)
+  
+  ag_while_opts(parallel_iterations = 1)
+  for (elem in x)
+    running_total %<>% add(elem)
+  
+  running_total
 }))
 
-ds <- tensor_slices_dataset(m)
-niave_reduce_sum(ds) # loop body is only traced just once on first call
-niave_reduce_sum(ds)
+niave_reduce_sum_with_opts(tf$range(10))
 ```
 
-Be careful to not pass a dataset that repeats forever! One way to guard against
-iterating forever is to use `take()`.
- 
- 
+
+# `break` / `next`
+
+Loop control flow statements `break` and `next` are handled automatically by
+`autograph()`, both in eager mode and graph mode. Use `break` and/or `next`
+anywhere you would use it naturally in `while` and `for` loops.
+
+# FizzBuzz!
+
+Lets tie some concepts together to write
+(fizzbuzz)[https://en.wikipedia.org/wiki/Fizz_buzz]! Before we do that, we'll
+write a helper `tf_print()` that writes to a temporary file by default. This
+will help us capture the output in this Rmarkdown vignette. (If we don't
+redirect output to a file, then it would show up in the rendering console and
+not in this vignette)
 ```{r}
-safe_niave_reduce_sum <- tf_function(autograph(function(ds, max_iter = 2) {
-  sum <- tf$zeros(ds$element_spec$shape, dtype = ds$element_spec$dtype)
-  for (elem in ds$take(as.integer(max_iter))) {
-    message("Tracing for loop body")
-    sum %<>% add(elem)
+TEMPFILE <- tempfile("tf-print-out", fileext = ".txt")
+
+print_tempfile <-
+  function(clear_after_read = TRUE, rewrap_lines = TRUE) {
+    output <- readLines(TEMPFILE, warn = FALSE)
+    if (clear_after_read) 
+      unlink(TEMPFILE)
+    if (rewrap_lines) 
+      output <- strwrap(paste0(output, collapse = " "))
+    writeLines(output)
   }
-  sum
-}))
 
-ds %>% 
-  dataset_repeat() %>% # repeats infinitly!
-  safe_niave_reduce_sum(max_iter = 6)
-```
-
-Lets tie some concepts together to write fizzbuzz! Before we do that, we'll
-write a helper `knitr_log`, that will help us capture the output from `tf.print`
-in this Rmarkdown vignette. (If we don't redirect output to a file, then it
-would show up in the rendering console and not in the vignette)
-
-```{r}
-temp_knitr_logfile <- local({
-  LOGFILE <- NULL
-  function(what = c("get", "reset")) {
-    if (is.null(LOGFILE))
-      LOGFILE <<- sprintf("file://%s", tempfile())
-    
-    what <- match.arg(what)
-    if (what == "reset")
-      on.exit({
-        unlink(LOGFILE)
-        LOGFILE <<- NULL
-      })
-    
-    LOGFILE
-  }
-})
-
-print_temp_knitr_logfile <- function(reset = TRUE) {
-  filepath <- temp_knitr_logfile(if(reset) "reset" else "get")
-  output <- readLines(filepath, warn = FALSE)
-  writeLines(strwrap(output))
-}
-
+tf_print <- function(...)
+  tf$print(..., output_stream = sprintf("file://%s", TEMPFILE))
 ```
 
 
@@ -327,203 +318,59 @@ print_temp_knitr_logfile <- function(reset = TRUE) {
 fizzbuzz <- autograph(function(n) {
   for (i in range_dataset(from = 1L, to = n)) {
     if (i %% 15L == 0L)
-      tf$print("FizzBuzz", end = "", output_stream = temp_knitr_logfile())
+      tf_print("FizzBuzz")
     else if (i %% 3L == 0L)
-      tf$print("Fizz", end = "", output_stream = temp_knitr_logfile())
+      tf_print("Fizz")
     else if (i %% 5L == 0L)
-      tf$print("Buzz", end = "", output_stream = temp_knitr_logfile())
+     tf_print("Buzz")
     else
-      tf$print(i, end = "", output_stream = temp_knitr_logfile())
-    
-    if(i < tf$cast(n-1L, i$dtype))
-      tf$print(", ", end = "", output_stream = temp_knitr_logfile())
+      tf_print(i)
   }
 })
 ```
 
+
 First, lets run it in eager mode.
 ```{r}
 fizzbuzz(tf$constant(25L))
-print_temp_knitr_logfile()
+print_tempfile()
 ```
 And now in graph mode.
 ```{r}
 fizzbuzz <- tf_function(fizzbuzz)
 fizzbuzz(tf$constant(25L))
-print_temp_knitr_logfile()
+print_tempfile()
 ```
 
-#### `break` / `next`
-
-`while` and `for` both can accept `break` and `next` statements, both in eager
-mode and in graph mode.
 
 
-#### Passing additional options
+## Visualize Function Graphs
 
+As you are writing `tf.function()`s, it's helpful to visualize what the produced
+graph from a particular autographed function looks like. Use
+`tfautograph::view_function_graph()` to launchs a tensorboard and view the
+function graph.
 
-#### Providing hints
+```{r, eval = FALSE}
+view_function_graph(fizzbuzz, list(tf$constant(25L)))
+```
 
-
-#### Control Dependencies
-
-
-#### View graph
-
+## Control Dependencies
+Check out the vignette on TF v1.
 
 #### Growing Objects / TensorArrays
 
+The package provides a `[<-` method for TensorArrays. That's the recomnded way
+to grow objects on the graph.
 
 
 #### How it works
-
-
-
-
-
-# Demo -- Full MNIST Training Loop
-
-Here is a full MNIST training loop implemented in R using tfautograph. 
-(adapted from [here](https://www.tensorflow.org/beta/guide/autograph))
-
-
-
-```{r setup2, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+`autograph()` works by evaluating expressions in an environment where primitives like `if` and `for` are masked by autographing versions of them. The complete list of which symbols are masked by `autograph()` is:   
+```{r echo=FALSE}
+names(tfautograph:::ag_mask_list)
 ```
 
+### Other resources:
 
-```{r}
-library(magrittr)
-library(purrr, warn.conflicts = FALSE)
-
-library(tensorflow)
-library(tfdatasets)
-library(keras)
-
-library(tfautograph)
-
-rm(list = ls()) # clear the global env
-
-# reticulate::use_virtualenv("tf2-nightly")
-
-# All of tfautograph works in tf 1.14 also, but this readme expects 2.0.
-tf$version$VERSION
-stopifnot(tf_version() >= "2")
-```
-
-
-
-### Download data
-
-
-```{r}
-prepare_mnist_features_and_labels <- function(x, y) {
-  x = tf$cast(x, tf$float32) / 255
-  y = tf$cast(y, tf$int64)
-  list(x, y)
-}
-
-mnist_dataset <- function() {
-  c(c(x, y), .) %<-% tf$keras$datasets$mnist$load_data()
-  tensor_slices_dataset(list(x, y)) %>%
-    dataset_map(prepare_mnist_features_and_labels) %>%
-    dataset_take(20000) %>%
-    dataset_shuffle(20000) %>%
-    dataset_batch(100)
-}
-
-train_dataset <- mnist_dataset()
-```
-
-
-### Define the model
-```{r}
-new_model_and_optimizer <- function() {
-  model <- keras_model_sequential() %>%
-    layer_reshape(target_shape = c(28 * 28),
-                  input_shape = shape(28, 28)) %>%
-    layer_dense(100, activation = 'relu') %>%
-    layer_dense(100, activation = 'relu') %>%
-    layer_dense(10)
-  model$build()
-  optimizer <- tf$keras$optimizers$Adam()
-  list(model, optimizer)
-}
-c(model, optimizer) %<-% new_model_and_optimizer()
-```
-
-
-### Define the training loop
-```{r, message=TRUE, warning=TRUE}
-compute_loss <- tf$keras$losses$SparseCategoricalCrossentropy(from_logits = TRUE)
-compute_accuracy <- tf$keras$metrics$SparseCategoricalAccuracy()
-
-train_one_step <- function(model, optimizer, x, y) {
-  with(tf$GradientTape() %as% tape, {
-    logits <- model(x)
-    loss <- compute_loss(y, logits)
-  })
-
-  grads <- tape$gradient(loss, model$trainable_variables)
-  optimizer$apply_gradients(
-    transpose(list(grads, model$trainable_variables)))
-
-  compute_accuracy(y, logits)
-  loss
-}
-
-
-train <- autograph(function(model, optimizer) {
-  step <- 0L
-  loss <- 0
-  for (batch in train_dataset) {
-    c(x, y) %<-% batch
-    step %<>% add(1L)
-    loss <- train_one_step(model, optimizer, x, y)
-    if (compute_accuracy$result() > 0.8) {
-      tf$print( 'Step', step, ': loss', loss, '; accuracy', compute_accuracy$result(),
-        output_stream = log_file)
-      # We direct all tf$print() outputs to a log file only so that Rmarkdown can
-      # show output that would otherwise just go to stdout
-      tf$print("Breaking early", output_stream = log_file)
-      break
-    } else if (step %% 10L == 0L)
-      tf$print('Step', step, ': loss', loss,
-               '; accuracy', compute_accuracy$result(), 
-               output_stream = log_file)
-  }
-  list(step, loss)
-})
-```
-
-### train in graph mode
-```{r, message=TRUE, warning=TRUE}
-
-log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
-
-train_graph <- tf_function(train)
-c(step, loss) %<-% train_graph(model, optimizer)
-
-cat(readLines(log_file), sep = "\n")
-cat(sprintf(
-  'Final step %i: loss %.6f; accuracy %.6f',
-  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-```
-
-
-### train in eager mode
-```{r, message=TRUE, warning=TRUE}
-# autograph also works in eager mode
-
-log_file <- sprintf("file://%s", tempfile("TF-print-log", fileext = ".out"))
-
-c(model, optimizer) %<-% new_model_and_optimizer()
-c(step, loss) %<-% train(model, optimizer)
-
-cat(readLines(log_file), sep = "\n")
-cat(sprintf(
-  'Final step %i: loss %.6f; accuracy %.6f',
-  as.array(step), as.array(loss), as.array(compute_accuracy$result())))
-```
-
+Check out the examples:
+ Full MNIST training loop implemented in R using `autograph()`

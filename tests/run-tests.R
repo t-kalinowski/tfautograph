@@ -16,10 +16,8 @@ run_tst_cmd <- function(virtualenv) {
 }
 
 
-# system(run_tst_cmd("tf2-rc"))
-system(run_tst_cmd("tf-rc"))
-system(run_tst_cmd("tf1-rc"))
-system(run_tst_cmd("tf2-nightly"))
+system(run_tst_cmd("tf1"))
+system(run_tst_cmd("tf2"))
 
 # reticulate::virtualenv_install("tf2-nightly", "tf-nightly-2.0-preview")
 # reticulate::virtualenv_install("tf2-rc", "tensorflow==2.0.0rc2")

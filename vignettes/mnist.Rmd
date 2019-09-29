@@ -1,0 +1,144 @@
+---
+title: "mnist"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mnist}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+reticulate::use_virtualenv("tf2", TRUE)
+```
+
+```{r setup}
+library(tfautograph)
+```
+
+
+# Example -- MNIST Training Loop using `autograph()`
+
+Here is a full MNIST training loop implemented in R using tfautograph. 
+(originally adapted from [here](https://www.tensorflow.org/beta/guide/autograph))
+
+```{r}
+library(magrittr)
+library(purrr, warn.conflicts = FALSE)
+
+library(tensorflow)
+library(tfdatasets)
+library(keras)
+
+library(tfautograph)
+tf$version$VERSION
+```
+First, some helpers so we can capture `tf.print()` output in the Rmarkdown vignette.
+```{r}
+TEMPFILE <- tempfile("tf-print-out", fileext = ".txt")
+
+print_tempfile <- function(clear_after_read = TRUE) {
+  if (clear_after_read) on.exit(unlink(TEMPFILE))
+  writeLines(readLines(TEMPFILE, warn = FALSE))
+}
+
+tf_print <- function(...)
+  tf$print(..., output_stream = sprintf("file://%s", TEMPFILE))
+```
+
+
+### Prepare the dataset
+```{r}
+c(c(x_train, y_train), .) %<-%  tf$keras$datasets$mnist$load_data()
+
+train_dataset <- list(x_train, y_train) %>%
+  tensor_slices_dataset() %>%
+  dataset_map(function(x, y) {
+    x <- tf$cast(x, tf$float32) / 255
+    y <- tf$cast(y, tf$int64)
+    list(x, y)
+  }) %>% 
+  dataset_take(20000) %>%
+  dataset_shuffle(20000) %>%
+  dataset_batch(100)
+```
+
+
+### Define the model
+```{r}
+new_model_and_optimizer <- function() {
+  model <- keras_model_sequential() %>%
+    layer_reshape(target_shape = c(28 * 28),
+                  input_shape = shape(28, 28)) %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(100, activation = 'relu') %>%
+    layer_dense(10)
+  model$build()
+  optimizer <- tf$keras$optimizers$Adam()
+  list(model, optimizer)
+}
+c(model, optimizer) %<-% new_model_and_optimizer()
+```
+
+
+### Define the training loop
+```{r, message=TRUE, warning=TRUE}
+compute_loss <- tf$keras$losses$SparseCategoricalCrossentropy(from_logits = TRUE)
+compute_accuracy <- tf$keras$metrics$SparseCategoricalAccuracy()
+
+train_one_step <- function(model, optimizer, x, y) {
+  with(tf$GradientTape() %as% tape, {
+    logits <- model(x)
+    loss <- compute_loss(y, logits)
+  })
+
+  grads <- tape$gradient(loss, model$trainable_variables)
+  optimizer$apply_gradients(
+    transpose(list(grads, model$trainable_variables)))
+
+  compute_accuracy(y, logits)
+  loss
+}
+
+train <- autograph(function(model, optimizer) {
+  step <- 0L
+  loss <- 0
+  for (batch in train_dataset) {
+    c(x, y) %<-% batch
+    step %<>% add(1L)
+    loss <- train_one_step(model, optimizer, x, y)
+    if (compute_accuracy$result() > 0.8) {
+      tf_print("Accuracy over 0.8; breaking early")
+      break
+    } else if (step %% 10L == 0L)
+      tf_print('Step', step, ': loss', loss, '; accuracy', compute_accuracy$result())
+  }
+  tf_print('Final step', step, ": loss", loss, "; accuracy", compute_accuracy$result())
+  list(step, loss)
+})
+```
+
+### Train in Eager mode
+```{r, message=TRUE, warning=TRUE}
+# autograph also works in eager mode
+
+c(model, optimizer) %<-% new_model_and_optimizer()
+c(step, loss) %<-% train(model, optimizer)
+
+print_tempfile()
+```
+
+### Train in Graph mode
+```{r, message=TRUE, warning=TRUE}
+c(model, optimizer) %<-% new_model_and_optimizer()
+
+train_on_graph <- tf_function(train)
+c(step, loss) %<-% train_on_graph(model, optimizer)
+
+print_tempfile()
+```
+
+

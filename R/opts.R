@@ -135,6 +135,10 @@ ag_name <- function(x) next_ag_name$set(x)
 ag_if_vars <- function(..., modified = list(), return = FALSE,
                        undefs = NULL, control_flow = 0) {
 
+  # TODO: should this have an 'exclude' argument like `ag_loop_vars()`?
+  #
+  # leaning towards no because I'm not seeing how ag_if will be biased towards
+  # capturing more than necessary like ag_while...
 
   if (...length()) {
     modified <- c(modified,

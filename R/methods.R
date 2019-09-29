@@ -1,9 +1,28 @@
 
 
-
-# ta <- tf$TensorArray(tf$float32, size = 1L, dynamic_size = TRUE)
-
+#' `TensorArray.write()`
+#'
+#' @param ta a tensorflow `TensorArray`
+#' @param i comething castable to an int32 scalar tensor. 0-based.
+#' @param ... Error if anything is passed to `...`
+#' @param name A scalar string, name of the op
+#' @param value The value to write.
+#'
 #' @export
+#' @examples
+#' \dontrun{
+#' ta <- tf$TensorArray(tf$float32, size = 5L)
+#' for(i in 0:4)
+#'   ta[[i]] <- i
+#' ta$stack()
+#'
+#' # You can use this to grow objects in graph mode
+#' accuracies_log <- tf$TensorArray(tf$float32, size = 0L, dynamic_size=TRUE)
+#' for(epoch in 0:4)
+#'   accuracies_log[[epoch]] <- runif(1)
+#' acc <- accuracies_log$stack()
+#' acc
+#' }
 `[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` <-
   function(ta, i, ..., name = NULL, value) {
     if(...length())
@@ -12,10 +31,6 @@
   }
 
 
-# train_losses     %<>% {.$write(i, step_train_loss)}
-# test_losses      %<>% {.$write(i, step_test_loss)}
-# train_accuracies %<>% {.$write(i, step_train_accuracy)}
-# test_accuracies  %<>% {.$write(i, step_test_accuracy)}
 
 #' @importFrom tensorflow tf_function
 #' @export
@@ -28,28 +43,39 @@ tensorflow::tf
 
 
 
+
+
 as.function.formula <- function(x) {
-  envir <- environment(x)
-  body <- list(x[[length(x)]])
-  if (length(x) == 3L) {
-    args <- x[[2L]]
-    if (is.call(args))
-      args[[1L]] <- NULL
-    if(!is.list(args))
-      args <- pairlist(args)
+  if (length(x) == 3L)
+    stop("Lambda functions provided as a formula cannot ",
+         "have anything on the left hand side of the `~`")
 
-    # args <- as.pairlist(args)
-    nms <- rlang::names2(args)
-    for (i in seq_along(args))
-      if (nms[[i]] == "") {
-        stopifnot(is.name(args[[i]]))
-        nms[[i]] <- as.character(args[[i]])
-        args[[i]] <- quote(expr =)
-      }
-    names(args) <- nms
-  } else
-    args <- NULL
-
-  as.function.default(c(args, body), envir = envir)
+  as.function.default(list(x[[2L]]), envir = environment(x))
 }
 
+
+# as.function.formula <- function(x) {
+#   envir <- environment(x)
+#   body <- list(x[[length(x)]])
+#   if (length(x) == 3L) {
+#     args <- x[[2L]]
+#     if (is.call(args))
+#       args[[1L]] <- NULL
+#     if(!is.list(args))
+#       args <- pairlist(args)
+#
+#     # args <- as.pairlist(args)
+#     nms <- rlang::names2(args)
+#     for (i in seq_along(args))
+#       if (nms[[i]] == "") {
+#         stopifnot(is.name(args[[i]]))
+#         nms[[i]] <- as.character(args[[i]])
+#         args[[i]] <- quote(expr =)
+#       }
+#     names(args) <- nms
+#   } else
+#     args <- NULL
+#
+#   as.function.default(c(args, body), envir = envir)
+# }
+#
