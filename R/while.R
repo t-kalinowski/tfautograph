@@ -5,19 +5,14 @@ ag_while <- function(cond, body) {
   body <- substitute(body)
   env <- parent.frame()
 
-  # TODO: rename consuming getters to `consume_*`, eg, `consume_next_ag_name()`
-
-  # TODO: revisit this after `append<-` is handled. Dispatching to standard R
-  # control flow may no always be the right choise.
-
-
   cond_tensor_types <- sym_tensor_types(cond, env)
   if(cond_tensor_types == "eager") {
     next_ag_name$pop()
     next_loop_vars$pop()
     next_while_loop_opts$pop()
-    cond <- substitute(as.logical(cond), list(cond = cond))
+
     # cond <- substitute((cond)$`__bool__`, list(cond = cond)) ??
+    cond <- substitute(as.logical(cond), list(cond = cond))
     cond_tensor_types <- "none"
   }
 
@@ -29,9 +24,13 @@ ag_while <- function(cond, body) {
   # TODO: consider tracing with as_concrete_fn() here for better inference of
   # loop_vars here. Downside is slight bloat of overall graph in tf v1, but in
   # tf v2 the traced graph will be able to be garbage collected. right?
+
+  hint <- next_loop_vars$pop()
+
   loop_vars <-
-    next_loop_vars$pop() %||%
-    statically_infer_modified_syms(body, env = env)
+    hint$list %||% statically_infer_modified_syms(body, env = env)
+
+  loop_vars <- union(setdiff(loop_vars, hint$exclude), hint$include)
 
   # TODO: the loop vars selector should work the same as ag_if. it should handle
   # nested structures similarily, and the user-specificaiton function should
@@ -62,6 +61,9 @@ ag_while <- function(cond, body) {
     while_loop_args$return_same_structure <- NULL
 
   res <- do.call(tf$while_loop, while_loop_args)
+
+  if (length(hint$undef))
+    export_undefs(hint$undef)
 
   loop_vars <- res[[1]]
   list2env(loop_vars, env)

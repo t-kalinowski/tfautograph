@@ -44,7 +44,6 @@ as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
 
   .cond_fn <-
     as.function.default(c(as_args(loop_vars), cond_expr), envir = env)
-  # rlang::new_function(as_args(loop_vars), cond_expr, env)
 
   function(loop_vars, did_break = NULL) {
     continue <- do.call(.cond_fn, loop_vars)
@@ -92,12 +91,18 @@ warn_about_unmodified <- function(before, after, dont_check) {
   if(any(unmodified)) {
     unmod <- names(unmodified[unmodified])
     mod   <- names(unmodified[!unmodified])
-    warning(sprintf("%s appear to be unnecessarily captured as a loop variable",
-                    yasp::pc_and(yasp::wrap(unmod, "`"))),
+    warning(sprintf("%s appears to be unnecessarily captured as a loop variable",
+                    pc_and(sprintf("`%s`", unmod))),
             "\nSpecify loop vars with ag_loop_vars(). e.g.,\n",
-            "ag_loop_vars(", yasp::pcc(yasp::dbl_quote(mod)), ")\n", call. = FALSE)
+            "ag_loop_vars(", paste(mod, collapse = ", "), ")\n",
+            "or\n",
+            sprintf("ag_loop_vars(%s)\n", paste0("-", unmod, collapse = ", ")),
+            call. = FALSE)
   }
 }
+
+pc_and <- yasp::pc_and
+pc_or <- yasp::pc_or
 
 
 cond_registries         <- Stack()
