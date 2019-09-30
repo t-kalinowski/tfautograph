@@ -5,7 +5,6 @@ if(testthat::is_testing()){
   devtools::load_all()
 }
 
-
 test_that("break basic", {
   fn <- function(n) {
     while (n > 0L) {
@@ -181,3 +180,4 @@ test_that("break and next in simple for", {
   }
 
 })
+

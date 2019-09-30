@@ -125,3 +125,9 @@ tf_group_ops <- function(x) {
   with(tf$control_dependencies(op), robust_tf_identity(x))
 }
 
+
+#' @importFrom tensorflow tf_version
+tf_v2 <- function() package_version(tf_version()) >= "2"
+tf_v1 <- function() package_version(tf_version()) < "2"
+
+

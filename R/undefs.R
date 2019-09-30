@@ -27,8 +27,11 @@ is_undef <- function(x, env = NULL) {
 }
 
 export_undef <- function(leaf_nm, env, call) {
-  if(length(leaf_nm) == 1)
+  if(length(leaf_nm) == 1) {
+    if(exists(leaf_nm, envir = env, inherits = FALSE))
+      rm(list = leaf_nm, envir = env)
     makeActiveBinding(leaf_nm, new_undef_fn(leaf_nm, call), env)
+  }
   else {
     x <- get(leaf_nm[1], env)
     x[[leaf_nm[-1]]] <- new_undef_fn(paste0(leaf_nm, collapse = "$"), call)

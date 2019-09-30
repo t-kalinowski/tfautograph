@@ -133,7 +133,6 @@ test_that("while local composite complex illegal", {
     ag_fn <- tf_function(ag_fn)
   }
 
-  # TODO: while should return a better error message
   expect_error(ag_fn(as_tensor(5L)), '*tc*',
                class = if(!tf$executing_eagerly()) "access_undefined")
   expect_error(ag_fn(as_tensor(5L)), 'must be defined before the loop',
@@ -168,3 +167,38 @@ test_that("while test while dispatches by cond only", {
 
 
 
+
+test_that("while loop_vars hints", {
+  fn <- function(n) {
+    b <- 1L
+    while (n > 0L) {
+      b <- b
+      subtract(n) <- 1L
+    }
+    n
+  }
+
+  ag_fn <- autograph(fn)
+
+  wrng <- "`b` appears to be unnecessarily captured as a loop variable"
+  for (i in 1:2) {
+    if (tf$executing_eagerly())
+      next
+
+    expect_warning(ag_fn(as_tensor(5L)), wrng)
+
+    ag_loop_vars(-b)
+    expect_silent(ag_fn(as_tensor(5L)))
+
+    ag_loop_vars(n)
+    expect_silent(ag_fn(as_tensor(5L)))
+
+    expect_warning(ag_fn(as_tensor(5L)), wrng)
+
+    ag_fn <- local({
+      # force retracing every call
+      ag_fn <- ag_fn
+      function(...) tf_function(ag_fn)(...)
+    })
+  }
+})

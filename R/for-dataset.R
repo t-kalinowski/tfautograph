@@ -7,14 +7,21 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
     if(tf$executing_eagerly()) {
       next_ag_name$pop()
       next_loop_vars$pop()
+      next_while_loop_opts$pop()
+      # in case someone is writing a function that can accept either a dataset or a tensor
       # TODO: aren't there other options to pass to dataset$reduce() ?
       return(ag_for_impl.python.builtin.iterator(
         as_iterator(iterable), var, body, env))
     }
 
-    body_vars <-
-      next_loop_vars$pop() %||%
-      statically_infer_modified_syms(body, env = env)
+    hint <- next_loop_vars$pop()
+
+    loop_vars <-
+      hint$list %||% statically_infer_modified_syms(body, env = env)
+
+    loop_vars <- union(setdiff(loop_vars, hint$exclude), hint$include)
+
+    body_vars <- loop_vars
 
     var <- deparse(var)
 
