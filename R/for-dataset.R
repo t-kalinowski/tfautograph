@@ -63,12 +63,14 @@ dataset_for_loop_with_potential_break <-
         res
       }
 
+      var_is_loop_var <- var %in% names(loop_vars)
+
       current_state$loop_vars[[var]] <- next_ds_elem
       new_state <- tf$cond(did_break_prior_elem,
                            function() current_state,
                            function() fn(current_state))
 
-      if (!exists(var, envir = env))
+      if (!var_is_loop_var)
         new_state$loop_vars[[var]] <- NULL
 
       new_state$did_break_prior_elem <- did_break_prior_elem
@@ -107,12 +109,14 @@ dataset_for_loop_no_break <-
         current_state$placeholder <- NULL
       }
 
+      var_is_loop_var <- var %in% names(initial_state)
+
       current_state[[var]] <- next_ds_elem
       new_state <- body_fn(current_state)[[1]]
 
       # TODO: should there be a better heuristic here?
       # maybe: if (var %in% names(formals(body_fn))) ?
-      if(!exists(var, envir = env))
+      if(!var_is_loop_var)
         new_state[[var]] <- NULL
 
       if(using_placeholder)

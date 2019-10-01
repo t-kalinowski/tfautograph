@@ -32,6 +32,8 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
 
+    var_is_loop_var <- var %in% names(loop_vars)
+
     loop_vars[[var]] <- iter$read(index)
     res <- .body_fn(loop_vars, did_break)
 
@@ -39,7 +41,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
     loop_vars <- res$loop_vars
     did_break <- res$did_break
 
-    if(!exists(var, envir = env))
+    if(!var_is_loop_var)
       loop_vars[[var]] <- NULL
 
     drop_empty(list(index + 1L, loop_vars, did_break))
