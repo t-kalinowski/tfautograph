@@ -182,7 +182,14 @@ test_that("while loop_vars hints", {
 
   wrng <- "`b` appears to be unnecessarily captured as a loop variable"
   for (i in 1:2) {
-    if (tf$executing_eagerly())
+    if(i == 2)
+      ag_fn <- local({
+        # force retracing every call
+        ag_fn <- ag_fn
+        function(...) tf_function(ag_fn)(...)
+      })
+
+    if(i == 1 && tf$executing_eagerly())
       next
 
     expect_warning(ag_fn(as_tensor(5L)), wrng)
@@ -195,10 +202,6 @@ test_that("while loop_vars hints", {
 
     expect_warning(ag_fn(as_tensor(5L)), wrng)
 
-    ag_fn <- local({
-      # force retracing every call
-      ag_fn <- ag_fn
-      function(...) tf_function(ag_fn)(...)
-    })
+
   }
 })
