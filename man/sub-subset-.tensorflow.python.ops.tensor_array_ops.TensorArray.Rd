@@ -10,7 +10,7 @@
 \arguments{
 \item{ta}{a tensorflow \code{TensorArray}}
 
-\item{i}{comething castable to an int32 scalar tensor. 0-based.}
+\item{i}{something castable to an int32 scalar tensor. 0-based.}
 
 \item{...}{Error if anything is passed to \code{...}}
 

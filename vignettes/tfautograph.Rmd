@@ -43,7 +43,7 @@ library(tfdatasets)
 library(tfautograph)
 ```
 
-## Compatability
+## Compatibility
 tfautograph works with Tensorflow versions 1.14, 1.15, and 2.0. This vignette is
 using version 2.0.
 ```{r}
@@ -99,7 +99,7 @@ square_if_positive_verbose(y)
 square_if_positive_verbose(y)
 ```
 As you can see we're in eager mode, meaning, the R code of the function body is
-evaluated every time the funciton is called.
+evaluated every time the function is called.
 
 The easiest way to enter a context where tensorflow is not executing eagerly anymore and instead is in **graph mode** is to call python's `tf.function()`. (Because `function` is a reserved word for the R parser, there is a convenient wrapper provided by the tensorflow `R` package: `tf_function()`)
 
@@ -124,7 +124,7 @@ The key takeaways are that `autograph()` helps you write natural R code and use 
 
 tfautograph can translate R control flow statements `if`, `while`, `for`, `break`, and
 `next` to tensorflow. Here is summary table of the translation endpoints (note,
-these summary code snippits are meant to concisely convey the spirit of the
+these summary code snippets are meant to concisely convey the spirit of the
 translation, not the actual implementation)
 
 ```{r, echo = FALSE, results = 'asis'}
@@ -147,7 +147,7 @@ Lets go through them one at a time.
 
 In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`). 
 
-In graph mode, `if` statements written in R automatically get translated to a `tf.cond()`. `tf.cond()` requires that both branches of the conditional are balanced (meaning, both branchs return the same output structure). `autograph()` tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated  `tf.cond()`, while satisfying the requirement for balanced branches.
+In graph mode, `if` statements written in R automatically get translated to a `tf.cond()`. `tf.cond()` requires that both branches of the conditional are balanced (meaning, both branches return the same output structure). `autograph()` tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated  `tf.cond()`, while satisfying the requirement for balanced branches.
 
 
 ```{r}
@@ -375,7 +375,7 @@ view_function_graph(fizzbuzz, list(tf$constant(25L)))
 ```
 
 ## Control Dependencies
-Side effects Ops `tf$print()` and `tf$Assert()` created within a `tf.function` are executed in-line and in the correct order when the funciton is evaluated. (If you're used to working Tensorflow version 1, you read that right!)
+Side effects Ops `tf$print()` and `tf$Assert()` created within a `tf.function` are executed in-line and in the correct order when the function is evaluated. (If you're used to working Tensorflow version 1, you read that right!)
 
 Tensorflow 2.0 has drastically changed (for the better!) how control dependencies work. For the most part, so long as you only enter graph mode while within a `tf.function()`, there is no need anymore to enter a control dependency context. The days of wrapping code in a `with(tf$control_dependency(...), ...)` are mostly over.
 
@@ -384,7 +384,7 @@ If you're still working in Tensorflow version 1, check out the vignette on TF v1
 
 # Growing Objects / TensorArrays
 
-The package provides a `[[<-` method for TensorArrays. That's the recomnded way
+The package provides a `[[<-` method for TensorArrays. That's the recommended way
 to grow objects on the graph. 
 See ``` ?`[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` ``` for usage examples.
 
