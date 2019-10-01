@@ -3,52 +3,44 @@
 
 # tfautograph
 
-# :construction: **Under Construction** :construction:
-
 <!-- badges: start -->
+
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/tfautograph)](https://CRAN.R-project.org/package=tfautograph) -->
 
 <!-- badges: end -->
 
-This package implements autograph for R. It can be used to translate R
-control flow statements like `if` into tensorflow graphs.
+This package implements autograph for R.
 
-Checkout a work-in-progress draft of the [intro
-vignette](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
+It lets you use tensors in R control flow expressions like `if`, `while`
+and `for` and automatically translates those expressions into tensorflow
+graphs.
 
-Implemented so far:
+It is compatible with and tested against Tensorflow Versions 2.0, 1.15
+and 1.14.
 
-  - \[x\] `if`
-  - \[x\] `while`
-  - \[x\] `for` with tensors
-  - \[x\] `for` with tf datasets
-  - \[x\] `next` and `break` in `while`
-  - \[x\] `next` and `break` in `for` with tensors
-  - \[x\] `next` and `break` in `for` with tf datasets
-  - \[x\] `switch` (autograph to `tf.switch_case`)
-  - \[x\] `stopifnot` (python `assert`); translates to `tf.Assert()`
-    (mostly useful for tensorflow v1 code)
+# Learn More:
 
-Additional remaining tasks:
+Start here:
 
-  - \[x\] full compatibility with both tf versions 1.15 and 2.0
-  - \[x\] full compatibility with both eager and graph mode
-  - \[x\] autograph inline expressions also, in addition to functions
-  - \[x\] nice informative error messages warning about undefined
-    symbols and unbalanced branches
-  - \[x\] a way to pass through additional options to `tf.while_loop`
-  - \[ \] R function documentation (in progress)
-  - \[ \] vignette / README (in progress)
-  - \[ \] a verbose/debug mode that logs what autograph is doing
-  - \[ \] submit to CRAN
+  - [Getting
+    Started](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
 
-Planned for CRAN release \#2
+## Demos
 
-  - \[ \] early `return` in `while` and `for`
-  - \[ \] autograph `if ... else if ... else if` chains into `tf.case`
-  - \[ \] an ergonomic API around `TensorArray`s and `TensorList`s
-  - \[ \] `recursive` support
+  - Full [MNIST training
+    loop](https://t-kalinowski.github.io/tfautograph/articles/demo-mnist.html)
+    using `autograph` and Tensorflow 2.0
+
+## Additional Articles:
+
+  - Tensorflow Version 1 and control dependencies:
+    [here](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
+  - Giving `autograph`
+    [hints](https://t-kalinowski.github.io/tfautograph/articles/hints.html)
 
 ## Installation
+
+tfautograph is not yet on CRAN (it will be soon\!)
 
 You can install the development version from
 [GitHub](https://github.com/) with:

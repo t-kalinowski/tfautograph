@@ -54,7 +54,7 @@ ag_name <- function(x) next_ag_name$set(x)
 #'   ag_while_opts(back_prop = FALSE)
 #'   while(n > 0)
 #'     n <- n - 1
-#' })
+#' }))
 #' }
 ag_while_opts <- function(...,
                           shape_invariants = NULL,

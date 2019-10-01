@@ -38,13 +38,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="../articles/tfautograph.html">Get started</a>
+  <a href="../articles/tfautograph.html">Getting Started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -57,13 +51,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/hints.html">Giving `autograph` hints</a>
+      <a href="../articles/hints.html">Giving hints</a>
     </li>
     <li>
-      <a href="../articles/mnist.html">mnist</a>
+      <a href="../articles/tf-v1.html">Control Dependencies in TF version 1</a>
     </li>
-    <li>
-      <a href="../articles/tf-v1.html">Autographing Tensorflow version 1.15</a>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Demos
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="../articles/demo-mnist.html">MNIST Training Loop</a>
     </li>
   </ul>
 </li>
@@ -162,8 +165,8 @@
 <a class="sourceLine" id="cb3-48" data-line-number="48"><span class="co"># [&lt;R call 42&gt;: rmarkdown::render(...)] </span></a>
 <a class="sourceLine" id="cb3-49" data-line-number="49"><span class="co"># [&lt;R call 43&gt;: (function (...) ] </span></a>
 <a class="sourceLine" id="cb3-50" data-line-number="50"><span class="co"># [&lt;R call 44&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb3-51" data-line-number="51"><span class="co"># [&lt;R call 45&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
-<a class="sourceLine" id="cb3-52" data-line-number="52"><span class="co"># [&lt;R call 46&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpuwPDiu/file5fbe67e6e238\")] </span></a>
+<a class="sourceLine" id="cb3-51" data-line-number="51"><span class="co"># [&lt;R call 45&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb3-52" data-line-number="52"><span class="co"># [&lt;R call 46&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpQCLsYB/file2a8f30573e89\")] </span></a>
 <a class="sourceLine" id="cb3-53" data-line-number="53"><span class="co"># [&lt;R call 47&gt;: withCallingHandlers({] </span></a>
 <a class="sourceLine" id="cb3-54" data-line-number="54"><span class="co"># [&lt;R call 48&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
 <a class="sourceLine" id="cb3-55" data-line-number="55"><span class="co"># [&lt;R call 49&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
@@ -220,7 +223,7 @@
 <a class="sourceLine" id="cb3-106" data-line-number="106"><span class="co"># [&lt;R call 42&gt;: rmarkdown::render(...)] </span></a>
 <a class="sourceLine" id="cb3-107" data-line-number="107"><span class="co"># [&lt;R call 43&gt;: (function (...) ] </span></a>
 <a class="sourceLine" id="cb3-108" data-line-number="108"><span class="co"># [&lt;R call 44&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb3-109" data-line-number="109"><span class="co"># [&lt;R call 45&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb3-109" data-line-number="109"><span class="co"># [&lt;R call 45&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
 <a class="sourceLine" id="cb3-110" data-line-number="110"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb3-111" data-line-number="111"><span class="co">#&gt; Detailed traceback: </span></a>
 <a class="sourceLine" id="cb3-112" data-line-number="112"><span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf1/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span></a>
@@ -277,8 +280,8 @@
 <a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co"># [&lt;R call 30&gt;: rmarkdown::render(...)] </span></a>
 <a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co"># [&lt;R call 31&gt;: (function (...) ] </span></a>
 <a class="sourceLine" id="cb4-45" data-line-number="45"><span class="co"># [&lt;R call 32&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co"># [&lt;R call 33&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
-<a class="sourceLine" id="cb4-47" data-line-number="47"><span class="co"># [&lt;R call 34&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpuwPDiu/file5fbe67e6e238\")] </span></a>
+<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co"># [&lt;R call 33&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb4-47" data-line-number="47"><span class="co"># [&lt;R call 34&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpQCLsYB/file2a8f30573e89\")] </span></a>
 <a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co"># [&lt;R call 35&gt;: withCallingHandlers({] </span></a>
 <a class="sourceLine" id="cb4-49" data-line-number="49"><span class="co"># [&lt;R call 36&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
 <a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co"># [&lt;R call 37&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
@@ -288,53 +291,53 @@
 <a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co"># [&lt;R call 41&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
 <a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co"># [&lt;R call 42&gt;: tryCatch(withCallingHandlers({]</span></a>
 <a class="sourceLine" id="cb4-56" data-line-number="56"><span class="co">#&gt;   [[node Assert_1/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
-<a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co">#&gt;   [[Identity/_221]]</span></a>
-<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="co">#&gt;   (1) Invalid argument: assertion failed: </span></a>
-<a class="sourceLine" id="cb4-59" data-line-number="59"><span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [x is positive] [`x` value:] [-1] </span></a>
-<a class="sourceLine" id="cb4-60" data-line-number="60"><span class="co"># [&lt;R call stack&gt;:] </span></a>
-<a class="sourceLine" id="cb4-61" data-line-number="61"><span class="co"># [&lt;R call 1&gt;: tf_assert(x &gt; 0, \"x is positive\")] </span></a>
-<a class="sourceLine" id="cb4-62" data-line-number="62"><span class="co"># [&lt;R call 2&gt;: stop_if_negative3(x)] </span></a>
-<a class="sourceLine" id="cb4-63" data-line-number="63"><span class="co"># [&lt;R call 3&gt;: eval(expr, p)] </span></a>
-<a class="sourceLine" id="cb4-64" data-line-number="64"><span class="co"># [&lt;R call 4&gt;: eval(expr, p)] </span></a>
-<a class="sourceLine" id="cb4-65" data-line-number="65"><span class="co"># [&lt;R call 5&gt;: eval.parent(call)] </span></a>
-<a class="sourceLine" id="cb4-66" data-line-number="66"><span class="co"># [&lt;R call 6&gt;: py_resolve_dots(eval.parent(call))] </span></a>
-<a class="sourceLine" id="cb4-67" data-line-number="67"><span class="co"># [&lt;R call 7&gt;: sess$run(stop_if_negative3(x))] </span></a>
-<a class="sourceLine" id="cb4-68" data-line-number="68"><span class="co"># [&lt;R call 8&gt;: eval(expr, envir, enclos)] </span></a>
-<a class="sourceLine" id="cb4-69" data-line-number="69"><span class="co"># [&lt;R call 9&gt;: eval(expr, envir, enclos)] </span></a>
-<a class="sourceLine" id="cb4-70" data-line-number="70"><span class="co"># [&lt;R call 10&gt;: withVisible(eval(expr, envir, enclos))] </span></a>
-<a class="sourceLine" id="cb4-71" data-line-number="71"><span class="co"># [&lt;R call 11&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)] </span></a>
-<a class="sourceLine" id="cb4-72" data-line-number="72"><span class="co"># [&lt;R call 12&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb4-73" data-line-number="73"><span class="co"># [&lt;R call 13&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
-<a class="sourceLine" id="cb4-74" data-line-number="74"><span class="co"># [&lt;R call 14&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
-<a class="sourceLine" id="cb4-75" data-line-number="75"><span class="co"># [&lt;R call 15&gt;: tryCatch(expr, error = function(e) {] </span></a>
-<a class="sourceLine" id="cb4-76" data-line-number="76"><span class="co"># [&lt;R call 16&gt;: try(f, silent = TRUE)] </span></a>
-<a class="sourceLine" id="cb4-77" data-line-number="77"><span class="co"># [&lt;R call 17&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))] </span></a>
-<a class="sourceLine" id="cb4-78" data-line-number="78"><span class="co"># [&lt;R call 18&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span></a>
-<a class="sourceLine" id="cb4-79" data-line-number="79"><span class="co"># [&lt;R call 19&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span></a>
-<a class="sourceLine" id="cb4-80" data-line-number="80"><span class="co"># [&lt;R call 20&gt;: evaluate::evaluate(...)] </span></a>
-<a class="sourceLine" id="cb4-81" data-line-number="81"><span class="co"># [&lt;R call 21&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span></a>
-<a class="sourceLine" id="cb4-82" data-line-number="82"><span class="co"># [&lt;R call 22&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span></a>
-<a class="sourceLine" id="cb4-83" data-line-number="83"><span class="co"># [&lt;R call 23&gt;: block_exec(params)] </span></a>
-<a class="sourceLine" id="cb4-84" data-line-number="84"><span class="co"># [&lt;R call 24&gt;: call_block(x)] </span></a>
-<a class="sourceLine" id="cb4-85" data-line-number="85"><span class="co"># [&lt;R call 25&gt;: process_group.block(group)] </span></a>
-<a class="sourceLine" id="cb4-86" data-line-number="86"><span class="co"># [&lt;R call 26&gt;: process_group(group)] </span></a>
-<a class="sourceLine" id="cb4-87" data-line-number="87"><span class="co"># [&lt;R call 27&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span></a>
-<a class="sourceLine" id="cb4-88" data-line-number="88"><span class="co"># [&lt;R call 28&gt;: process_file(text, output)] </span></a>
-<a class="sourceLine" id="cb4-89" data-line-number="89"><span class="co"># [&lt;R call 29&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet, encoding = encoding)] </span></a>
-<a class="sourceLine" id="cb4-90" data-line-number="90"><span class="co"># [&lt;R call 30&gt;: rmarkdown::render(...)] </span></a>
-<a class="sourceLine" id="cb4-91" data-line-number="91"><span class="co"># [&lt;R call 31&gt;: (function (...) ] </span></a>
-<a class="sourceLine" id="cb4-92" data-line-number="92"><span class="co"># [&lt;R call 32&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb4-93" data-line-number="93"><span class="co"># [&lt;R call 33&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
-<a class="sourceLine" id="cb4-94" data-line-number="94"><span class="co"># [&lt;R call 34&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpuwPDiu/file5fbe67e6e238\")] </span></a>
-<a class="sourceLine" id="cb4-95" data-line-number="95"><span class="co"># [&lt;R call 35&gt;: withCallingHandlers({] </span></a>
-<a class="sourceLine" id="cb4-96" data-line-number="96"><span class="co"># [&lt;R call 36&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb4-97" data-line-number="97"><span class="co"># [&lt;R call 37&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
-<a class="sourceLine" id="cb4-98" data-line-number="98"><span class="co"># [&lt;R call 38&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span></a>
-<a class="sourceLine" id="cb4-99" data-line-number="99"><span class="co"># [&lt;R call 39&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb4-100" data-line-number="100"><span class="co"># [&lt;R call 40&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span></a>
-<a class="sourceLine" id="cb4-101" data-line-number="101"><span class="co"># [&lt;R call 41&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
-<a class="sourceLine" id="cb4-102" data-line-number="102"><span class="co"># [&lt;R call 42&gt;: tryCatch(withCallingHandlers({]</span></a>
-<a class="sourceLine" id="cb4-103" data-line-number="103"><span class="co">#&gt;   [[node Assert_1/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
+<a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co">#&gt;   (1) Invalid argument: assertion failed: </span></a>
+<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [x is positive] [`x` value:] [-1] </span></a>
+<a class="sourceLine" id="cb4-59" data-line-number="59"><span class="co"># [&lt;R call stack&gt;:] </span></a>
+<a class="sourceLine" id="cb4-60" data-line-number="60"><span class="co"># [&lt;R call 1&gt;: tf_assert(x &gt; 0, \"x is positive\")] </span></a>
+<a class="sourceLine" id="cb4-61" data-line-number="61"><span class="co"># [&lt;R call 2&gt;: stop_if_negative3(x)] </span></a>
+<a class="sourceLine" id="cb4-62" data-line-number="62"><span class="co"># [&lt;R call 3&gt;: eval(expr, p)] </span></a>
+<a class="sourceLine" id="cb4-63" data-line-number="63"><span class="co"># [&lt;R call 4&gt;: eval(expr, p)] </span></a>
+<a class="sourceLine" id="cb4-64" data-line-number="64"><span class="co"># [&lt;R call 5&gt;: eval.parent(call)] </span></a>
+<a class="sourceLine" id="cb4-65" data-line-number="65"><span class="co"># [&lt;R call 6&gt;: py_resolve_dots(eval.parent(call))] </span></a>
+<a class="sourceLine" id="cb4-66" data-line-number="66"><span class="co"># [&lt;R call 7&gt;: sess$run(stop_if_negative3(x))] </span></a>
+<a class="sourceLine" id="cb4-67" data-line-number="67"><span class="co"># [&lt;R call 8&gt;: eval(expr, envir, enclos)] </span></a>
+<a class="sourceLine" id="cb4-68" data-line-number="68"><span class="co"># [&lt;R call 9&gt;: eval(expr, envir, enclos)] </span></a>
+<a class="sourceLine" id="cb4-69" data-line-number="69"><span class="co"># [&lt;R call 10&gt;: withVisible(eval(expr, envir, enclos))] </span></a>
+<a class="sourceLine" id="cb4-70" data-line-number="70"><span class="co"># [&lt;R call 11&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)] </span></a>
+<a class="sourceLine" id="cb4-71" data-line-number="71"><span class="co"># [&lt;R call 12&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb4-72" data-line-number="72"><span class="co"># [&lt;R call 13&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
+<a class="sourceLine" id="cb4-73" data-line-number="73"><span class="co"># [&lt;R call 14&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
+<a class="sourceLine" id="cb4-74" data-line-number="74"><span class="co"># [&lt;R call 15&gt;: tryCatch(expr, error = function(e) {] </span></a>
+<a class="sourceLine" id="cb4-75" data-line-number="75"><span class="co"># [&lt;R call 16&gt;: try(f, silent = TRUE)] </span></a>
+<a class="sourceLine" id="cb4-76" data-line-number="76"><span class="co"># [&lt;R call 17&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))] </span></a>
+<a class="sourceLine" id="cb4-77" data-line-number="77"><span class="co"># [&lt;R call 18&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span></a>
+<a class="sourceLine" id="cb4-78" data-line-number="78"><span class="co"># [&lt;R call 19&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span></a>
+<a class="sourceLine" id="cb4-79" data-line-number="79"><span class="co"># [&lt;R call 20&gt;: evaluate::evaluate(...)] </span></a>
+<a class="sourceLine" id="cb4-80" data-line-number="80"><span class="co"># [&lt;R call 21&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span></a>
+<a class="sourceLine" id="cb4-81" data-line-number="81"><span class="co"># [&lt;R call 22&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span></a>
+<a class="sourceLine" id="cb4-82" data-line-number="82"><span class="co"># [&lt;R call 23&gt;: block_exec(params)] </span></a>
+<a class="sourceLine" id="cb4-83" data-line-number="83"><span class="co"># [&lt;R call 24&gt;: call_block(x)] </span></a>
+<a class="sourceLine" id="cb4-84" data-line-number="84"><span class="co"># [&lt;R call 25&gt;: process_group.block(group)] </span></a>
+<a class="sourceLine" id="cb4-85" data-line-number="85"><span class="co"># [&lt;R call 26&gt;: process_group(group)] </span></a>
+<a class="sourceLine" id="cb4-86" data-line-number="86"><span class="co"># [&lt;R call 27&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span></a>
+<a class="sourceLine" id="cb4-87" data-line-number="87"><span class="co"># [&lt;R call 28&gt;: process_file(text, output)] </span></a>
+<a class="sourceLine" id="cb4-88" data-line-number="88"><span class="co"># [&lt;R call 29&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet, encoding = encoding)] </span></a>
+<a class="sourceLine" id="cb4-89" data-line-number="89"><span class="co"># [&lt;R call 30&gt;: rmarkdown::render(...)] </span></a>
+<a class="sourceLine" id="cb4-90" data-line-number="90"><span class="co"># [&lt;R call 31&gt;: (function (...) ] </span></a>
+<a class="sourceLine" id="cb4-91" data-line-number="91"><span class="co"># [&lt;R call 32&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
+<a class="sourceLine" id="cb4-92" data-line-number="92"><span class="co"># [&lt;R call 33&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb4-93" data-line-number="93"><span class="co"># [&lt;R call 34&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpQCLsYB/file2a8f30573e89\")] </span></a>
+<a class="sourceLine" id="cb4-94" data-line-number="94"><span class="co"># [&lt;R call 35&gt;: withCallingHandlers({] </span></a>
+<a class="sourceLine" id="cb4-95" data-line-number="95"><span class="co"># [&lt;R call 36&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb4-96" data-line-number="96"><span class="co"># [&lt;R call 37&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
+<a class="sourceLine" id="cb4-97" data-line-number="97"><span class="co"># [&lt;R call 38&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span></a>
+<a class="sourceLine" id="cb4-98" data-line-number="98"><span class="co"># [&lt;R call 39&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb4-99" data-line-number="99"><span class="co"># [&lt;R call 40&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span></a>
+<a class="sourceLine" id="cb4-100" data-line-number="100"><span class="co"># [&lt;R call 41&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
+<a class="sourceLine" id="cb4-101" data-line-number="101"><span class="co"># [&lt;R call 42&gt;: tryCatch(withCallingHandlers({]</span></a>
+<a class="sourceLine" id="cb4-102" data-line-number="102"><span class="co">#&gt;   [[node Assert_1/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
+<a class="sourceLine" id="cb4-103" data-line-number="103"><span class="co">#&gt;   [[Identity/_221]]</span></a>
 <a class="sourceLine" id="cb4-104" data-line-number="104"><span class="co">#&gt; 0 successful operations.</span></a>
 <a class="sourceLine" id="cb4-105" data-line-number="105"><span class="co">#&gt; 0 derived errors ignored.</span></a>
 <a class="sourceLine" id="cb4-106" data-line-number="106"><span class="co">#&gt; </span></a>
@@ -393,8 +396,8 @@
 <a class="sourceLine" id="cb5-43" data-line-number="43"><span class="co"># [&lt;R call 34&gt;: rmarkdown::render(...)] </span></a>
 <a class="sourceLine" id="cb5-44" data-line-number="44"><span class="co"># [&lt;R call 35&gt;: (function (...) ] </span></a>
 <a class="sourceLine" id="cb5-45" data-line-number="45"><span class="co"># [&lt;R call 36&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb5-46" data-line-number="46"><span class="co"># [&lt;R call 37&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
-<a class="sourceLine" id="cb5-47" data-line-number="47"><span class="co"># [&lt;R call 38&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpuwPDiu/file5fbe67e6e238\")] </span></a>
+<a class="sourceLine" id="cb5-46" data-line-number="46"><span class="co"># [&lt;R call 37&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb5-47" data-line-number="47"><span class="co"># [&lt;R call 38&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpQCLsYB/file2a8f30573e89\")] </span></a>
 <a class="sourceLine" id="cb5-48" data-line-number="48"><span class="co"># [&lt;R call 39&gt;: withCallingHandlers({] </span></a>
 <a class="sourceLine" id="cb5-49" data-line-number="49"><span class="co"># [&lt;R call 40&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
 <a class="sourceLine" id="cb5-50" data-line-number="50"><span class="co"># [&lt;R call 41&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
@@ -404,57 +407,57 @@
 <a class="sourceLine" id="cb5-54" data-line-number="54"><span class="co"># [&lt;R call 45&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
 <a class="sourceLine" id="cb5-55" data-line-number="55"><span class="co"># [&lt;R call 46&gt;: tryCatch(withCallingHandlers({]</span></a>
 <a class="sourceLine" id="cb5-56" data-line-number="56"><span class="co">#&gt;   [[node Assert_2/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
-<a class="sourceLine" id="cb5-57" data-line-number="57"><span class="co">#&gt;   (1) Invalid argument: assertion failed: </span></a>
-<a class="sourceLine" id="cb5-58" data-line-number="58"><span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [`x` value:] [-1] </span></a>
-<a class="sourceLine" id="cb5-59" data-line-number="59"><span class="co"># [&lt;R call stack&gt;:] </span></a>
-<a class="sourceLine" id="cb5-60" data-line-number="60"><span class="co"># [&lt;R call 1&gt;: stopifnot(x &gt; 0)] </span></a>
-<a class="sourceLine" id="cb5-61" data-line-number="61"><span class="co"># [&lt;R call 2&gt;: fn(...)] </span></a>
-<a class="sourceLine" id="cb5-62" data-line-number="62"><span class="co"># [&lt;R call 3&gt;: withVisible(fn(...))] </span></a>
-<a class="sourceLine" id="cb5-63" data-line-number="63"><span class="co"># [&lt;R call 4&gt;: fn()] </span></a>
-<a class="sourceLine" id="cb5-64" data-line-number="64"><span class="co"># [&lt;R call 5&gt;: autograph(stopifnot(x &gt; 0))] </span></a>
-<a class="sourceLine" id="cb5-65" data-line-number="65"><span class="co"># [&lt;R call 6&gt;: stop_if_negative4(x)] </span></a>
-<a class="sourceLine" id="cb5-66" data-line-number="66"><span class="co"># [&lt;R call 7&gt;: eval(expr, p)] </span></a>
-<a class="sourceLine" id="cb5-67" data-line-number="67"><span class="co"># [&lt;R call 8&gt;: eval(expr, p)] </span></a>
-<a class="sourceLine" id="cb5-68" data-line-number="68"><span class="co"># [&lt;R call 9&gt;: eval.parent(call)] </span></a>
-<a class="sourceLine" id="cb5-69" data-line-number="69"><span class="co"># [&lt;R call 10&gt;: py_resolve_dots(eval.parent(call))] </span></a>
-<a class="sourceLine" id="cb5-70" data-line-number="70"><span class="co"># [&lt;R call 11&gt;: sess$run(stop_if_negative4(x))] </span></a>
-<a class="sourceLine" id="cb5-71" data-line-number="71"><span class="co"># [&lt;R call 12&gt;: eval(expr, envir, enclos)] </span></a>
-<a class="sourceLine" id="cb5-72" data-line-number="72"><span class="co"># [&lt;R call 13&gt;: eval(expr, envir, enclos)] </span></a>
-<a class="sourceLine" id="cb5-73" data-line-number="73"><span class="co"># [&lt;R call 14&gt;: withVisible(eval(expr, envir, enclos))] </span></a>
-<a class="sourceLine" id="cb5-74" data-line-number="74"><span class="co"># [&lt;R call 15&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)] </span></a>
-<a class="sourceLine" id="cb5-75" data-line-number="75"><span class="co"># [&lt;R call 16&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb5-76" data-line-number="76"><span class="co"># [&lt;R call 17&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
-<a class="sourceLine" id="cb5-77" data-line-number="77"><span class="co"># [&lt;R call 18&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
-<a class="sourceLine" id="cb5-78" data-line-number="78"><span class="co"># [&lt;R call 19&gt;: tryCatch(expr, error = function(e) {] </span></a>
-<a class="sourceLine" id="cb5-79" data-line-number="79"><span class="co"># [&lt;R call 20&gt;: try(f, silent = TRUE)] </span></a>
-<a class="sourceLine" id="cb5-80" data-line-number="80"><span class="co"># [&lt;R call 21&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))] </span></a>
-<a class="sourceLine" id="cb5-81" data-line-number="81"><span class="co"># [&lt;R call 22&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span></a>
-<a class="sourceLine" id="cb5-82" data-line-number="82"><span class="co"># [&lt;R call 23&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span></a>
-<a class="sourceLine" id="cb5-83" data-line-number="83"><span class="co"># [&lt;R call 24&gt;: evaluate::evaluate(...)] </span></a>
-<a class="sourceLine" id="cb5-84" data-line-number="84"><span class="co"># [&lt;R call 25&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span></a>
-<a class="sourceLine" id="cb5-85" data-line-number="85"><span class="co"># [&lt;R call 26&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span></a>
-<a class="sourceLine" id="cb5-86" data-line-number="86"><span class="co"># [&lt;R call 27&gt;: block_exec(params)] </span></a>
-<a class="sourceLine" id="cb5-87" data-line-number="87"><span class="co"># [&lt;R call 28&gt;: call_block(x)] </span></a>
-<a class="sourceLine" id="cb5-88" data-line-number="88"><span class="co"># [&lt;R call 29&gt;: process_group.block(group)] </span></a>
-<a class="sourceLine" id="cb5-89" data-line-number="89"><span class="co"># [&lt;R call 30&gt;: process_group(group)] </span></a>
-<a class="sourceLine" id="cb5-90" data-line-number="90"><span class="co"># [&lt;R call 31&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span></a>
-<a class="sourceLine" id="cb5-91" data-line-number="91"><span class="co"># [&lt;R call 32&gt;: process_file(text, output)] </span></a>
-<a class="sourceLine" id="cb5-92" data-line-number="92"><span class="co"># [&lt;R call 33&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet, encoding = encoding)] </span></a>
-<a class="sourceLine" id="cb5-93" data-line-number="93"><span class="co"># [&lt;R call 34&gt;: rmarkdown::render(...)] </span></a>
-<a class="sourceLine" id="cb5-94" data-line-number="94"><span class="co"># [&lt;R call 35&gt;: (function (...) ] </span></a>
-<a class="sourceLine" id="cb5-95" data-line-number="95"><span class="co"># [&lt;R call 36&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
-<a class="sourceLine" id="cb5-96" data-line-number="96"><span class="co"># [&lt;R call 37&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
-<a class="sourceLine" id="cb5-97" data-line-number="97"><span class="co"># [&lt;R call 38&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpuwPDiu/file5fbe701234f4\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpuwPDiu/file5fbe67e6e238\")] </span></a>
-<a class="sourceLine" id="cb5-98" data-line-number="98"><span class="co"># [&lt;R call 39&gt;: withCallingHandlers({] </span></a>
-<a class="sourceLine" id="cb5-99" data-line-number="99"><span class="co"># [&lt;R call 40&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb5-100" data-line-number="100"><span class="co"># [&lt;R call 41&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
-<a class="sourceLine" id="cb5-101" data-line-number="101"><span class="co"># [&lt;R call 42&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span></a>
-<a class="sourceLine" id="cb5-102" data-line-number="102"><span class="co"># [&lt;R call 43&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
-<a class="sourceLine" id="cb5-103" data-line-number="103"><span class="co"># [&lt;R call 44&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span></a>
-<a class="sourceLine" id="cb5-104" data-line-number="104"><span class="co"># [&lt;R call 45&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
-<a class="sourceLine" id="cb5-105" data-line-number="105"><span class="co"># [&lt;R call 46&gt;: tryCatch(withCallingHandlers({]</span></a>
-<a class="sourceLine" id="cb5-106" data-line-number="106"><span class="co">#&gt;   [[node Assert_2/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
-<a class="sourceLine" id="cb5-107" data-line-number="107"><span class="co">#&gt;   [[Identity_1/_325]]</span></a>
+<a class="sourceLine" id="cb5-57" data-line-number="57"><span class="co">#&gt;   [[Identity_1/_325]]</span></a>
+<a class="sourceLine" id="cb5-58" data-line-number="58"><span class="co">#&gt;   (1) Invalid argument: assertion failed: </span></a>
+<a class="sourceLine" id="cb5-59" data-line-number="59"><span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [`x` value:] [-1] </span></a>
+<a class="sourceLine" id="cb5-60" data-line-number="60"><span class="co"># [&lt;R call stack&gt;:] </span></a>
+<a class="sourceLine" id="cb5-61" data-line-number="61"><span class="co"># [&lt;R call 1&gt;: stopifnot(x &gt; 0)] </span></a>
+<a class="sourceLine" id="cb5-62" data-line-number="62"><span class="co"># [&lt;R call 2&gt;: fn(...)] </span></a>
+<a class="sourceLine" id="cb5-63" data-line-number="63"><span class="co"># [&lt;R call 3&gt;: withVisible(fn(...))] </span></a>
+<a class="sourceLine" id="cb5-64" data-line-number="64"><span class="co"># [&lt;R call 4&gt;: fn()] </span></a>
+<a class="sourceLine" id="cb5-65" data-line-number="65"><span class="co"># [&lt;R call 5&gt;: autograph(stopifnot(x &gt; 0))] </span></a>
+<a class="sourceLine" id="cb5-66" data-line-number="66"><span class="co"># [&lt;R call 6&gt;: stop_if_negative4(x)] </span></a>
+<a class="sourceLine" id="cb5-67" data-line-number="67"><span class="co"># [&lt;R call 7&gt;: eval(expr, p)] </span></a>
+<a class="sourceLine" id="cb5-68" data-line-number="68"><span class="co"># [&lt;R call 8&gt;: eval(expr, p)] </span></a>
+<a class="sourceLine" id="cb5-69" data-line-number="69"><span class="co"># [&lt;R call 9&gt;: eval.parent(call)] </span></a>
+<a class="sourceLine" id="cb5-70" data-line-number="70"><span class="co"># [&lt;R call 10&gt;: py_resolve_dots(eval.parent(call))] </span></a>
+<a class="sourceLine" id="cb5-71" data-line-number="71"><span class="co"># [&lt;R call 11&gt;: sess$run(stop_if_negative4(x))] </span></a>
+<a class="sourceLine" id="cb5-72" data-line-number="72"><span class="co"># [&lt;R call 12&gt;: eval(expr, envir, enclos)] </span></a>
+<a class="sourceLine" id="cb5-73" data-line-number="73"><span class="co"># [&lt;R call 13&gt;: eval(expr, envir, enclos)] </span></a>
+<a class="sourceLine" id="cb5-74" data-line-number="74"><span class="co"># [&lt;R call 14&gt;: withVisible(eval(expr, envir, enclos))] </span></a>
+<a class="sourceLine" id="cb5-75" data-line-number="75"><span class="co"># [&lt;R call 15&gt;: withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)] </span></a>
+<a class="sourceLine" id="cb5-76" data-line-number="76"><span class="co"># [&lt;R call 16&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb5-77" data-line-number="77"><span class="co"># [&lt;R call 17&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
+<a class="sourceLine" id="cb5-78" data-line-number="78"><span class="co"># [&lt;R call 18&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
+<a class="sourceLine" id="cb5-79" data-line-number="79"><span class="co"># [&lt;R call 19&gt;: tryCatch(expr, error = function(e) {] </span></a>
+<a class="sourceLine" id="cb5-80" data-line-number="80"><span class="co"># [&lt;R call 20&gt;: try(f, silent = TRUE)] </span></a>
+<a class="sourceLine" id="cb5-81" data-line-number="81"><span class="co"># [&lt;R call 21&gt;: handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler))] </span></a>
+<a class="sourceLine" id="cb5-82" data-line-number="82"><span class="co"># [&lt;R call 22&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span></a>
+<a class="sourceLine" id="cb5-83" data-line-number="83"><span class="co"># [&lt;R call 23&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span></a>
+<a class="sourceLine" id="cb5-84" data-line-number="84"><span class="co"># [&lt;R call 24&gt;: evaluate::evaluate(...)] </span></a>
+<a class="sourceLine" id="cb5-85" data-line-number="85"><span class="co"># [&lt;R call 25&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span></a>
+<a class="sourceLine" id="cb5-86" data-line-number="86"><span class="co"># [&lt;R call 26&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span></a>
+<a class="sourceLine" id="cb5-87" data-line-number="87"><span class="co"># [&lt;R call 27&gt;: block_exec(params)] </span></a>
+<a class="sourceLine" id="cb5-88" data-line-number="88"><span class="co"># [&lt;R call 28&gt;: call_block(x)] </span></a>
+<a class="sourceLine" id="cb5-89" data-line-number="89"><span class="co"># [&lt;R call 29&gt;: process_group.block(group)] </span></a>
+<a class="sourceLine" id="cb5-90" data-line-number="90"><span class="co"># [&lt;R call 30&gt;: process_group(group)] </span></a>
+<a class="sourceLine" id="cb5-91" data-line-number="91"><span class="co"># [&lt;R call 31&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span></a>
+<a class="sourceLine" id="cb5-92" data-line-number="92"><span class="co"># [&lt;R call 32&gt;: process_file(text, output)] </span></a>
+<a class="sourceLine" id="cb5-93" data-line-number="93"><span class="co"># [&lt;R call 33&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet, encoding = encoding)] </span></a>
+<a class="sourceLine" id="cb5-94" data-line-number="94"><span class="co"># [&lt;R call 34&gt;: rmarkdown::render(...)] </span></a>
+<a class="sourceLine" id="cb5-95" data-line-number="95"><span class="co"># [&lt;R call 35&gt;: (function (...) ] </span></a>
+<a class="sourceLine" id="cb5-96" data-line-number="96"><span class="co"># [&lt;R call 36&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></a>
+<a class="sourceLine" id="cb5-97" data-line-number="97"><span class="co"># [&lt;R call 37&gt;: do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></a>
+<a class="sourceLine" id="cb5-98" data-line-number="98"><span class="co"># [&lt;R call 38&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/RtmpQCLsYB/file2a8f328c71f2\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/RtmpQCLsYB/file2a8f30573e89\")] </span></a>
+<a class="sourceLine" id="cb5-99" data-line-number="99"><span class="co"># [&lt;R call 39&gt;: withCallingHandlers({] </span></a>
+<a class="sourceLine" id="cb5-100" data-line-number="100"><span class="co"># [&lt;R call 40&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb5-101" data-line-number="101"><span class="co"># [&lt;R call 41&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></a>
+<a class="sourceLine" id="cb5-102" data-line-number="102"><span class="co"># [&lt;R call 42&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span></a>
+<a class="sourceLine" id="cb5-103" data-line-number="103"><span class="co"># [&lt;R call 43&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></a>
+<a class="sourceLine" id="cb5-104" data-line-number="104"><span class="co"># [&lt;R call 44&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span></a>
+<a class="sourceLine" id="cb5-105" data-line-number="105"><span class="co"># [&lt;R call 45&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span></a>
+<a class="sourceLine" id="cb5-106" data-line-number="106"><span class="co"># [&lt;R call 46&gt;: tryCatch(withCallingHandlers({]</span></a>
+<a class="sourceLine" id="cb5-107" data-line-number="107"><span class="co">#&gt;   [[node Assert_2/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span></a>
 <a class="sourceLine" id="cb5-108" data-line-number="108"><span class="co">#&gt; 0 successful operations.</span></a>
 <a class="sourceLine" id="cb5-109" data-line-number="109"><span class="co">#&gt; 0 derived errors ignored.</span></a>
 <a class="sourceLine" id="cb5-110" data-line-number="110"><span class="co">#&gt; </span></a>

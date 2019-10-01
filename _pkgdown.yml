@@ -1,4 +1,27 @@
 destination: docs
+
+navbar:
+  left:
+  - text: Getting Started
+    href: articles/tfautograph.html
+
+  - text: Reference
+    href: reference/index.html
+
+  - text: Articles
+    menu:
+    - text: Giving hints
+      href: articles/hints.html
+    - text: Control Dependencies in TF version 1
+      href: articles/tf-v1.html
+
+  - text: Demos
+    menu:
+    - text: MNIST Training Loop
+      href: articles/demo-mnist.html
+
+
+
 reference:
   - title: "Autograph"
     desc: >
@@ -19,3 +42,9 @@ reference:
     desc: "Thin wrappers around direct tensorflow functions with easier ergonomics."
     contents:
       - starts_with("tf_")
+      - '`[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray`'
+  - title: "Interactive helpers"
+    desc: "Helpful utilities while writing and debugging"
+    contents:
+      -  view_function_graph
+
