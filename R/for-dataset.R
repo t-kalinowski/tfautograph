@@ -14,14 +14,16 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
         as_iterator(iterable), var, body, env))
     }
 
+    var <- deparse(var)
+
     hint <- next_loop_vars$pop()
 
-    body_vars <-
-      hint$list %||% statically_infer_modified_syms(body, env = env)
+    body_vars <- hint$list %||%
+      statically_infer_loop_vars(body, env = env,
+                                 also_try_include = union(var, hint$include))
 
-    body_vars <- union(setdiff(body_vars, hint$exclude), hint$include)
+    body_vars <- setdiff(body_vars, hint$exclude)
 
-    var <- deparse(var)
 
     body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env,
                                dont_check = var)
@@ -44,10 +46,10 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
 dataset_for_loop_with_potential_break <-
   function(iterable, var, body_fn, body_vars, env) {
 
+    var_is_body_var <- var %in% names(body_vars)
+
     did_break <- did_break_prior_elem <- FALSE
     initial_state <- tuple(body_vars, did_break, did_break_prior_elem)
-
-    var_is_body_var <- var %in% names(body_vars)
 
     scan_fn <- function(current_state, next_ds_elem) {
 

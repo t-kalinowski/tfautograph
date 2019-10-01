@@ -10,6 +10,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
       as_iterator(iterable), var, body, env))
   }
 
+  var <- deparse(var)
   # track python tensorflow TODO, reimplement here if implementation there changes:
   ## TODO(b/117628877): Revisit performance once XLA has the necessary support.
   ## Note: using a TensorArray creates an extra copy, but can calculate
@@ -20,19 +21,19 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   hint <- next_loop_vars$pop()
 
-  loop_vars <-
-    hint$list %||% statically_infer_modified_syms(body, env = env)
+  loop_vars <- hint$list %||%
+    statically_infer_loop_vars(body, env = env,
+                               also_try_include = union(var, hint$include))
 
-  loop_vars <- union(setdiff(loop_vars, hint$exclude), hint$include)
+  loop_vars <- setdiff(loop_vars, hint$exclude)
 
-  var <- deparse(var)
+  var_is_loop_var <- var %in% names(loop_vars)
 
   .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env,
                               dont_check = var)
 
   body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
 
-    var_is_loop_var <- var %in% names(loop_vars)
 
     loop_vars[[var]] <- iter$read(index)
     res <- .body_fn(loop_vars, did_break)

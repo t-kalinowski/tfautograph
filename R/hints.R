@@ -269,3 +269,6 @@ ag_loop_vars <-
       )
     ))
   }
+
+next_if_vars   <- Variable()
+next_loop_vars <- Variable()
