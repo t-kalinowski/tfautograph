@@ -11,6 +11,11 @@
 #'   warning if executing eagerly)
 #'
 #' @export
+#' @examples
+#' \dontrun{
+#' fn <- tf_function(function(x) autograph(if(x > 0) x * x else x))
+#' view_function_graph(fn, list(tf$constant(5)))
+#' }
 view_function_graph <- function(fn, args, ...,
                                 name = deparse(substitute(fn)),
                                 profiler=FALSE,
