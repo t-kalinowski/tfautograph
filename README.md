@@ -20,8 +20,6 @@ and 1.14.
 
 # Learn More:
 
-Start here:
-
   - [Getting
     Started](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
 
@@ -33,7 +31,7 @@ Start here:
 
 ## Additional Articles:
 
-  - Tensorflow Version 1 and control dependencies:
+  - Tensorflow version 1 and control dependencies:
     [here](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
   - Giving `autograph`
     [hints](https://t-kalinowski.github.io/tfautograph/articles/hints.html)
