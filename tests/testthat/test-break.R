@@ -1,6 +1,8 @@
 if(testthat::is_testing()){
   source("utils.R")
 } else {
+  # reticulate::use_virtualenv("tf2", TRUE)
+  # cat("Tensorflow Version:", tf$version$VERSION, "\n")
   source("tests/testthat/utils.R")
   devtools::load_all()
 }
@@ -29,22 +31,40 @@ test_that("break and next basic", {
   fn <- function(n) {
     x <- 0
     while (n > 0L) {
+      # tf$print("top of loop")
+      # tf$print(n)
       subtract(n) <- 1L
+      # tf$print(n)
       if (n %% 5L == 0L) {
-        # print("hi")
-
+        # tf$print(n)
+        # tf$print("breaking")
         break
+
       } else {
-        if (n %% 2L == 0L)
+
+        if (n %% 2L == 0L) {
+
+          # tf$print("nexting")
           next
+
+        }
       }
+      # tf$print("adding x")
+      # tf$print(x)
       add(x) <- 1
+      # tf$print(x)
     }
     list(n, x)
   }
 
   # debugonce(ag_next)
+  # fn(3L)
   # autograph(fn)(as_tensor(3L))
+  # grab(autograph(fn)(as_tensor(3L)))
+  # grab(tf_function(autograph(fn))(as_tensor(3L)))
+  #
+  # fn(3) # 0 1
+  # autograph(fn)(as_tensor(3))
 
 
 
@@ -53,10 +73,10 @@ test_that("break and next basic", {
   # fn(6) # 5 0
   # fn(9) # 5 1
 
-  expect_ag_equivalent(fn, 3)
-  expect_ag_equivalent(fn, 4)
-  expect_ag_equivalent(fn, 6)
-  expect_ag_equivalent(fn, 9)
+  expect_ag_equivalent(fn, 3L)
+  expect_ag_equivalent(fn, 4L)
+  expect_ag_equivalent(fn, 6L)
+  expect_ag_equivalent(fn, 9L)
 
 })
 
@@ -164,8 +184,13 @@ test_that("break and next in simple for", {
     }
     list(x, y, z)
   }
+  n <- 0L
+  ds <- tf$data$Dataset$range(n)
+
   ag_fn <- autograph(fn)
   tf_ag_fn <- tf_function(ag_fn, experimental_relax_shapes = TRUE)
+
+  tf_ag_fn(ds)
 
 
   for (n in 0:6) {

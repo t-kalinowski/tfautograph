@@ -2,6 +2,7 @@ Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 2)
 Sys.setenv(CUDA_VISIBLE_DEVICES = 0)
 Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
+library(tfautograph)
 
 tf <- tensorflow::tf
 
