@@ -15,7 +15,7 @@ It lets you use tensors in R control flow expressions like `if`, `while`
 and `for` and automatically translates those expressions into tensorflow
 graphs.
 
-It is compatible with and tested against Tensorflow Versions 2.0, 1.15
+It is compatible with and tested against Tensorflow versions 2.0, 1.15
 and 1.14.
 
 # Learn More:
