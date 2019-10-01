@@ -1,8 +1,8 @@
 ---
-title: "Autograph Basics"
+title: "Getting Started with tfautograph"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{autograph-basics}
+  %\VignetteIndexEntry{getting-started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,39 +15,46 @@ knitr::opts_chunk$set(
 reticulate::use_virtualenv("tf2", TRUE)
 ```
 
-```{r setup}
-library(magrittr)
-library(reticulate)
-library(tensorflow)
-library(tfdatasets)
-
-library(tfautograph)
-tf$version$VERSION
-```
-
 The R package `tfautograph` helps you write tensorflow code using R control flow. 
 
 It allows you to use tensors in R control flow expressions like `if`, `while`,
-`for`, `break`, and `next`, which can automatically be translated to build a
-tensorflow graph  (hence the name, __auto__ __graph__). 
+and `for`, which can automatically be translated to build a tensorflow graph
+(hence the name, __auto__ __graph__).
 
-This vignette goes through some of the main features and then goes into how it
-works a little.
+This "Getting Started" vignette goes through some of the main features and then
+goes into how it works a little.
 
 Before we get started a clarification: This R package is inspired by the
 functionality (and name) of the `tf.autograph` submodule in the python interface
-to tensorflow, but it has very little relation to that code base. If you're
-interested in writing tensorflow code in R using native R syntax, then keep reading
+to Tensorflow, but it has little relation to that code base. If you're
+interested in writing Tensorflow code in R using native R syntax, then keep reading
 because you're in the right place. If you're looking for an interface to the
 `tf.autograph` python submodule from the R, this package is probably not what
 you're looking for.
 
-### Usage
 
+# Setup
+```{r setup}
+library(magrittr)
+
+library(tensorflow)
+library(tfdatasets)
+
+library(tfautograph)
+```
+
+## Compatability
+tfautograph works with Tensorflow versions 1.14, 1.15, and 2.0. This vignette is
+using version 2.0.
+```{r}
+tf$version$VERSION
+```
+
+# Usage
 The primary workhorse function of the package is the function `autograph()`. For
 most use-cases, this is the only function from the package you will need or want
 to call. It can either take a function or an expression. The following two uses
-are equivalent.
+are equivalent:
 
 ```{r}
 # pass a function to autograph()
@@ -75,10 +82,10 @@ branch is evaluated.
 ```{r}
 square_if_positive_verbose <- autograph(function(x) {
   if (x > 0) {
-    message("Tracing true branch")
+    message("Evaluating true branch")
     x * x
   } else {
-    message("Tracing false branch")
+    message("Evaluating false branch")
     x
   }
 })
@@ -108,18 +115,17 @@ graph_fn(y)
 graph_fn(y)
 ```
 
-In graph mode, both branches of the `if` expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by `tf.function()`. Then on subsequent calls only the cached graph is evaluated.
+In graph mode, both branches of the `if` expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by Tensorflow `Function` object returned from `tf.function()`. Then on subsequent calls of the `Function`, only the cached graph is evaluated.
 
-The key takeaways are that `autograph()` helps you write natural R code and use tensors in expressions where R wouldn't otherwise accept them. And that `autograph` is smart enough to do the right thing in both eager mode and graph mode. 
+The key takeaways are that `autograph()` helps you write natural R code and use tensors in expressions where R wouldn't otherwise accept them. And that `autograph()` is smart enough to do the right thing in both eager mode and graph mode. 
 
 
-### Control Flow 
+# Control Flow 
 
-tfautograph will translate R control flow statements to tensorflow. This
-includes `if`, `while`, `for`, `break`, `next`, and `switch`. Here is handy
-summary table of the translation endpoints (note, these summary code snippits
-are meant to concisely convey the spirit of the translation, not the actual
-implementation)
+tfautograph can translate R control flow statements `if`, `while`, `for`, `break`, and
+`next` to tensorflow. Here is summary table of the translation endpoints (note,
+these summary code snippits are meant to concisely convey the spirit of the
+translation, not the actual implementation)
 
 ```{r, echo = FALSE, results = 'asis'}
 knitr::kable(matrix(
@@ -136,7 +142,7 @@ knitr::kable(matrix(
 Lets go through them one at a time. 
 
 
-#### `if`
+## `if`
 
 
 In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`). 
@@ -169,12 +175,12 @@ undef_example(tf$constant(1))
 ```
 
 
-#### `while`
+## `while`
 
 In eager mode, `while(eagor_tensor)` is translated to
 `while(as.logical(eager_tensor))`. The `tensorflow` R package provides tensor
-methods for many S3 generics, including `as.logical()`, so this works as you
-would expect.
+methods for many S3 generics, including `as.logical()` which coerces an
+`EagerTensor` to an R logical atomic, so this works as you would expect.
 
 Here is an example of an autographed `while` expression being evaluated eagerly.
 Remember, `autograph()` is not just for functions!
@@ -206,8 +212,8 @@ tf_factorial <- tf_function(autograph(function(x) {
   total
 }))
 
-tf_factorial(x)
-tf_factorial(y)
+tf_factorial(tf$constant(5))
+tf_factorial(tf$constant(-5))
 ```
 
 [`tf.while_loop()`](https://www.tensorflow.org/api_docs/python/tf/while_loop)
@@ -225,12 +231,13 @@ tf_factorial_no_backprop <- tf_function(autograph(function(x) {
   }
   total
   }))
-tf_factorial_no_backprop(y)
+tf_factorial_no_backprop(tf$constant(5))
 ```
 
 
-#### `for`
+## `for`
 Autographed `for` loops build on top of while loops. `autograph` adds support for three new types of values passed to `for`: 
+
 +  tfdatasets 
 +  tensors
 +  python iterators (eager mode only).
@@ -253,8 +260,8 @@ Note, that tensors are iterated over their first dimension.
 m <- tf$convert_to_tensor(matrix(1:12, nrow = 3, byrow = TRUE))
 m
 autograph({
-  for (elem in m)
-    print(elem)
+  for (row in m)
+    print(row)
 })
 ```
 
@@ -296,7 +303,7 @@ niave_reduce_sum_with_opts(tf$range(10))
 ```
 
 
-# `break` / `next`
+## `break` / `next`
 
 Loop control flow statements `break` and `next` are handled automatically by
 `autograph()`, both in eager mode and graph mode. Use `break` and/or `next`
@@ -305,7 +312,7 @@ anywhere you would use it naturally in `while` and `for` loops.
 # FizzBuzz!
 
 Lets tie some concepts together to write
-(fizzbuzz)[https://en.wikipedia.org/wiki/Fizz_buzz]! Before we do that, we'll
+[fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz)! Before we do that, we'll
 write a helper `tf_print()` that writes to a temporary file by default. This
 will help us capture the output in this Rmarkdown vignette. (If we don't
 redirect output to a file, then it would show up in the rendering console and
@@ -356,39 +363,45 @@ print_tempfile()
 
 
 
-## Visualize Function Graphs
+# Visualize Function Graphs
 
 As you are writing `tf.function()`s, it's helpful to visualize what the produced
 graph from a particular autographed function looks like. Use
-`tfautograph::view_function_graph()` to launch tensorboard with the produced
-function graph.
+`tfautograph::view_function_graph()` to launch a tensorboard instance with the
+produced function graph from a temporary directory.
 
 ```{r, eval = FALSE}
 view_function_graph(fizzbuzz, list(tf$constant(25L)))
 ```
 
 ## Control Dependencies
-Side effects Ops `tf$print()` and `tf$Assert()` created within a `tf.function` are executed in-line and in the correct order when the funciton is evaluated. (If you're used to working Tensorflow v1, you read that right!)
+Side effects Ops `tf$print()` and `tf$Assert()` created within a `tf.function` are executed in-line and in the correct order when the funciton is evaluated. (If you're used to working Tensorflow version 1, you read that right!)
 
-Tensorflow 2.0 has drastically changed (for the better!) how control dependencies work. For the most part, so long as you only enter graph mode while within a `tf.function()`, there is no need anymore to enter a control dependency context. The days of wrapping code in a `with(tf$control_dependency(...), ...)` are mostly over.  
+Tensorflow 2.0 has drastically changed (for the better!) how control dependencies work. For the most part, so long as you only enter graph mode while within a `tf.function()`, there is no need anymore to enter a control dependency context. The days of wrapping code in a `with(tf$control_dependency(...), ...)` are mostly over.
 
-If you're still working in Tensorflow version 1, check out the vignette on TF v1 and control dependencies. In particular, `autograph()` does some cool tricks to help enter and exit a `tf$control_dependency()` context when autographing `stopifnot()`
+If you're still working in Tensorflow version 1, check out the vignette on TF v1 and control dependencies. In particular, `autograph()` does some cool tricks to help enter and exit a `tf$control_dependency()` context when autographing `stopifnot()`.
 
 
-
-#### Growing Objects / TensorArrays
+# Growing Objects / TensorArrays
 
 The package provides a `[[<-` method for TensorArrays. That's the recomnded way
-to grow objects on the graph.
+to grow objects on the graph. 
+See ``` ?`[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` ``` for usage examples.
 
+# Other helpers
 
-#### How it works
+The tfautograph package provides a small collection of additional helpers when working with tensorflow from R. They are:
+
++  `tf_assert()`: A thin wrapper around `tf.Assert()` that automatically generates a useful error message that includes the R call stack and the values of the tensors involved in the expression.
++  `tf_cond()`, `tf_case()`, `tf_switch()`: Thin wrappers around the control flow primitives that accept compact (`rlang` style ~) lambda syntax for the callables.
+
+# How it works
 `autograph()` works by evaluating expressions in an environment where primitives like `if` and `for` are masked by autographing versions of them. The complete list of which symbols are masked by `autograph()` is:
 ```{r echo=FALSE}
 names(tfautograph:::ag_mask_list)
 ```
 
-### Other resources:
+# Other resources:
 
 Check out the examples:
  Full MNIST training loop implemented in R using `autograph()`.

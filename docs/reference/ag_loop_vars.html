@@ -39,6 +39,10 @@
 <meta property="og:description" content="This can be used to manually specify which variables are to be included
 explicitly as loop_vars when autographing an expression into a
 tf.while_loop() call, or the loop_vars equivalent when building a
+dataset.reduce().
+This can be used to manually specify which variables are to be included
+explicitly as loop_vars when autographing an expression into a
+tf.while_loop() call, or the loop_vars equivalent when building a
 dataset.reduce()." />
 <meta name="twitter:card" content="summary" />
 
@@ -134,14 +138,34 @@ dataset.reduce()." />
 explicitly as <code>loop_vars</code> when autographing an expression into a
 <code>tf.while_loop()</code> call, or the <code>loop_vars</code> equivalent when building a
 <code>dataset.reduce()</code>.</p>
+<p>This can be used to manually specify which variables are to be included
+explicitly as <code>loop_vars</code> when autographing an expression into a
+<code>tf.while_loop()</code> call, or the <code>loop_vars</code> equivalent when building a
+<code>dataset.reduce()</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>ag_loop_vars</span>(<span class='no'>...</span>, <span class='kw'>list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>include</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>undefs</span> <span class='kw'>=</span> <span class='no'>exclude</span>)</pre>
+  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>undef</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())
+
+<span class='fu'>ag_loop_vars</span>(<span class='no'>...</span>, <span class='kw'>list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>include</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>undef</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>...</th>
+      <td><p>Variables as bare symbol names</p></td>
+    </tr>
+    <tr>
+      <th>list</th>
+      <td><p>optionally, the variable names as a character vector (use this as
+an escape hatch from the <code>...</code> lazy evaluation semantics).</p></td>
+    </tr>
+    <tr>
+      <th>undefs</th>
+      <td><p>character vector of symbols</p></td>
+    </tr>
     <tr>
       <th>...</th>
       <td><p>Variables as bare symbol names</p></td>
@@ -160,6 +184,7 @@ an escape hatch from the <code>...</code> lazy evaluation semantics).</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>NULL</code>, invisibly.</p>
+<p>the specified hint invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Use of this is usually not required as the loop variables are automatically
@@ -177,9 +202,25 @@ an error thrown when attempting to actually autograph the expression)</p>
 may be expanded to allow for nested complex composites (e.g., specifying
 variables that are nested within a more complex structure--passing
 <code>ag_loop_vars(foo$bar$baz)</code> is currently not supported.)</p>
+<p>Use of this is usually not required as the loop variables are automatically
+inferred. Inference is done by statically looking through the loop body and
+finding the symbols that are the targets of the common assignment operators
+from base R (<code>&lt;-</code>, <code>-&gt;</code>, <code>=</code>), from package:zeallot (<code>%&lt;-%</code> and <code>%-&gt;%</code>) and
+package:magrittr (<code>%&lt;&gt;%</code>).</p>
+<p>In certain circumstances, this approach may capture variables that are
+intended to be local variables only. In those circumstances it is also
+possible to specify them preceded with a <code>-</code>.</p>
+<p>Note, the specified loop vars are expected to exist before the autographed
+expression, and a warning is issued otherwise (usually immediately preceding
+an error thrown when attempting to actually autograph the expression)</p>
+<p>Only bare symbol names can be supplied as loop vars. In the future, support
+may be expanded to allow for nested complex composites (e.g., specifying
+variables that are nested within a more complex structure--passing
+<code>ag_loop_vars(foo$bar$baz)</code> is currently not supported.)</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>The semantics of this function are inspired by base::rm()</p>
+<p>The semantics of this function are inspired by base::rm()</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -193,6 +234,43 @@ variables that are nested within a more complex structure--passing
     <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> - <span class='fl'>1</span>
   }
 })
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>0L</span>)
+
+<span class='fu'><a href='autograph.html'>autograph</a></span>({
+  <span class='fu'>ag_loop_vars</span>(<span class='no'>x</span>, <span class='no'>i</span>)
+  <span class='kw'>while</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
+    <span class='kw'>if</span>(<span class='no'>x</span> <span class='kw'>%%</span><span class='fl'>2</span> <span class='kw'>==</span> <span class='fl'>0</span>)
+      <span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>i</span> + <span class='fl'>1L</span>
+    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> - <span class='fl'>1</span>
+  }
+})
+
+<span class='co'>## sometimes, a variable is infered to be a loop_var unnecessarily. For example</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>10</span>)
+
+<span class='co'># imagine x is left over in the current scope from some previous calculations</span>
+<span class='co'># It's value is not important, but it exists</span>
+<span class='fu'><a href='autograph.html'>autograph</a></span>({
+  <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>6</span>)) {
+    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>i</span> * <span class='no'>i</span>
+    <span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>)
+  }
+})
+
+<span class='co'># this will throw an error because `x` was infered to be a `loop_var`,</span>
+<span class='co'># but it's shape witin the loop body is different from what it was before.</span>
+<span class='co'># there are two solutions to prevent `x` from being captured as a loop_var</span>
+<span class='co'>## 1) remove `x` from the current scope like so:</span>
+<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>x</span>)
+
+<span class='co'>## 2) provide a hint like so:</span>
+<span class='fu'>ag_loop_vars</span>(-<span class='no'>x</span>)
+
+<span class='co'>## if your variable names are being dynamically generated, there is an</span>
+<span class='co'>## escape hatch for the lazy evaluation semantics of ...</span>
+<span class='fu'>ag_loop_vars</span>(<span class='kw'>exclude</span> <span class='kw'>=</span> <span class='st'>"x"</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

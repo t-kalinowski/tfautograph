@@ -102,9 +102,8 @@
 <p>If you want to bypass these inference routines, (for example, because the inferred outcome is producing a graph that has more nodes than strictly necessary, or for some minor performance benefits), you can provide hints to <code>autograph</code> to let it know what it would otherwise try to infer.</p>
 <p>There are 2 main types of hints, corresponding to the two main control flow functions: <code>if</code> and <code>while</code>.</p>
 <p>Since these hints are only relevant in graph mode we’ll disable eager execution for the rest of the vignette. In your code you’re more likely to enter graph mode only when tracing a <code>tf.function()</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tf1 &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">disable_eager_execution</span>()</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">sess &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">Session</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">disable_eager_execution</span>()</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">sess &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">Session</span>()</a></code></pre></div>
 <div id="passing-hints-to-if" class="section level1">
 <h1 class="hasAnchor">
 <a href="#passing-hints-to-if" class="anchor"></a>Passing hints to <code>if</code>

@@ -47,7 +47,6 @@ Since these hints are only relevant in graph mode we'll disable eager execution
 for the rest of the vignette. In your code you're more likely to enter graph
 mode only when tracing a `tf.function()`.
 ```{r}
-tf1 <- tf$compat$v1
 tf$compat$v1$disable_eager_execution()
 sess <- tf$compat$v1$Session()
 ```

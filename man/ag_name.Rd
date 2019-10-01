@@ -22,11 +22,5 @@ creation of a tensor or op graph node. This can be used before \code{for} (both 
 
 ag_name("main-training-loop")
 for(elem in dataset) ...
-
-ag_name("iter-along-tensor")
-for(elem in my_tensor) ...
-
-ag_name("iter-along-tensor")
-for(elem in my_tensor) ...
 }
 }
