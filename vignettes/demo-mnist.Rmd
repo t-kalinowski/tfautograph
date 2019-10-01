@@ -1,5 +1,5 @@
 ---
-title: "mnist"
+title: "MNIST"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{mnist}
@@ -15,17 +15,12 @@ knitr::opts_chunk$set(
 reticulate::use_virtualenv("tf2", TRUE)
 ```
 
-```{r setup}
-library(tfautograph)
-```
-
-
-# Example -- MNIST Training Loop using `autograph()`
+# Demo -- MNIST Training Loop using `autograph()`
 
 Here is a full MNIST training loop implemented in R using tfautograph. 
 (originally adapted from [here](https://www.tensorflow.org/beta/guide/autograph))
 
-```{r}
+```{r setup}
 library(magrittr)
 library(purrr, warn.conflicts = FALSE)
 

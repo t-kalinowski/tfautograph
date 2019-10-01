@@ -29,8 +29,6 @@ It is compatible with and tested against Tensorflow Versions 2.0, 1.15 and 1.14.
 
 # Learn More: 
 
-Start here: 
-
 +  [Getting Started](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
 
 
@@ -41,7 +39,7 @@ Start here:
 
 ## Additional Articles:
 
-+  Tensorflow Version 1 and control dependencies: [here](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
++  Tensorflow version 1 and control dependencies: [here](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
 +  Giving `autograph` [hints](https://t-kalinowski.github.io/tfautograph/articles/hints.html)
 
 
