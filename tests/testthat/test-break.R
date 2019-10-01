@@ -127,7 +127,12 @@ test_that("next in for", {
     list(x, y, z)
   }
   ag_fn <- autograph(fn)
-  tf_ag_fn <- tf_function(ag_fn, experimental_relax_shapes = TRUE)
+  if(tensorflow::tf_version() >= "1.15")
+    tf_function <- local({
+      tf_function <- tf_function
+      function(...) tf_function(..., experimental_relax_shapes = TRUE)
+    })
+  tf_ag_fn <- tf_function(ag_fn)
 
   for (n in 0:6) {
     l <- array(seq_len(n))
@@ -150,8 +155,7 @@ test_that("next in for", {
     o
   }
   ag_fn <- autograph(fn)
-  # tf_ag_fn <- tf_function(ag_fn)
-  tf_ag_fn <- tf_function(ag_fn, experimental_relax_shapes = TRUE)
+  tf_ag_fn <- tf_function(ag_fn)
 
   for (n in 0:6) {
     l <- array(seq_len0(n))
@@ -188,7 +192,12 @@ test_that("break and next in simple for", {
   ds <- tf$data$Dataset$range(n)
 
   ag_fn <- autograph(fn)
-  tf_ag_fn <- tf_function(ag_fn, experimental_relax_shapes = TRUE)
+  if(tensorflow::tf_version() >= "1.15")
+    tf_function <- local({
+      tf_function <- tf_function
+      function(...) tf_function(..., experimental_relax_shapes = TRUE)
+    })
+  tf_ag_fn <- tf_function(ag_fn)
 
   tf_ag_fn(ds)
 
