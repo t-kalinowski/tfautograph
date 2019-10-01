@@ -107,9 +107,9 @@
 <a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
 <a class="sourceLine" id="cb1-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</a></code></pre></div>
-<div id="compatability" class="section level2">
+<div id="compatibility" class="section level2">
 <h2 class="hasAnchor">
-<a href="#compatability" class="anchor"></a>Compatability</h2>
+<a href="#compatibility" class="anchor"></a>Compatibility</h2>
 <p>tfautograph works with Tensorflow versions 1.14, 1.15, and 2.0. This vignette is using version 2.0.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tf<span class="op">$</span>version<span class="op">$</span>VERSION</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; [1] "2.0.0"</span></a></code></pre></div>
@@ -162,7 +162,7 @@
 <a class="sourceLine" id="cb5-27" data-line-number="27"><span class="kw">square_if_positive_verbose</span>(y)</a>
 <a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt; Evaluating false branch</span></a>
 <a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></a></code></pre></div>
-<p>As you can see we’re in eager mode, meaning, the R code of the function body is evaluated every time the funciton is called.</p>
+<p>As you can see we’re in eager mode, meaning, the R code of the function body is evaluated every time the function is called.</p>
 <p>The easiest way to enter a context where tensorflow is not executing eagerly anymore and instead is in <strong>graph mode</strong> is to call python’s <code>tf.function()</code>. (Because <code>function</code> is a reserved word for the R parser, there is a convenient wrapper provided by the tensorflow <code>R</code> package: <code><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function()</a></code>)</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">graph_fn &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(square_if_positive_verbose)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"></a>
@@ -187,7 +187,7 @@
 <div id="control-flow" class="section level1">
 <h1 class="hasAnchor">
 <a href="#control-flow" class="anchor"></a>Control Flow</h1>
-<p>tfautograph can translate R control flow statements <code>if</code>, <code>while</code>, <code>for</code>, <code>break</code>, and <code>next</code> to tensorflow. Here is summary table of the translation endpoints (note, these summary code snippits are meant to concisely convey the spirit of the translation, not the actual implementation)</p>
+<p>tfautograph can translate R control flow statements <code>if</code>, <code>while</code>, <code>for</code>, <code>break</code>, and <code>next</code> to tensorflow. Here is summary table of the translation endpoints (note, these summary code snippets are meant to concisely convey the spirit of the translation, not the actual implementation)</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">R expression</th>
@@ -223,7 +223,7 @@
 <a href="#if" class="anchor"></a><code>if</code>
 </h2>
 <p>In eager mode, <code>if(eager_tensor)</code> is translated to <code>if(eager_tensor$`__bool__`())</code>. (Essentially, a slightly more robust way to call <code>eager_tensor$numpy()</code>).</p>
-<p>In graph mode, <code>if</code> statements written in R automatically get translated to a <code>tf.cond()</code>. <code>tf.cond()</code> requires that both branches of the conditional are balanced (meaning, both branchs return the same output structure). <code><a href="../reference/autograph.html">autograph()</a></code> tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated <code>tf.cond()</code>, while satisfying the requirement for balanced branches.</p>
+<p>In graph mode, <code>if</code> statements written in R automatically get translated to a <code>tf.cond()</code>. <code>tf.cond()</code> requires that both branches of the conditional are balanced (meaning, both branches return the same output structure). <code><a href="../reference/autograph.html">autograph()</a></code> tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated <code>tf.cond()</code>, while satisfying the requirement for balanced branches.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">tf_sign &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">    <span class="dv">1</span></a>
@@ -439,7 +439,7 @@
 <div id="control-dependencies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#control-dependencies" class="anchor"></a>Control Dependencies</h2>
-<p>Side effects Ops <code>tf$print()</code> and <code>tf$Assert()</code> created within a <code>tf.function</code> are executed in-line and in the correct order when the funciton is evaluated. (If you’re used to working Tensorflow version 1, you read that right!)</p>
+<p>Side effects Ops <code>tf$print()</code> and <code>tf$Assert()</code> created within a <code>tf.function</code> are executed in-line and in the correct order when the function is evaluated. (If you’re used to working Tensorflow version 1, you read that right!)</p>
 <p>Tensorflow 2.0 has drastically changed (for the better!) how control dependencies work. For the most part, so long as you only enter graph mode while within a <code>tf.function()</code>, there is no need anymore to enter a control dependency context. The days of wrapping code in a <code><a href="https://rdrr.io/r/base/with.html">with(tf$control_dependency(...), ...)</a></code> are mostly over.</p>
 <p>If you’re still working in Tensorflow version 1, check out the vignette on TF v1 and control dependencies. In particular, <code><a href="../reference/autograph.html">autograph()</a></code> does some cool tricks to help enter and exit a <code>tf$control_dependency()</code> context when autographing <code><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot()</a></code>.</p>
 </div>
@@ -447,7 +447,7 @@
 <div id="growing-objects-tensorarrays" class="section level1">
 <h1 class="hasAnchor">
 <a href="#growing-objects-tensorarrays" class="anchor"></a>Growing Objects / TensorArrays</h1>
-<p>The package provides a <code>[[&lt;-</code> method for TensorArrays. That’s the recomnded way to grow objects on the graph. See <code><a href="../reference/sub-subset-.tensorflow.python.ops.tensor_array_ops.TensorArray.html">?`[[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray`</a></code> for usage examples.</p>
+<p>The package provides a <code>[[&lt;-</code> method for TensorArrays. That’s the recommended way to grow objects on the graph. See <code><a href="../reference/sub-subset-.tensorflow.python.ops.tensor_array_ops.TensorArray.html">?`[[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray`</a></code> for usage examples.</p>
 </div>
 <div id="other-helpers" class="section level1">
 <h1 class="hasAnchor">
@@ -482,7 +482,7 @@
       <ul class="nav nav-pills nav-stacked">
 <li>
 <a href="#setup">Setup</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#compatability">Compatability</a></li>
+<li><a href="#compatibility">Compatibility</a></li>
       </ul>
 </li>
       <li><a href="#usage">Usage</a></li>

@@ -3,7 +3,7 @@
 #' `TensorArray.write()`
 #'
 #' @param ta a tensorflow `TensorArray`
-#' @param i comething castable to an int32 scalar tensor. 0-based.
+#' @param i something castable to an int32 scalar tensor. 0-based.
 #' @param ... Error if anything is passed to `...`
 #' @param name A scalar string, name of the op
 #' @param value The value to write.
