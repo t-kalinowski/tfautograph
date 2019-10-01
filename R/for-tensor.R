@@ -91,3 +91,6 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   invisible()
 }
+
+
+# TODO: `var` should probably be exported as an undef if it's not a `loop_var`

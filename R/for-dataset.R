@@ -16,12 +16,10 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
 
     hint <- next_loop_vars$pop()
 
-    loop_vars <-
+    body_vars <-
       hint$list %||% statically_infer_modified_syms(body, env = env)
 
-    loop_vars <- union(setdiff(loop_vars, hint$exclude), hint$include)
-
-    body_vars <- loop_vars
+    body_vars <- union(setdiff(body_vars, hint$exclude), hint$include)
 
     var <- deparse(var)
 
@@ -49,29 +47,30 @@ dataset_for_loop_with_potential_break <-
     did_break <- did_break_prior_elem <- FALSE
     initial_state <- tuple(body_vars, did_break, did_break_prior_elem)
 
+    var_is_body_var <- var %in% names(body_vars)
+
     scan_fn <- function(current_state, next_ds_elem) {
 
-      nms <- c("loop_vars", "did_break", "did_break_prior_elem")
+      nms <- c("body_vars", "did_break", "did_break_prior_elem")
       names(current_state) <- nms
 
       did_break_prior_elem <- current_state$did_break
       current_state$did_break_prior_elem <- NULL
 
       fn <- function(current_state) {
-        res <- do.call(body_fn, current_state)
-        names(res) <- c("loop_vars", "did_break")
+        res <- do.call(body_fn, unname(current_state))
+        names(res) <- c("body_vars", "did_break")
         res
       }
 
-      var_is_loop_var <- var %in% names(loop_vars)
 
-      current_state$loop_vars[[var]] <- next_ds_elem
+      current_state$body_vars[[var]] <- next_ds_elem
       new_state <- tf$cond(did_break_prior_elem,
                            function() current_state,
                            function() fn(current_state))
 
-      if (!var_is_loop_var)
-        new_state$loop_vars[[var]] <- NULL
+      if (!var_is_body_var)
+        new_state$body_vars[[var]] <- NULL
 
       new_state$did_break_prior_elem <- did_break_prior_elem
       new_state <- do.call(tuple, unname(new_state[nms]))
@@ -96,6 +95,8 @@ dataset_for_loop_with_potential_break <-
 dataset_for_loop_no_break <-
   function(iterable, var, body_fn, body_vars, env) {
 
+    var_is_body_var <- var %in% names(body_vars)
+
     initial_state <- body_vars
     using_placeholder  <- length(initial_state) == 0
 
@@ -109,14 +110,13 @@ dataset_for_loop_no_break <-
         current_state$placeholder <- NULL
       }
 
-      var_is_loop_var <- var %in% names(initial_state)
 
       current_state[[var]] <- next_ds_elem
       new_state <- body_fn(current_state)[[1]]
 
       # TODO: should there be a better heuristic here?
       # maybe: if (var %in% names(formals(body_fn))) ?
-      if(!var_is_loop_var)
+      if(!var_is_body_var)
         new_state[[var]] <- NULL
 
       if(using_placeholder)
