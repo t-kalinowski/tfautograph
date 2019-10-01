@@ -1,7 +1,8 @@
 
 
-statically_infer_modified_syms <- function(expr, env) {
-  vars <- unique(find_assiged_syms(expr))
+statically_infer_loop_vars <- function(body, env, also_try_include = NULL) {
+  vars <- unique(find_assiged_syms(body))
+  vars <- union(vars, also_try_include)
   vars <- vars[vapply(vars, exists, TRUE, envir = env)]
 
   if(!length(vars)) return(character())
@@ -101,8 +102,6 @@ warn_about_unmodified <- function(before, after, dont_check) {
   }
 }
 
-pc_and <- yasp::pc_and
-pc_or <- yasp::pc_or
 
 
 cond_registries         <- Stack()

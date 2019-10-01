@@ -28,9 +28,10 @@ ag_while <- function(cond, body) {
   hint <- next_loop_vars$pop()
 
   loop_vars <-
-    hint$list %||% statically_infer_modified_syms(body, env = env)
+    hint$list %||% statically_infer_loop_vars(body, env = env,
+                                              also_try_include = hint$include)
 
-  loop_vars <- union(setdiff(loop_vars, hint$exclude), hint$include)
+  loop_vars <- setdiff(loop_vars, hint$exclude)
 
   # TODO: the loop vars selector should work the same as ag_if. it should handle
   # nested structures similarily, and the user-specificaiton function should
