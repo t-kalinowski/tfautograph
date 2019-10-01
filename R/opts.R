@@ -16,12 +16,6 @@
 #'
 #' ag_name("main-training-loop")
 #' for(elem in dataset) ...
-#'
-#' ag_name("iter-along-tensor")
-#' for(elem in my_tensor) ...
-#'
-#' ag_name("iter-along-tensor")
-#' for(elem in my_tensor) ...
 #' }
 ag_name <- function(x) next_ag_name$set(x)
 
@@ -86,7 +80,5 @@ ag_while_opts <- function(...,
 
 
 next_ag_name         <- Variable()
-next_if_vars         <- Variable()
 next_while_loop_opts <- Variable()
-next_loop_vars       <- Variable()
 
