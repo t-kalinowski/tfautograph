@@ -88,7 +88,6 @@ new_ag_mask <- function(parent = parent.frame()) {
 }
 
 
-#' @export
 is_autographed <- function(fn) {
   if (is.environment(e <- environment(fn)))
     while (!identical(e, emptyenv())) {
@@ -101,9 +100,8 @@ is_autographed <- function(fn) {
   FALSE
 }
 
-
-#' @export
+# usefull sometimes for interactive work. not exported, so it's an easter egg.
 attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
-  attach(ag_mask_list, pos = pos, name = "tfautograph:ag_mask",
+  get("attach")(ag_mask_list, pos = pos, name = "tfautograph:ag_mask",
          warn.conflicts = warn.conflicts)
 

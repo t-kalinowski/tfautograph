@@ -10,10 +10,11 @@ ag_loop_vars(..., list = character(), include = character(),
 \arguments{
 \item{...}{Variables as bare symbol names}
 
-\item{list}{optionally, the variable names as a character vector (use this as
-an escape hatch from the \code{...} lazy evaluation semantics).}
+\item{list, include, exclude}{optionally, the variable names as a character
+vector (use this as an escape hatch from the \code{...} lazy evaluation
+semantics).}
 
-\item{undefs}{character vector of symbols}
+\item{undef}{character vector of symbols}
 }
 \value{
 the specified hint invisibly.
