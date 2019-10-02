@@ -160,10 +160,10 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
 #' `ag_loop_vars(foo$bar$baz)` is currently not supported.)
 #'
 #' @param ... Variables as bare symbol names
-#' @param list optionally, the variable names as a character vector (use this as
-#'   an escape hatch from the `...` lazy evaluation semantics).
-#' @param undefs character vector of symbols
-#'
+#' @param list,include,exclude optionally, the variable names as a character
+#'   vector (use this as an escape hatch from the `...` lazy evaluation
+#'   semantics).
+#' @param undef character vector of symbols
 #'
 #' @note The semantics of this function are inspired by base::rm()
 #'

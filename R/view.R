@@ -3,6 +3,7 @@
 #' @param fn TensorFlow function (returned from `tf.function()`)
 #' @param args arguments passed to `fun`
 #' @param ... other arguments passed to [tensorflow::tensorboard()]
+#' @param name string, provided to tensorboard
 #' @param profiler logical, passed on to `tf.compat.v2.summary.trace_on()` (only
 #'   used in eager mode)
 #' @param concrete_fn a `ConcreteFunction` (only used in graph mode, ignored

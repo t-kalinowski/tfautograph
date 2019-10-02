@@ -15,6 +15,8 @@ view_function_graph(fn, args, ..., name = deparse(substitute(fn)),
 
 \item{...}{other arguments passed to \code{\link[tensorflow:tensorboard]{tensorflow::tensorboard()}}}
 
+\item{name}{string, provided to tensorboard}
+
 \item{profiler}{logical, passed on to \code{tf.compat.v2.summary.trace_on()} (only
 used in eager mode)}
 
