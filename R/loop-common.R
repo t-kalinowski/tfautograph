@@ -58,6 +58,7 @@ as_loop_cond_fn <- function(cond_expr, loop_vars, env) {
 
 as_loop_body_fn <- function(body_expr, loop_vars, env,
                             dont_check = NULL,
+                            additional_undefs = NULL,
                             call = sys.call(-1)) {
   force(call)
 
@@ -68,7 +69,8 @@ as_loop_body_fn <- function(body_expr, loop_vars, env,
     loop_vars_in <- list(...)
     outcome <- outcome_fn(...)
 
-    if (length(undefs <- setdiff(names(outcome$modified), loop_vars)))
+    if (length(undefs <- c(setdiff(names(outcome$modified), loop_vars),
+                           additional_undefs)))
       export_undefs(as.list(undefs), env, call)
 
     if (!tf$executing_eagerly())

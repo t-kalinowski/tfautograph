@@ -28,9 +28,12 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   loop_vars <- setdiff(loop_vars, hint$exclude)
 
   var_is_loop_var <- var %in% names(loop_vars)
+  if(!var_is_loop_var)
+    hint$undef <- c(hint$undef, var)
 
   .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env,
-                              dont_check = var)
+                              dont_check = var,
+                              additional_undefs = hint$undef)
 
   body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
 
@@ -78,20 +81,10 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   res <- do.call(tf$while_loop, while_loop_args)
   names(res) <- c("index", "loop_vars", "did_break")[seq_len(length(res))]
-  # loop_vars <- res$loop_vars
-  # did_break <- res$did_break
-  # TODO: export undefs here
-  # activate_undefs(undefs, sym)
 
   loop_vars <- res$loop_vars
   if(length(loop_vars))
     list2env(loop_vars, envir = env)
 
-  if (length(hint$undef))
-    export_undefs(hint$undef)
-
   invisible()
 }
-
-
-# TODO: `var` should probably be exported as an undef if it's not a `loop_var`
