@@ -8,8 +8,8 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
       next_ag_name$pop()
       next_loop_vars$pop()
       next_while_loop_opts$pop()
-      # in case someone is writing a function that can accept either a dataset or a tensor
-      # TODO: aren't there other options to pass to dataset$reduce() ?
+      # while_opts not used here others, but pop anyway in case this is a for
+      # loop that can accept either a dataset or a tensor
       return(ag_for_impl.python.builtin.iterator(
         as_iterator(iterable), var, body, env))
     }
@@ -116,12 +116,9 @@ dataset_for_loop_no_break <-
         current_state$placeholder <- NULL
       }
 
-
       current_state[[var]] <- next_ds_elem
       new_state <- body_fn(current_state)[[1]]
 
-      # TODO: should there be a better heuristic here?
-      # maybe: if (var %in% names(formals(body_fn))) ?
       if(!var_is_body_var)
         new_state[[var]] <- NULL
 

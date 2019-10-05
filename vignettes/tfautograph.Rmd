@@ -44,7 +44,7 @@ library(tfautograph)
 ```
 
 ## Compatibility
-tfautograph works with Tensorflow versions 1.14, 1.15, and 2.0. This vignette is
+tfautograph works with Tensorflow versions 1.15 and 2.0. This vignette is
 using version 2.0.
 ```{r}
 tf$version$VERSION
@@ -62,7 +62,7 @@ fn <- function(x) if(x > 0) x * x else x
 square_if_positive <- autograph(fn) 
 
 # pass an expression to autograph()
-square_if_positive <- autograph(function(x) if(x > 0) x * x else x)
+square_if_positive <- function(x) autograph(if(x > 0) x * x else x)
 ```
 
 Now `square_if_positive` is a function that can accept a tensor as an argument. 
@@ -133,8 +133,8 @@ knitr::kable(matrix(
    c("R expression", "Graph Mode Translation", "Eager Mode Translation")),
   c("`if(x)`", "`tf$cond(x, ...)`", "```if(x$`__bool__`())```",
     "`while(x)`"        , "`tf$while_loop(...)`", "`while(as.logical(x))`",
-    "`for(x in tensor)`", "`tf$while_loop(...)`" , "`while(!is.null(var <- iter_next(tensor_iterator)))`",
-    "`for(x in tfdataset)`", "`Dataset$reduce()`", "`while(!is.null(var <- iter_next(dataset_iterator)))`" 
+    "`for(x in tensor)`", "`tf$while_loop(...)`" , "`while(!is.null(x <- iter_next(tensor_iterator)))`",
+    "`for(x in tfdataset)`", "`Dataset$reduce()`", "`while(!is.null(x <- iter_next(dataset_iterator)))`" 
   ),
 ))
 ```
@@ -161,7 +161,7 @@ tf_sign <- tf_function(autograph(function(x) {
 }))
 ```
 
-Any variables that can't be balanced between the branches are exported as **undefined** objects (S3 class: `undef`). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the undef originated from, and suggestions for how to prevent the symbol from being an `undef`. 
+Any variables that can't be balanced between the branches are exported as **undefined** objects (S3 class: `undef`). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the `undef` originated from, and suggestions for how to prevent the symbol from being an `undef`. 
 ```{r, error = TRUE}
 undef_example <- tf_function(autograph(function(x) {
   if (x > 0) {
@@ -392,7 +392,7 @@ See ``` ?`[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` ``` for usage
 
 The tfautograph package provides a small collection of additional helpers when working with tensorflow from R. They are:
 
-+  `tf_assert()`: A thin wrapper around `tf.Assert()` that automatically generates a useful error message that includes the R call stack and the values of the tensors involved in the expression.
++  `tf_assert()`: A thin wrapper around `tf.Assert()` that automatically generates a useful error message that includes the R call stack and the values of the tensors involved in the assert expression.
 +  `tf_cond()`, `tf_case()`, `tf_switch()`: Thin wrappers around the control flow primitives that accept compact (`rlang` style ~) lambda syntax for the callables.
 
 # How it works
