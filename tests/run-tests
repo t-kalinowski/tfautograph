@@ -1,6 +1,4 @@
-#! /usr/bin/Rscript --vanilla
-
-devtools::install(quick = TRUE)
+#! /usr/bin/Rscript
 
 run_tst_cmd <- function(virtualenv) {
   paste(
@@ -12,7 +10,10 @@ run_tst_cmd <- function(virtualenv) {
   )
 }
 
+virtualenvs <- intersect(commandArgs(TRUE), c("tf1", "tf2", "no-tf"))
 
-system(run_tst_cmd("no-tf"))
-system(run_tst_cmd("tf1"))
-system(run_tst_cmd("tf2"))
+if(length(virtualenvs))
+  devtools::install(quick = TRUE)
+
+for(venv in virtualenvs)
+  system(run_tst_cmd(venv))
