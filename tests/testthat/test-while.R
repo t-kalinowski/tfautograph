@@ -1,13 +1,7 @@
-if(testthat::is_testing()){
-  source("utils.R")
-} else {
-  source("tests/testthat/utils.R")
-  devtools::load_all()
-}
-
-
 
 test_that("while basic", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     i <- 0L
     s <- 0L
@@ -27,6 +21,8 @@ test_that("while basic", {
 
 
 test_that("while nested", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     i <- 0L
     j <- 0L
@@ -55,6 +51,8 @@ test_that("while nested", {
 
 
 test_that("while single output", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     while (n > 0L)
       subtract(n) <- 1L
@@ -76,6 +74,7 @@ test_that("while single output", {
 
 
 test_that("while local composite", {
+  skip_if_no_tensorflow()
 
   foo <- function() list(x = as_tensor(3L))
 
@@ -96,6 +95,8 @@ test_that("while local composite", {
 
 
 test_that("while local composite complex nestable", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     tc <- list(x = list(as_tensor(0L)))
     while(n > 0L) {
@@ -114,6 +115,8 @@ test_that("while local composite complex nestable", {
 
 
 test_that("while local composite complex illegal", {
+  skip_if_no_tensorflow()
+
   foo <- function() list(x = list(as_tensor(3L)))
   fn <- function(n) {
     while(n > 0L) {
@@ -140,6 +143,7 @@ test_that("while local composite complex illegal", {
 })
 
 test_that("while test while dispatches by cond only", {
+  skip_if_no_tensorflow()
 
   TensorIncompatibleNumeric <- function(val)
     structure(list(val = val), class = "TensorIncompatibleNumeric")
@@ -169,6 +173,8 @@ test_that("while test while dispatches by cond only", {
 
 
 test_that("while loop_vars hints", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     b <- 1L
     while (n > 0L) {

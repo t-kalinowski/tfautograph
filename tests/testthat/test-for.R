@@ -1,12 +1,7 @@
-if(testthat::is_testing()){
-  source("utils.R")
-} else {
-  source("tests/testthat/utils.R")
-  devtools::load_all()
-}
-
 
 test_that("for single output", {
+  skip_if_no_tensorflow()
+
   fn <- function(l) {
     s <- 0L
     for (e in l)
@@ -24,6 +19,8 @@ test_that("for single output", {
 
 
 test_that("for simple", {
+  skip_if_no_tensorflow()
+
   fn <- function(l) {
     s1 <- 0L
     s2 <- 0L
@@ -44,6 +41,8 @@ test_that("for simple", {
 
 
 test_that("for iterated expression", {
+  skip_if_no_tensorflow()
+
   # no first-class iterators in R, so this is really testing
   # an R vector as an
   # iterable
@@ -99,6 +98,7 @@ test_that("for iterated expression", {
 
 
 test_that("for with tf Dataset", {
+  skip_if_no_tensorflow()
 
   ds <- tf$data$Dataset$from_tensor_slices(as_tensor(seq_len(5), "float32"))
 
@@ -131,14 +131,15 @@ test_that("for with tf Dataset", {
   expect_result(ag_fn, ds, list(15, 55))
   expect_result(tf_ag_fn, ds, list(15, 55))
 
-  `%<-%` <- zeallot::`%<-%`
+  # `%<-%` <- zeallot::`%<-%`
   fn <- function(ds) {
     h1 <- h2 <- h3 <- 0
     for (b in ds) {
-      c(x, y, w) %<-% b
-      add(h1) <- x[1, 1]
-      add(h2) <- y[1]
-      add(h3) <- w
+      names(b) <- c("x", "y", "w")
+      # c(x, y, w) %<-% b
+      add(h1) <- b$x[1, 1]
+      add(h2) <- b$y[1]
+      add(h3) <- b$w
     }
     list(h1, h2, h3)
   }

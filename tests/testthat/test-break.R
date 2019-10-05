@@ -1,13 +1,7 @@
-if(testthat::is_testing()){
-  source("utils.R")
-} else {
-  # reticulate::use_virtualenv("tf2", TRUE)
-  # cat("Tensorflow Version:", tf$version$VERSION, "\n")
-  source("tests/testthat/utils.R")
-  devtools::load_all()
-}
+
 
 test_that("break basic", {
+  skip_if_no_tensorflow()
   fn <- function(n) {
     while (n > 0L) {
       if (n %% 2L == 0L) {
@@ -17,7 +11,6 @@ test_that("break basic", {
     }
     n
   }
-  # debugonce(ag_if)
 
   # autograph(fn)(as_tensor(4L))
   # autograph(fn)(as_tensor(1L))
@@ -28,6 +21,8 @@ test_that("break basic", {
 })
 
 test_that("break and next basic", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     x <- 0
     while (n > 0L) {
@@ -65,7 +60,6 @@ test_that("break and next basic", {
   #
   # fn(3) # 0 1
   # autograph(fn)(as_tensor(3))
-
 
 
   # fn(3) # 0 1
@@ -112,6 +106,8 @@ test_that("break and next basic", {
 
 
 test_that("next in for", {
+  skip_if_no_tensorflow()
+
   fn <- function(l) {
     x <- 0
     y <- 0
@@ -127,7 +123,8 @@ test_that("next in for", {
     list(x, y, z)
   }
   ag_fn <- autograph(fn)
-  if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
+  # if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
+  if(tensorflow::tf_version() >= "1.15")
     tf_function <- function(...)
       tf$`function`(..., autograph = FALSE, experimental_relax_shapes = TRUE)
 
@@ -171,6 +168,8 @@ test_that("next in for", {
 
 
 test_that("break and next in simple for", {
+  skip_if_no_tensorflow()
+
   fn <- function(l) {
     x <- 0
     y <- 0
@@ -191,7 +190,8 @@ test_that("break and next in simple for", {
   ds <- tf$data$Dataset$range(n)
 
   ag_fn <- autograph(fn)
-  if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
+  # if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
+  if(tensorflow::tf_version() >= "1.15")
     tf_function <- function(...)
       tf$`function`(..., autograph = FALSE, experimental_relax_shapes = TRUE)
 
