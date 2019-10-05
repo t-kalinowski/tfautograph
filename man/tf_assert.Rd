@@ -29,6 +29,8 @@ expression, as well as the full R call stack at the time the \code{tf$Assert()}
 node is created.
 }
 \examples{
+\dontrun{
 x <- tf$constant(-1)
 try(tf_assert(x > 0, "oopsies! x must be greater than 0"))
+}
 }

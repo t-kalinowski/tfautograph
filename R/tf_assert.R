@@ -19,8 +19,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' x <- tf$constant(-1)
 #' try(tf_assert(x > 0, "oopsies! x must be greater than 0"))
+#' }
 tf_assert <- function(condition, ...,
                       expr = substitute(condition),
                       summarize = NULL,
