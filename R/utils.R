@@ -14,7 +14,7 @@ is_lazy_tensor <- function(x) is_tensor(x) && !is_eager_tensor(x)
 
 is_op <- function(x) inherits(x, "tensorflow.python.framework.ops.Operation")
 
-## TODO: should also return true for TensorArrays
+# TODO: should also return true for TensorArrays
 
 # in tf2.0
 # > class(tf$convert_to_tensor(3))

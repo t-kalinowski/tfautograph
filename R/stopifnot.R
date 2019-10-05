@@ -15,10 +15,6 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
 
 
   # TODO: how to pass in custom messages? custom names?
-  #
-  # TODO: consider exporting pretty_call_stack() or pretty_tf_assert_data() for
-  # cases when you want to write tf$Assert()? Or maybe export an ergonomic
-  # minimal wrapper tf_assert() ?
   call_stack <- pretty_call_stack()
 
   # TODO: this will fail if the symbols are objects with methods,

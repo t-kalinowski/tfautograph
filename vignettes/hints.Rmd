@@ -71,10 +71,8 @@ autograph({
 y
 ```
 
-`autograph()`
-
 Notice that `y` points to a different tensor after the `autograph()` call. The
-new tensor has 'cond' in the name, which is a big hint that `autograph()` took
+new tensor has `'cond'` in the name, which is a big hint that `autograph()` took
 that expression and called `tf.cond()` with it.
 
 If you were to inspect the graph (e.g, by reading the `GraphDef` or inspecting
@@ -96,7 +94,7 @@ branch as a `tf.function` and then reconciled the differences. Then within the
 routines that "fix-up" the actual outcome from the branch into a balanced final
 outcome.
 
-if you wanted to avoid tracing each branch as a separate `ConcreteFunction` and
+If you wanted to avoid tracing each branch as a separate `ConcreteFunction` and
 balancing the output structures, you could supply a hint to autograph about what
 outcomes you expect from the branches by calling `ag_if_vars()` right before the
 `if`.

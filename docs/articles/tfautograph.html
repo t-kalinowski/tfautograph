@@ -110,7 +110,7 @@
 <div id="compatibility" class="section level2">
 <h2 class="hasAnchor">
 <a href="#compatibility" class="anchor"></a>Compatibility</h2>
-<p>tfautograph works with Tensorflow versions 1.14, 1.15, and 2.0. This vignette is using version 2.0.</p>
+<p>tfautograph works with Tensorflow versions 1.15 and 2.0. This vignette is using version 2.0.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tf<span class="op">$</span>version<span class="op">$</span>VERSION</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; [1] "2.0.0"</span></a></code></pre></div>
 </div>
@@ -124,7 +124,7 @@
 <a class="sourceLine" id="cb3-3" data-line-number="3">square_if_positive &lt;-<span class="st"> </span><span class="kw"><a href="../reference/autograph.html">autograph</a></span>(fn) </a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># pass an expression to autograph()</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">square_if_positive &lt;-<span class="st"> </span><span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(x) <span class="cf">if</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) x <span class="op">*</span><span class="st"> </span>x <span class="cf">else</span> x)</a></code></pre></div>
+<a class="sourceLine" id="cb3-6" data-line-number="6">square_if_positive &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">if</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) x <span class="op">*</span><span class="st"> </span>x <span class="cf">else</span> x)</a></code></pre></div>
 <p>Now <code>square_if_positive</code> is a function that can accept a tensor as an argument.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">convert_to_tensor</span>(<span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">y &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">convert_to_tensor</span>(<span class="op">-</span><span class="dv">5</span>)</a>
@@ -208,12 +208,12 @@
 <tr class="odd">
 <td align="left"><code>for(x in tensor)</code></td>
 <td align="left"><code>tf$while_loop(...)</code></td>
-<td align="left"><code>while(!is.null(var &lt;- iter_next(tensor_iterator)))</code></td>
+<td align="left"><code>while(!is.null(x &lt;- iter_next(tensor_iterator)))</code></td>
 </tr>
 <tr class="even">
 <td align="left"><code>for(x in tfdataset)</code></td>
 <td align="left"><code>Dataset$reduce()</code></td>
-<td align="left"><code>while(!is.null(var &lt;- iter_next(dataset_iterator)))</code></td>
+<td align="left"><code>while(!is.null(x &lt;- iter_next(dataset_iterator)))</code></td>
 </tr>
 </tbody>
 </table>
@@ -232,7 +232,7 @@
 <a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="cf">else</span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7">    <span class="dv">0</span></a>
 <a class="sourceLine" id="cb7-8" data-line-number="8">}))</a></code></pre></div>
-<p>Any variables that can’t be balanced between the branches are exported as <strong>undefined</strong> objects (S3 class: <code>undef</code>). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the undef originated from, and suggestions for how to prevent the symbol from being an <code>undef</code>.</p>
+<p>Any variables that can’t be balanced between the branches are exported as <strong>undefined</strong> objects (S3 class: <code>undef</code>). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the <code>undef</code> originated from, and suggestions for how to prevent the symbol from being an <code>undef</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">undef_example &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3">    branch_local_tmp &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
@@ -455,7 +455,7 @@
 <p>The tfautograph package provides a small collection of additional helpers when working with tensorflow from R. They are:</p>
 <ul>
 <li>
-<code><a href="../reference/tf_assert.html">tf_assert()</a></code>: A thin wrapper around <code>tf.Assert()</code> that automatically generates a useful error message that includes the R call stack and the values of the tensors involved in the expression.</li>
+<code><a href="../reference/tf_assert.html">tf_assert()</a></code>: A thin wrapper around <code>tf.Assert()</code> that automatically generates a useful error message that includes the R call stack and the values of the tensors involved in the assert expression.</li>
 <li>
 <code><a href="../reference/tf_cond.html">tf_cond()</a></code>, <code><a href="../reference/tf_case.html">tf_case()</a></code>, <code><a href="../reference/tf_switch.html">tf_switch()</a></code>: Thin wrappers around the control flow primitives that accept compact (<code>rlang</code> style ~) lambda syntax for the callables.</li>
 </ul>

@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/tfautograph)](https://CRAN.R-project.org/package=tfautograph) -->
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tfautograph)](https://CRAN.R-project.org/package=tfautograph)
 <!-- badges: end -->
 
 This package implements autograph for R.
@@ -15,10 +15,10 @@ It lets you use tensors in R control flow expressions like `if`, `while`
 and `for` and automatically translates those expressions into tensorflow
 graphs.
 
-It is compatible with and tested against Tensorflow versions 2.0, 1.15
-and 1.14.
+It is compatible with and tested against Tensorflow versions 2.0 and
+1.15.
 
-# Learn More:
+## Learn More:
 
   - [Getting
     Started](https://t-kalinowski.github.io/tfautograph/articles/tfautograph.html)
@@ -31,14 +31,18 @@ and 1.14.
 
 ## Additional Articles:
 
-  - Tensorflow version 1 and control dependencies:
-    [here](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
+  - Control dependencies in [Tensorflow
+    version 1](https://t-kalinowski.github.io/tfautograph/articles/tf-v1.html)
   - Giving `autograph`
     [hints](https://t-kalinowski.github.io/tfautograph/articles/hints.html)
 
 ## Installation
 
-tfautograph is not yet on CRAN (it will be soon\!)
+You can install tfautograph from CRAN with:
+
+``` r
+install.packages("tfautograph")
+```
 
 You can install the development version from
 [GitHub](https://github.com/) with:
