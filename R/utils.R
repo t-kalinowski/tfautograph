@@ -114,9 +114,8 @@ valid_typeofs <- c("logical", "integer", "double", "complex", "character",
 #   is_tensor(x) || mode(x) %in% valid_modes
 # }
 
-is_named_list <- function(x) {
-  is.list(x) && !is.null(names(x))
-}
+is_named_list <- function(x) is.list(x) && !is.null(names(x))
+
 
 
 tf_group_ops <- function(x) {
