@@ -221,8 +221,3 @@ tf_switch <- function(branch_index, ...,
   )
 }
 
-
-# maybe_call_result <- function(fn) {
-#   force(fn)
-#   function() if(is.function(res <- fn())) res() else res
-# }

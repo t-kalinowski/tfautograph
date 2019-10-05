@@ -44,7 +44,7 @@ autograph <- function(x) {
   env <- parent.frame()
 
   if (is.symbol(xe)) {
-    # function or something with `environment<-` method
+    # function, formula, or something with `environment<-` method
     environment(x) <- new_ag_mask(parent = environment(x))
     return(x)
   }
@@ -55,7 +55,6 @@ autograph <- function(x) {
 
   export_modified(outcome$modified, env)
 
-
   if(isFALSE(outcome$visible) ||
      is.null(outcome$returned) && !tf$executing_eagerly())
     invisible(outcome$returned)
@@ -65,7 +64,6 @@ autograph <- function(x) {
 
 
 new_ag_mask <- function(parent = parent.frame()) {
-
 
   ag_mask <- list2env(ag_mask_list, parent = parent)
 

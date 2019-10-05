@@ -5,6 +5,7 @@ is_bool <- function(x) identical(x, TRUE) || identical(x, FALSE)
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
 is_eager_tensor <- function(x) is_tensor(x) && py_has_attr(x, "numpy")
 is_eager <- function(x) py_has_attr(x, "numpy")
+# TODO: maybe check for actual class here? with base::inherits() or
   # z$`__class__`$`__name__` == "EagerTensor"
   #
 
@@ -25,7 +26,6 @@ is_op <- function(x) inherits(x, "tensorflow.python.framework.ops.Operation")
 # [5] "tensorflow.python.framework.tensor_like._TensorLike"
 # [6] "python.builtin.object"
 
-# TODO: maybe check for actual class here?
 
 
 as_args <- function(x) {
@@ -59,7 +59,6 @@ tensor_type <- function(x) {
 }
 
 
-# drop_empty <- function(x) x[(lx <- lengths(x)) != 0 | is.na(lx)]
 drop_empty <- function(x)
   x[!vapply(x, function(x) !is_tensor(x) && identical(length(x), 0L), FALSE)]
 
@@ -105,14 +104,8 @@ unnamed_lists_to_tuples <- function(x) {
 }
 
 valid_typeofs <- c("logical", "integer", "double", "complex", "character",
-                   "raw", "list") #, "environment")
+                   "raw", "list")
 
-
-# is_gettable <- function(nm, env) {
-#   # exists(nm, envir = env) &&
-#   x <- get0(nm, envir = env)
-#   is_tensor(x) || mode(x) %in% valid_modes
-# }
 
 is_named_list <- function(x) is.list(x) && !is.null(names(x))
 
