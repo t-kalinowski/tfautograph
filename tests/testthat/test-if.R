@@ -1,16 +1,11 @@
-if(testthat::is_testing()){
-  source("utils.R")
-} else {
-  source("tests/testthat/utils.R")
-  devtools::load_all()
-}
-
 
 
 # these tests are all modeled after:
 # tensorflow/python/autograph/converters/control_flow_test.py
 
 test_that("if non-tensor dispatches normally", {
+  skip_if_no_tensorflow()
+
   fn <- function(n) {
     a <- 0L
     b <- 0L
@@ -31,6 +26,7 @@ test_that("if non-tensor dispatches normally", {
 
 
 test_that("if basic", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     a <- 0L
@@ -57,6 +53,7 @@ test_that("if basic", {
 
 
 test_that("if complex outputs", {
+  skip_if_no_tensorflow()
 
   fn <- function(n, obj) {
     obj$a <- 0L
@@ -88,6 +85,7 @@ test_that("if complex outputs", {
 
 
 test_that("if single output", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     if(n > 0L) {
@@ -104,6 +102,7 @@ test_that("if single output", {
 
 
 test_that("if single output - inline expr", {
+  skip_if_no_tensorflow()
 
   n <- local({
     n <- as_tensor(1L)
@@ -133,6 +132,7 @@ test_that("if single output - inline expr", {
 
 
 test_that("if single semi", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     if(n > 0L)
@@ -150,6 +150,7 @@ test_that("if single semi", {
 
 
 test_that("if local var", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     if(n > 0L) {
@@ -206,6 +207,7 @@ test_that("if local var", {
 
 
 test_that("if no outputs", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     if(n > 0L)
@@ -223,6 +225,7 @@ test_that("if no outputs", {
 
 
 test_that("if unbalanced multiple composites", {
+  skip_if_no_tensorflow()
 
   fn <- function(x, condition) {
     z = 5L
@@ -246,6 +249,7 @@ test_that("if unbalanced multiple composites", {
 
 
 test_that("if unbalanced composite", {
+  skip_if_no_tensorflow()
 
   fn <- function(x, condition) {
     z = 5L
@@ -265,6 +269,7 @@ test_that("if unbalanced composite", {
 })
 
 test_that("if as last expression", {
+  skip_if_no_tensorflow()
   fn <- function(n) {
     if (n > 0L)
       -n
@@ -281,6 +286,7 @@ test_that("if as last expression", {
 })
 
 test_that("nested if statement", {
+  skip_if_no_tensorflow()
   fn <- function(n) {
     a <- 0L
     if (n > 0L) {
@@ -306,6 +312,7 @@ test_that("nested if statement", {
 })
 
 test_that("can call from another functions", {
+  skip_if_no_tensorflow()
 
   fn <- function(n) {
     a <- 0L

@@ -1,0 +1,18 @@
+#! /usr/bin/Rscript --vanilla
+
+devtools::install(quick = TRUE)
+
+run_tst_cmd <- function(virtualenv) {
+  paste(
+    "Rscript --vanilla -e",
+    "'",
+    sprintf('reticulate::use_virtualenv("%s", TRUE);', virtualenv),
+    'testthat::test_dir("tests/testthat/")',
+    "'"
+  )
+}
+
+
+system(run_tst_cmd("no-tf"))
+system(run_tst_cmd("tf1"))
+system(run_tst_cmd("tf2"))

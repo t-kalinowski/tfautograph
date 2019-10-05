@@ -1,15 +1,23 @@
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 2)
-Sys.setenv(CUDA_VISIBLE_DEVICES = 0)
+# Sys.setenv(CUDA_VISIBLE_DEVICES = 0)
 Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 library(tfautograph)
 
-tf <- tensorflow::tf
+delayedAssign("tf", tensorflow::tf)
+
+if (!exists(".DID_EMIT_TF_VERSION")) {
+  if(reticulate::py_module_available("tensorflow"))
+    cat(sprintf("Testing Against Tensorflow Version: %s\n",
+              tensorflow::tf$version$VERSION))
+  else
+    cat("Tensorflow not available for testing\n")
+  .DID_EMIT_TF_VERSION <- TRUE
+}
 
 tf_function <- function(fn, ...)
   tf$`function`(reticulate::py_func(fn), ..., autograph = FALSE)
-# tf_function <- tensorflow::tf_function
-# formals(tf_function)$autograph <- FALSE
+
 tuple <- reticulate::tuple
 
 as_tensor <- function(x, ...) tf$convert_to_tensor(x, ...)
@@ -62,6 +70,15 @@ expect_ag_equivalent <- function(fn, input) {
 }
 
 
-np_arr <- function(...) reticulate::np_array(array(seq_len(prod(...)), c(...)), "float32")
+np_arr <- function(...)
+  reticulate::np_array(array(seq_len(prod(...)), c(...)), "float32")
 
-tf_arr <- function(...) tf$convert_to_tensor(np_arr(...))
+tf_arr <- function(...)
+  tf$convert_to_tensor(np_arr(...))
+
+
+skip_if_no_tensorflow <- function() {
+  if (!reticulate::py_module_available("tensorflow"))
+    skip("TensorFlow not available for testing")
+}
+

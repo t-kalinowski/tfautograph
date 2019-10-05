@@ -1,12 +1,7 @@
-if(testthat::is_testing()){
-  source("utils.R")
-} else {
-  source("tests/testthat/utils.R")
-  devtools::load_all()
-}
 
 
 test_that("stopifnot simple", {
+  skip_if_no_tensorflow()
   fn <- function(x) {
     stopifnot(x > 0)
     x
@@ -22,6 +17,7 @@ test_that("stopifnot simple", {
 })
 
 test_that("stopifnot compound", {
+  skip_if_no_tensorflow()
 
   fn <- function(x, y, z) {
     stopifnot(x > 0, x < 10, y > x, z > y & z < 20)

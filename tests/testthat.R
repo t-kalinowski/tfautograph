@@ -5,7 +5,14 @@ library(tfautograph)
 # reticulate::use_virtualenv("tf2", TRUE)
 
 
-message("Testing Against Tensorflow Version: ", tf$version$VERSION)
+if (reticulate::py_module_available("tensorflow")) {
+  print("HI")
 
-# test_dir("tests/testthat/")
-test_check("tfautograph")
+  if (!exists(".DID_EMIT_TF_VERSION")) {
+    message("Testing Against Tensorflow Version: ",
+            tensorflow::tf$version$VERSION)
+    .DID_EMIT_TF_VERSION <- TRUE
+  }
+  test_check("tfautograph")
+} else
+  message("TensorFlow not available for testing")
