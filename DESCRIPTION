@@ -1,6 +1,6 @@
 Package: tfautograph
 Title: Autograph R functions for tensorflow
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: person("Tomasz", "Kalinowski", email = "kalinowskit@gmail.com", role = c("aut", "cre"))
 Description: Translate R functions into tensorflow graphs.
 Depends: R (>= 3.5.0)
