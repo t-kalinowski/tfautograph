@@ -68,7 +68,7 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     if (identical(env, topenv(env))) {
       # is this even ever going to be TRUE, isn't this always going to be run
       # either from an autographed function or an as_outcome_fn()?
-      ## actually, yes it can be if exporting attach_ag_mask()
+      ## actually, yes it can be after attach_ag_mask()
       control_dependencies_context$`__exit__`(NULL, NULL, NULL)
     } else {
       push_frame_context_manager(control_dependencies_context, env)
