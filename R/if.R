@@ -37,8 +37,6 @@ ag_if <- function(cond, true, false = NULL) {
       env)
   }
 
-
-
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
 
@@ -53,13 +51,8 @@ ag_if <- function(cond, true, false = NULL) {
   for(lcf in rev(outcome$loop_control_flow))
     try_register_or_signal_error_with_restart(lcf)
 
-  if (!is.null(outcome$modified)) {
-    for (nm in names(outcome$modified))
-      if (is.list(outcome$modified[[nm]]))
-        outcome$modified[[nm]] <-
-          modifyList(get(nm, env), outcome$modified[[nm]])
-    list2env(outcome$modified, envir = env)
-  }
+  if (!is.null(outcome$modified))
+    export_modified(outcome$modified, env)
 
   if(length(undefs))
     export_undefs(undefs, env)
@@ -103,14 +96,14 @@ as_cond_branch_fn <- function(cond, branch_expr, branch, env) {
 
 
 prune_invalid_vals <- function(x) {
-  modifyList(list(x = x),
+  modify_list(list(x = x),
              rapply(list(x = x), function(v)
                if (is_valid_val(v)) v else NULL,
                how = 'replace'))$x
 }
 
 prune_ops <- function(x) {
-  modifyList(list(x = x),
+  modify_list(list(x = x),
              rapply(list(x = x), function(v) NULL,
                     classes = "tensorflow.python.framework.ops.Operation",
                     how = 'replace'))$x

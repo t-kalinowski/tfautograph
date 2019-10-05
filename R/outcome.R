@@ -2,7 +2,6 @@
 
 outcome_frames <- Stack()
 
-
 push_outcome_frame <- function(env = parent.frame())
   outcome_frames$push(env)
 
@@ -34,27 +33,17 @@ as_outcome_fn <- function(expr, env, args = NULL) {
       if (identical(environment(x), outcome_env))
         environment(x) <- env
       x
-    }, classes = "function", how = "replace")[[1]]
+    }, classes = c("function", "formula"), how = "replace")[[1]]
 
     out
   }
 }
 
-#' @importFrom utils modifyList
+
 export_modified <- function(modified, env) {
-  if (is_empty(modified))
-    return()
-
-  # TODO, this FAILS if nm is an empty unnamed list in env
-  # e.g, this fails
-  # x <- list()
-  # autograph(for(i in 1:10) x[[i]] <- i)
-
-  # at the end of this x is still an empty list() because `modifyList()` only
-  # knows how to handle named lists.
   for (nm in names(modified)) {
-    if (is.list(modified[[nm]]) && exists(nm, envir = env))
-      modified[[nm]] <- modifyList(get(nm, env), modified[[nm]])
+    if (is_named_list(modified[[nm]]) && exists(nm, envir = env))
+      modified[[nm]] <- modify_list(get(nm, env), modified[[nm]])
     else if (is_undef(modified[[nm]])) {
       makeActiveBinding(nm, modified[[nm]], env)
       modified[[nm]] <- NULL
@@ -63,7 +52,6 @@ export_modified <- function(modified, env) {
   if(length(modified))
     list2env(modified, envir = env)
 }
-
 
 
 prune_nested_unmodified <- function(modified, env) {
@@ -102,3 +90,23 @@ prune_identical <- function(x, y) {
   list(x, y)
 }
 
+
+modify_list <- function (x, y) {
+  stopifnot(is_named_list(x), is_named_list(y))
+  y_names <- names(y)
+
+  if(is.null(y_names) || anyNA(y_names) ||
+     anyDuplicated(y_names) || any(!nzchar(y_names)))
+    stop("Invalid names. Lists must either have no names or all elements must have unique names")
+
+  for (nm in y_names) {
+    x[[nm]] <-
+      if (is_named_list(x[[nm]]) &&
+          is_named_list(y[[nm]]))
+        modify_list(x[[nm]], y[[nm]])
+    else
+      y[[nm]]
+  }
+
+  x
+}

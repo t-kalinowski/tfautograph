@@ -53,13 +53,16 @@ When dealing with complex composites (that is, nested structures where a
 modified tensor is part of a named list or dictionary), care is taken to
 prevent unnecessarily capturing other unmodified tensors in the structure.
 This is done by pruning unmodified tensors from the returned output
-structure, and then merging them back with the original object using
-\code{\link[utils:modifyList]{utils::modifyList()}}. Two (current) limitation of this approach are
-that: a) removing an element from a nested structure in an \code{if} statement
-is not possible and b) pruning and merging is currently only supported for
-named lists (python dictionaries). Unnamed lists or tuples are passed as is
-(e.g, no pruning and merging done), which can lead to unnecessarily bloat
-in the constructed graphs.
+structure, and then merging them back with the original object recursively.
+One limitation of the implementation is that lists must either be fully
+named with unique names, or not named at all, partially named lists or
+duplicated names in a list throw an error. This is due to the conversion
+that happens when going between python and R: named lists get converted to
+python dictionaries, which require that all keys are unique. Additionally,
+pruning of unmodified objects from an autographed \code{if} is currently only
+supported for named lists (python dictionaries). Unnamed lists or tuples
+are passed as is (e.g, no pruning and merging done), which may lead to
+unnecessarily bloat in the constructed graphs.
 }
 \examples{
 \dontrun{
