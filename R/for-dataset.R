@@ -24,9 +24,13 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
 
     body_vars <- setdiff(body_vars, hint$exclude)
 
+    var_is_body_var <- var %in% names(body_vars)
+    if(!var_is_body_var)
+      hint$undef <- c(hint$undef, var)
 
     body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env,
-                               dont_check = var)
+                               dont_check = var,
+                               additional_undefs = hint$undef)
 
     body_vars <- mget(body_vars, env, inherits = TRUE)
 
@@ -38,9 +42,9 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
       dataset_for_loop_no_break(iterable, var, body_fn, body_vars, env)
 
     list2env(final_state, env)
+
     invisible()
   }
-
 
 
 dataset_for_loop_with_potential_break <-
