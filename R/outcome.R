@@ -10,7 +10,7 @@ as_outcome_fn <- function(expr, env, args = NULL) {
     return(as.function(list(NULL), envir = env))
 
   expr <- substitute({
-    tfautograph:::push_outcome_frame()
+    get("push_outcome_frame", envir = asNamespace("tfautograph"), inherits = FALSE)()
     expr
   }, list(expr = expr))
   fn <- as.function.default(c(args, list(expr)), envir = env)

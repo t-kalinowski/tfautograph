@@ -73,8 +73,13 @@ ag_stopifnot <- function(..., exprs, local = TRUE) {
     } else {
       push_frame_context_manager(control_dependencies_context, env)
       on.exit.elsewhere(return(
-        tfautograph:::identity_op_tensors_and_close_contexts(returnValue())
-      ), add = TRUE, after = TRUE, envir = env)
+        get("identity_op_tensors_and_close_contexts",
+            envir = asNamespace("tfautograph"),
+            inherits = FALSE)(returnValue())
+      ),
+      add = TRUE,
+      after = TRUE,
+      envir = env)
     }
 
   }

@@ -39,7 +39,7 @@ ag_for_impl.python.builtin.iterator <-
     on.exit(active_iterators$pop())
 
     expr <- substitute(
-      while (tfautograph:::active_iter_assign_next(var)) body,
+      while (get("active_iter_assign_next", envir = asNamespace("tfautograph"), inherits = FALSE)(var)) body,
       list(var = as.character(var), body = body))
 
     eval(expr, env)
