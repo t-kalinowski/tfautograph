@@ -126,11 +126,20 @@ build_target_outcome <- function(true, false, env) {
   all_modified <-  union(true_modified, false_modified)
   common <- intersect(true_modified, false_modified)
   unbalanced <- setdiff(all_modified, common)
-  unbalanced_gettable <-
-    Filter(function(x) !is.null(pluck_structure(x, env)),
-           unbalanced)
-  modified <- union(common, unbalanced_gettable)
-  undefs <- setdiff(unbalanced, unbalanced_gettable)
+  unbalanced_fixable <-
+    Filter(function(x) {
+      if (is.null(val <- pluck_structure(list(x), env)))
+        # doesn't exist
+        return(FALSE)
+
+      # make sure that the `val` is the right dtype and shape before pulling it
+      # from the outerscop to balance the branches
+      val_mold <- pluck_structure(list(x), true$modified, false$modified)
+      is_same_structure(val, val_mold)
+    },
+    unbalanced)
+  modified <- union(common, unbalanced_fixable)
+  undefs <- setdiff(unbalanced, unbalanced_fixable)
 
   n_lcf <- max(length(true$loop_control_flow),
                length(false$loop_control_flow))
@@ -190,6 +199,8 @@ as_concrete_function <- function(fn, input_signature = list()) {
 
 
 pluck_structure <- function(nms, ...) {
+  # nms a character vector of symbols names, or a list of character vectors for
+  # nested structures
   Y <- list()
   from <- list(...)
   for (nm in nms) {
