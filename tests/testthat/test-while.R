@@ -138,7 +138,8 @@ test_that("while local composite complex illegal", {
 
   expect_error(ag_fn(as_tensor(5L)), '*tc*',
                class = if(!tf$executing_eagerly()) "access_undefined")
-  expect_error(ag_fn(as_tensor(5L)), 'must be defined before the loop',
+  expect_error(ag_fn(as_tensor(5L)),
+               'object with the same dtype and shape be assigned to the symbol before the loop body',
                class = if(!tf$executing_eagerly()) "access_undefined")
 })
 
