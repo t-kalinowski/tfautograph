@@ -248,7 +248,7 @@
 <a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt;      x &lt;- branch_local_tmp + 1</span></a>
 <a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;      x</span></a>
 <a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;  }</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; To access this symbol, Tensorflow requires that the symbol must be defined either before the `if` statement, or in all branches of the `if` statement.</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; To access this symbol, Tensorflow requires that an object with the same dtype and shape be assigned to the symbol either before the `if` statement, or in all branches of the `if` statement.</span></a>
 <a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; Detailed traceback: </span></a>
 <a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf2/lib/python2.7/site-packages/tensorflow_core/python/eager/def_function.py", line 457, in __call__</span></a>

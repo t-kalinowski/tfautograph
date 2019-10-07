@@ -174,24 +174,10 @@ computed prior to the call</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(-<span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>tf_assert</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='st'>"oopsies! x must be greater than 0"</span>))</div><div class='output co'>#&gt; name: "Assert/AssertGuard/Merge"
-#&gt; op: "Merge"
-#&gt; input: "Assert/AssertGuard/control_dependency_1"
-#&gt; input: "Assert/AssertGuard/control_dependency"
-#&gt; attr {
-#&gt;   key: "N"
-#&gt;   value {
-#&gt;     i: 2
-#&gt;   }
-#&gt; }
-#&gt; attr {
-#&gt;   key: "T"
-#&gt;   value {
-#&gt;     type: DT_BOOL
-#&gt;   }
-#&gt; }
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(-<span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>tf_assert</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='st'>"oopsies! x must be greater than 0"</span>))
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
