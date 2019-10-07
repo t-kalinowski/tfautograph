@@ -60,7 +60,7 @@ access_undefined_condition <- function(sym, call) {
     sprintf(
       "Symbol `%s` is *undefined* after autographing the expression:\n %s\n",
       sym, pretty_call),
-    "To access this symbol, Tensorflow requires that the symbol be assigned to an object with the same dtype and shape ",
+    "To access this symbol, Tensorflow requires that an object with the same dtype and shape be assigned to the symbol ",
     switch(type,
       "if" = "either before the `if` statement, or in all branches of the `if` statement",
       "for" = , "while" = "before the loop body"
