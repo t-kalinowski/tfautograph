@@ -4,12 +4,12 @@
 ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
   function(iterable, var, body, env) {
 
+    next_while_loop_opts$pop()
+    # while_opts not used here others, but pop anyway in case this is a for
+    # loop that can accept either a dataset or a tensor
     if(tf$executing_eagerly()) {
       next_ag_name$pop()
       next_loop_vars$pop()
-      next_while_loop_opts$pop()
-      # while_opts not used here others, but pop anyway in case this is a for
-      # loop that can accept either a dataset or a tensor
       return(ag_for_impl.python.builtin.iterator(
         as_iterator(iterable), var, body, env))
     }
