@@ -40,9 +40,6 @@ ag_if <- function(cond, true, false = NULL) {
   undefs <- target_outcome$undefs
   target_outcome$undefs <- NULL
 
-  # TODO, the `placeholder` tensor returned should be the same, i.e., not
-  # recreated separatly in each branch, but made before the branch is traced
-  # then just grabbed
   outcome <- tf$cond(cond,
                      function() fix_outcome(true_fn(), target_outcome, env),
                      function() fix_outcome(false_fn(), target_outcome, env),
@@ -112,14 +109,8 @@ prune_ops <- function(x) {
 # from_concrete_fn's `structured_outputs`
 build_target_outcome <- function(true, false, env) {
 
-  # TODO: this should not just look for names and structure, but also check
-  # output shapes and dtypes. In particular when fetching from the outer scope.
-  # It should ONLY fetch from the outerscope to balance a branch if the
-  # retreived object has the correct shape, otherwise the unbalanced symbol
-  # should be exported as an undef.
-
-  ret <- if(is_same_structure(true$returned, false$returned) &&
-            !is_empty(true$returned) && !is_empty(false$returned))
+  ret <- if (!is_empty(true$returned) && !is_empty(false$returned) &&
+             is_same_structure(true$returned, false$returned))
     TRUE else NULL
   true_modified  <- leaf_names(true$modified)
   false_modified <- leaf_names(false$modified)
