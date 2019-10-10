@@ -100,7 +100,7 @@
       <h1>MNIST</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/t-kalinowski/tfautograph/blob/master/vignettes/demo-mnist.Rmd"><code>vignettes/demo-mnist.Rmd</code></a></small>
+      
       <div class="hidden name"><code>demo-mnist.Rmd</code></div>
 
     </div>
@@ -210,19 +210,19 @@
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/train.html">train</a></span>(model, optimizer)</a>
 <a class="sourceLine" id="cb6-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw">print_tempfile</span>()</a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.82808411 ; accuracy 0.309</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 1.14567769 ; accuracy 0.48</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.801618874 ; accuracy 0.563333333</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.603441596 ; accuracy 0.6295</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.552467287 ; accuracy 0.674</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.334274888 ; accuracy 0.7075</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.255261868 ; accuracy 0.733428597</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.283968061 ; accuracy 0.7525</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.340937376 ; accuracy 0.770222247</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Step 100 : loss 0.373568565 ; accuracy 0.7819</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Step 110 : loss 0.440194309 ; accuracy 0.793272734</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.79730403 ; accuracy 0.332</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 1.32700348 ; accuracy 0.479</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.884204566 ; accuracy 0.573333323</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.579629183 ; accuracy 0.63875</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.655183077 ; accuracy 0.6782</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.486716688 ; accuracy 0.709666669</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.543603182 ; accuracy 0.733285725</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.477482796 ; accuracy 0.75325</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.347360849 ; accuracy 0.767444432</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Step 100 : loss 0.365992278 ; accuracy 0.7806</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Step 110 : loss 0.393609613 ; accuracy 0.792090893</span></a>
 <a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; Accuracy over 0.8; breaking early</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Final step 118 : loss 0.583333969 ; accuracy 0.80008477</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Final step 118 : loss 0.251601249 ; accuracy 0.800508499</span></a></code></pre></div>
 </div>
 <div id="train-in-graph-mode" class="section level3">
 <h3 class="hasAnchor">
@@ -233,17 +233,18 @@
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">train_on_graph</span>(model, optimizer)</a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">print_tempfile</span>()</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.77932513 ; accuracy 0.76781249</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 0.936225414 ; accuracy 0.764202893</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.768683076 ; accuracy 0.766216218</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.494266123 ; accuracy 0.771202505</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.485471278 ; accuracy 0.776488066</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.423238844 ; accuracy 0.781966269</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.336505294 ; accuracy 0.786914885</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.288743138 ; accuracy 0.792626262</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.263154715 ; accuracy 0.797980785</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; Accuracy over 0.8; breaking early</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Final step 96 : loss 0.32856223 ; accuracy 0.80008477</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.81814575 ; accuracy 0.764296889</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 1.29604721 ; accuracy 0.758333325</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.723755598 ; accuracy 0.76</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.567499876 ; accuracy 0.765189886</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.56115526 ; accuracy 0.769821405</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.527587533 ; accuracy 0.775168538</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.464716882 ; accuracy 0.781489372</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.437305212 ; accuracy 0.787626266</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.406702638 ; accuracy 0.793028831</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; Step 100 : loss 0.591114104 ; accuracy 0.798073411</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Accuracy over 0.8; breaking early</span></a>
+<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; Final step 104 : loss 0.343499899 ; accuracy 0.800508499</span></a></code></pre></div>
 </div>
 </div>
   </div>

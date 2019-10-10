@@ -1,5 +1,10 @@
 destination: docs
 
+home:
+  links:
+  - text: Browse source code at
+    href: https://github.com/t-kalinowski/tfautograph
+
 navbar:
   structure:
     left:
@@ -61,4 +66,5 @@ reference:
     desc: "Helpful utilities while writing and debugging"
     contents:
       -  view_function_graph
+
 
