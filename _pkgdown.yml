@@ -1,26 +1,40 @@
 destination: docs
 
 navbar:
-  left:
-  - text: Getting Started
-    href: articles/tfautograph.html
-
-  - text: Reference
-    href: reference/index.html
-
-  - text: Articles
-    menu:
-    - text: Giving hints
-      href: articles/hints.html
-    - text: Control Dependencies in TF version 1
-      href: articles/tf-v1.html
-
-  - text: Demos
-    menu:
-    - text: MNIST Training Loop
-      href: articles/demo-mnist.html
-
-
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - demos
+    - news
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    intro:
+      text: Get started
+      href: articles/tfautograph.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Giving hints
+        href: articles/hints.html
+      - text: Control Dependencies in Tensorflow Version 1
+        href: articles/tf-v1.html
+    demos:
+      text: Demos
+      menu:
+      - text: MNIST Training Loop
+        href: articles/demo-mnist.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/t-kalinowski/tfautograph
 
 reference:
   - title: "Autograph"
