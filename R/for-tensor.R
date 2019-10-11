@@ -27,7 +27,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   loop_vars <- setdiff(loop_vars, hint$exclude)
 
-  var_is_loop_var <- var %in% names(loop_vars)
+  var_is_loop_var <- var %in% loop_vars
   if(!var_is_loop_var)
     hint$undef <- c(hint$undef, var)
 
