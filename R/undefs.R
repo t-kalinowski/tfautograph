@@ -15,14 +15,16 @@ new_undef_fn <- function(sym, call) {
 }
 
 
-is_undef <- function(x, env = NULL) {
+
+is_undef <- function(x, env = NULL, inherits = TRUE) {
   if (is.null(env))
     inherits(x, "undef")
   else {
-    exists(x, envir = env, inherits = FALSE) &&
-      bindingIsActive(x, env) &&
-      is_true(tryCatch(env[[x]],
-                       access_undefined = function(e) TRUE))
+    tryCatch({
+      get0(x, envir = env, inherits = inherits)
+      FALSE
+    },
+    access_undefined = function(e) TRUE)
   }
 }
 
