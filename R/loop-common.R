@@ -1,12 +1,15 @@
 
 
 statically_infer_loop_vars <- function(body, env, also_try_include = NULL) {
-  vars <- unique(find_assiged_syms(body))
-  vars <- union(vars, also_try_include)
-  vars <- vars[vapply(vars, exists, TRUE, envir = env)]
+  syms <- unique(find_assiged_syms(body))
+  syms <- union(syms, also_try_include)
+
+  vars <- list()
+  for (sym in syms)
+    vars[[sym]] <- tryCatch(get0(sym, envir = env),
+                            access_undefined = function(e) NULL)
 
   if(!length(vars)) return(character())
-  vars <- mget(vars, envir = env, inherits = TRUE)
   vars <- vars[vapply(vars, function(v) is_tensor(v) ||
                         typeof(v) %in% valid_typeofs, TRUE)]
   names(vars) %||% character()
