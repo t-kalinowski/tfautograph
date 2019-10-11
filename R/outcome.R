@@ -46,6 +46,8 @@ export_modified <- function(modified, env) {
         is_named_list(preexisting <- get0(nm, envir = env)))
       modified[[nm]] <- modify_list(preexisting, modified[[nm]])
     else if (is_undef(modified[[nm]])) {
+      if (exists(nm, envir = env, inherits = FALSE))
+        rm(list = nm, envir = env)
       makeActiveBinding(nm, modified[[nm]], env)
       modified[[nm]] <- NULL
     }
