@@ -42,8 +42,9 @@ as_outcome_fn <- function(expr, env, args = NULL) {
 
 export_modified <- function(modified, env) {
   for (nm in names(modified)) {
-    if (is_named_list(modified[[nm]]) && exists(nm, envir = env))
-      modified[[nm]] <- modify_list(get(nm, env), modified[[nm]])
+    if (is_named_list(modified[[nm]]) &&
+        is_named_list(preexisting <- get0(nm, envir = env)))
+      modified[[nm]] <- modify_list(preexisting, modified[[nm]])
     else if (is_undef(modified[[nm]])) {
       makeActiveBinding(nm, modified[[nm]], env)
       modified[[nm]] <- NULL
