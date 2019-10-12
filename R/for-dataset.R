@@ -30,7 +30,8 @@ ag_for_impl.tensorflow.python.data.ops.dataset_ops.DatasetV2 <-
 
     body_fn <- as_loop_body_fn(body, unique(c(body_vars, var)), env,
                                dont_check = var,
-                               additional_undefs = hint$undef)
+                               additional_undefs = hint$undef,
+                               call = sys.call(-2))
 
     body_vars <- mget(body_vars, env, inherits = TRUE)
 

@@ -33,7 +33,8 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
 
   .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env,
                               dont_check = var,
-                              additional_undefs = hint$undef)
+                              additional_undefs = hint$undef,
+                              call = sys.call(-2))
 
   body_fn <- function(index, loop_vars = NULL, did_break = NULL) {
 
