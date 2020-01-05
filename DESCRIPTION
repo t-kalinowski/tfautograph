@@ -1,6 +1,6 @@
 Package: tfautograph
 Title: Autograph R for 'Tensorflow'
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Authors@R: person("Tomasz", "Kalinowski", email = "kalinowskit@gmail.com", role = c("aut", "cre"))
 Description: Translate R control flow expressions into 'Tensorflow' graphs.
 SystemRequirements: TensorFlow (https://www.tensorflow.org/)
@@ -13,7 +13,7 @@ Imports:
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 Suggests:
     rlang,

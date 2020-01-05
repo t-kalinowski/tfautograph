@@ -53,6 +53,10 @@ as.function.formula <- function(x) {
   as.function.default(list(x[[2L]]), envir = environment(x))
 }
 
+as.function.character <- function(x, envir = parent.frame(2)) {
+  get(x, envir = envir, mode = "function")
+}
+
 
 # as.function.formula <- function(x) {
 #   envir <- environment(x)
