@@ -4,8 +4,13 @@
 \alias{tf_switch}
 \title{tf.switch_case}
 \usage{
-tf_switch(branch_index, ..., branch_fns = list(...), default = NULL,
-  name = "switch_case")
+tf_switch(
+  branch_index,
+  ...,
+  branch_fns = list(...),
+  default = NULL,
+  name = "switch_case"
+)
 }
 \arguments{
 \item{branch_index}{an integer tensor}

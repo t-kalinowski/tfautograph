@@ -4,9 +4,15 @@
 \alias{view_function_graph}
 \title{Visualizes the generated graph}
 \usage{
-view_function_graph(fn, args, ..., name = deparse(substitute(fn)),
-  profiler = FALSE, concrete_fn = do.call(fn$get_concrete_fn, args),
-  graph = concrete_fn$graph)
+view_function_graph(
+  fn,
+  args,
+  ...,
+  name = deparse(substitute(fn)),
+  profiler = FALSE,
+  concrete_fn = do.call(fn$get_concrete_fn, args),
+  graph = concrete_fn$graph
+)
 }
 \arguments{
 \item{fn}{TensorFlow function (returned from \code{tf.function()})}

@@ -4,8 +4,7 @@
 \alias{[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray}
 \title{\code{TensorArray.write()}}
 \usage{
-\method{[[}{tensorflow.python.ops.tensor_array_ops.TensorArray}(ta, i, ...,
-  name = NULL) <- value
+\method{[[}{tensorflow.python.ops.tensor_array_ops.TensorArray}(ta, i, ..., name = NULL) <- value
 }
 \arguments{
 \item{ta}{a tensorflow \code{TensorArray}}

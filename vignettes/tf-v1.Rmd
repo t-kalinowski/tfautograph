@@ -21,6 +21,8 @@ knit_hooks$set(error = function(x, options) {
   .hook_error(x, options)
 })
 
+if(Sys.info()[["sysname"]] == "Darwin")
+  Sys.setenv(KMP_DUPLICATE_LIB_OK=TRUE)
 ```
 
 ```{r setup}

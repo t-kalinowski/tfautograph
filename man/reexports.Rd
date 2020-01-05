@@ -12,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{tensorflow}{\code{\link[tensorflow]{tf_function}}, \code{\link[tensorflow]{tf}}}
+  \item{tensorflow}{\code{\link[tensorflow]{tf}}, \code{\link[tensorflow]{tf_function}}}
 }}
 

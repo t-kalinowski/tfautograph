@@ -4,8 +4,13 @@
 \alias{tf_assert}
 \title{tf_assert}
 \usage{
-tf_assert(condition, ..., expr = substitute(condition),
-  summarize = NULL, name = NULL)
+tf_assert(
+  condition,
+  ...,
+  expr = substitute(condition),
+  summarize = NULL,
+  name = NULL
+)
 }
 \arguments{
 \item{condition}{A boolean tensor}

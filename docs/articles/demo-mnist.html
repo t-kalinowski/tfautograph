@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="demo-mnist_files/jquery-1.11.3/jquery.min.js"></script><script src="demo-mnist_files/elevate-section-attrs-2.0/elevate-section-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>MNIST</h1>
@@ -112,139 +112,139 @@
 <a href="#demo-mnist-training-loop-using-autograph" class="anchor"></a>Demo – MNIST Training Loop using <code>autograph()</code>
 </h1>
 <p>Here is a full MNIST training loop implemented in R using tfautograph. (originally adapted from <a href="https://www.tensorflow.org/beta/guide/autograph">here</a>)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(purrr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">tf<span class="op">$</span>version<span class="op">$</span>VERSION</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">#&gt; [1] "2.0.0"</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(purrr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</span>
+<span id="cb1-9"><a href="#cb1-9"></a>tf<span class="op">$</span>version<span class="op">$</span>VERSION</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; [1] "2.0.0"</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(tf<span class="op">$</span><span class="st">`</span><span class="dt">__file__</span><span class="st">`</span>)</span></code></pre></div>
 <p>First, some helpers so we can capture <code>tf.print()</code> output in the Rmarkdown vignette.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">TEMPFILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span>(<span class="st">"tf-print-out"</span>, <span class="dt">fileext =</span> <span class="st">".txt"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">print_tempfile &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">clear_after_read =</span> <span class="ot">TRUE</span>) {</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">  <span class="cf">if</span> (clear_after_read) <span class="kw"><a href="https://rdrr.io/r/base/on.exit.html">on.exit</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(TEMPFILE))</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="kw"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(TEMPFILE, <span class="dt">warn =</span> <span class="ot">FALSE</span>))</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">}</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">tf_print &lt;-<span class="st"> </span><span class="cf">function</span>(...)</a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">  tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(..., <span class="dt">output_stream =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"file://%s"</span>, TEMPFILE))</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>TEMPFILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span>(<span class="st">"tf-print-out"</span>, <span class="dt">fileext =</span> <span class="st">".txt"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>print_tempfile &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">clear_after_read =</span> <span class="ot">TRUE</span>) {</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="cf">if</span> (clear_after_read) <span class="kw"><a href="https://rdrr.io/r/base/on.exit.html">on.exit</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(TEMPFILE))</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="kw"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(TEMPFILE, <span class="dt">warn =</span> <span class="ot">FALSE</span>))</span>
+<span id="cb2-6"><a href="#cb2-6"></a>}</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>tf_print &lt;-<span class="st"> </span><span class="cf">function</span>(...)</span>
+<span id="cb2-9"><a href="#cb2-9"></a>  tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(..., <span class="dt">output_stream =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"file://%s"</span>, TEMPFILE))</span></code></pre></div>
 <div id="prepare-the-dataset" class="section level3">
 <h3 class="hasAnchor">
 <a href="#prepare-the-dataset" class="anchor"></a>Prepare the dataset</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x_train, y_train), .) <span class="op">%&lt;-%</span><span class="st">  </span>tf<span class="op">$</span>keras<span class="op">$</span>datasets<span class="op">$</span>mnist<span class="op">$</span><span class="kw">load_data</span>()</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">train_dataset &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(x_train, y_train) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/tensor_slices_dataset.html">tensor_slices_dataset</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(x, y) {</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">    x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(x, tf<span class="op">$</span>float32) <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">    y &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(y, tf<span class="op">$</span>int64)</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(x, y)</a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">  }) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_take.html">dataset_take</a></span>(<span class="dv">20000</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">20000</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_batch.html">dataset_batch</a></span>(<span class="dv">100</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x_train, y_train), .) <span class="op">%&lt;-%</span><span class="st">  </span>tf<span class="op">$</span>keras<span class="op">$</span>datasets<span class="op">$</span>mnist<span class="op">$</span><span class="kw">load_data</span>()</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a>train_dataset &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(x_train, y_train) <span class="op">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/tensor_slices_dataset.html">tensor_slices_dataset</a></span>() <span class="op">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(x, y) {</span>
+<span id="cb3-6"><a href="#cb3-6"></a>    x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(x, tf<span class="op">$</span>float32) <span class="op">/</span><span class="st"> </span><span class="dv">255</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>    y &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(y, tf<span class="op">$</span>int64)</span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(x, y)</span>
+<span id="cb3-9"><a href="#cb3-9"></a>  }) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_take.html">dataset_take</a></span>(<span class="dv">20000</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">20000</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfdatasets/man/dataset_batch.html">dataset_batch</a></span>(<span class="dv">100</span>)</span></code></pre></div>
 </div>
 <div id="define-the-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#define-the-model" class="anchor"></a>Define the model</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">new_model_and_optimizer &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">  model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_reshape.html">layer_reshape</a></span>(<span class="dt">target_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span> <span class="op">*</span><span class="st"> </span><span class="dv">28</span>),</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">                  <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/shape.html">shape</a></span>(<span class="dv">28</span>, <span class="dv">28</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">100</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">100</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">  model<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/utils/PkgUtils.html">build</a></span>()</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">  optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>optimizers<span class="op">$</span><span class="kw">Adam</span>()</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(model, optimizer)</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">}</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>new_model_and_optimizer &lt;-<span class="st"> </span><span class="cf">function</span>() {</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_reshape.html">layer_reshape</a></span>(<span class="dt">target_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span> <span class="op">*</span><span class="st"> </span><span class="dv">28</span>),</span>
+<span id="cb4-4"><a href="#cb4-4"></a>                  <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/shape.html">shape</a></span>(<span class="dv">28</span>, <span class="dv">28</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">100</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">100</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="st">    </span><span class="kw"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span>(<span class="dv">10</span>)</span>
+<span id="cb4-8"><a href="#cb4-8"></a>  model<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/utils/PkgUtils.html">build</a></span>()</span>
+<span id="cb4-9"><a href="#cb4-9"></a>  optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>optimizers<span class="op">$</span><span class="kw">Adam</span>()</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(model, optimizer)</span>
+<span id="cb4-11"><a href="#cb4-11"></a>}</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</span></code></pre></div>
 </div>
 <div id="define-the-training-loop" class="section level3">
 <h3 class="hasAnchor">
 <a href="#define-the-training-loop" class="anchor"></a>Define the training loop</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">compute_loss &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>losses<span class="op">$</span><span class="kw">SparseCategoricalCrossentropy</span>(<span class="dt">from_logits =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">compute_accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">SparseCategoricalAccuracy</span>()</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">train_one_step &lt;-<span class="st"> </span><span class="cf">function</span>(model, optimizer, x, y) {</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">  <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>tape, {</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">    logits &lt;-<span class="st"> </span><span class="kw">model</span>(x)</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">    loss &lt;-<span class="st"> </span><span class="kw">compute_loss</span>(y, logits)</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">  })</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10">  grads &lt;-<span class="st"> </span>tape<span class="op">$</span><span class="kw">gradient</span>(loss, model<span class="op">$</span>trainable_variables)</a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">  optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12">    <span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(grads, model<span class="op">$</span>trainable_variables)))</a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14">  <span class="kw">compute_accuracy</span>(y, logits)</a>
-<a class="sourceLine" id="cb5-15" data-line-number="15">  loss</a>
-<a class="sourceLine" id="cb5-16" data-line-number="16">}</a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18">train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(model, optimizer) {</a>
-<a class="sourceLine" id="cb5-19" data-line-number="19">  step &lt;-<span class="st"> </span>0L</a>
-<a class="sourceLine" id="cb5-20" data-line-number="20">  loss &lt;-<span class="st"> </span><span class="dv">0</span></a>
-<a class="sourceLine" id="cb5-21" data-line-number="21">  <span class="cf">for</span> (batch <span class="cf">in</span> train_dataset) {</a>
-<a class="sourceLine" id="cb5-22" data-line-number="22">    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, y) <span class="op">%&lt;-%</span><span class="st"> </span>batch</a>
-<a class="sourceLine" id="cb5-23" data-line-number="23">    step <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(1L)</a>
-<a class="sourceLine" id="cb5-24" data-line-number="24">    loss &lt;-<span class="st"> </span><span class="kw">train_one_step</span>(model, optimizer, x, y)</a>
-<a class="sourceLine" id="cb5-25" data-line-number="25">    <span class="cf">if</span> (compute_accuracy<span class="op">$</span><span class="kw">result</span>() <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.8</span>) {</a>
-<a class="sourceLine" id="cb5-26" data-line-number="26">      <span class="kw">tf_print</span>(<span class="st">"Accuracy over 0.8; breaking early"</span>)</a>
-<a class="sourceLine" id="cb5-27" data-line-number="27">      <span class="cf">break</span></a>
-<a class="sourceLine" id="cb5-28" data-line-number="28">    } <span class="cf">else</span> <span class="cf">if</span> (step <span class="op">%%</span><span class="st"> </span>10L <span class="op">==</span><span class="st"> </span>0L)</a>
-<a class="sourceLine" id="cb5-29" data-line-number="29">      <span class="kw">tf_print</span>(<span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss, <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>())</a>
-<a class="sourceLine" id="cb5-30" data-line-number="30">  }</a>
-<a class="sourceLine" id="cb5-31" data-line-number="31">  <span class="kw">tf_print</span>(<span class="st">'Final step'</span>, step, <span class="st">": loss"</span>, loss, <span class="st">"; accuracy"</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>())</a>
-<a class="sourceLine" id="cb5-32" data-line-number="32">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(step, loss)</a>
-<a class="sourceLine" id="cb5-33" data-line-number="33">})</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>compute_loss &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>losses<span class="op">$</span><span class="kw">SparseCategoricalCrossentropy</span>(<span class="dt">from_logits =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>compute_accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">SparseCategoricalAccuracy</span>()</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a>train_one_step &lt;-<span class="st"> </span><span class="cf">function</span>(model, optimizer, x, y) {</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>tape, {</span>
+<span id="cb5-6"><a href="#cb5-6"></a>    logits &lt;-<span class="st"> </span><span class="kw">model</span>(x)</span>
+<span id="cb5-7"><a href="#cb5-7"></a>    loss &lt;-<span class="st"> </span><span class="kw">compute_loss</span>(y, logits)</span>
+<span id="cb5-8"><a href="#cb5-8"></a>  })</span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a>  grads &lt;-<span class="st"> </span>tape<span class="op">$</span><span class="kw">gradient</span>(loss, model<span class="op">$</span>trainable_variables)</span>
+<span id="cb5-11"><a href="#cb5-11"></a>  optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(</span>
+<span id="cb5-12"><a href="#cb5-12"></a>    <span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(grads, model<span class="op">$</span>trainable_variables)))</span>
+<span id="cb5-13"><a href="#cb5-13"></a></span>
+<span id="cb5-14"><a href="#cb5-14"></a>  <span class="kw">compute_accuracy</span>(y, logits)</span>
+<span id="cb5-15"><a href="#cb5-15"></a>  loss</span>
+<span id="cb5-16"><a href="#cb5-16"></a>}</span>
+<span id="cb5-17"><a href="#cb5-17"></a></span>
+<span id="cb5-18"><a href="#cb5-18"></a>train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/autograph.html">autograph</a></span>(<span class="cf">function</span>(model, optimizer) {</span>
+<span id="cb5-19"><a href="#cb5-19"></a>  step &lt;-<span class="st"> </span>0L</span>
+<span id="cb5-20"><a href="#cb5-20"></a>  loss &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a>  <span class="cf">for</span> (batch <span class="cf">in</span> train_dataset) {</span>
+<span id="cb5-22"><a href="#cb5-22"></a>    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, y) <span class="op">%&lt;-%</span><span class="st"> </span>batch</span>
+<span id="cb5-23"><a href="#cb5-23"></a>    step <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(1L)</span>
+<span id="cb5-24"><a href="#cb5-24"></a>    loss &lt;-<span class="st"> </span><span class="kw">train_one_step</span>(model, optimizer, x, y)</span>
+<span id="cb5-25"><a href="#cb5-25"></a>    <span class="cf">if</span> (compute_accuracy<span class="op">$</span><span class="kw">result</span>() <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.8</span>) {</span>
+<span id="cb5-26"><a href="#cb5-26"></a>      <span class="kw">tf_print</span>(<span class="st">"Accuracy over 0.8; breaking early"</span>)</span>
+<span id="cb5-27"><a href="#cb5-27"></a>      <span class="cf">break</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a>    } <span class="cf">else</span> <span class="cf">if</span> (step <span class="op">%%</span><span class="st"> </span>10L <span class="op">==</span><span class="st"> </span>0L)</span>
+<span id="cb5-29"><a href="#cb5-29"></a>      <span class="kw">tf_print</span>(<span class="st">'Step'</span>, step, <span class="st">': loss'</span>, loss, <span class="st">'; accuracy'</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>())</span>
+<span id="cb5-30"><a href="#cb5-30"></a>  }</span>
+<span id="cb5-31"><a href="#cb5-31"></a>  <span class="kw">tf_print</span>(<span class="st">'Final step'</span>, step, <span class="st">": loss"</span>, loss, <span class="st">"; accuracy"</span>, compute_accuracy<span class="op">$</span><span class="kw">result</span>())</span>
+<span id="cb5-32"><a href="#cb5-32"></a>  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(step, loss)</span>
+<span id="cb5-33"><a href="#cb5-33"></a>})</span></code></pre></div>
 </div>
 <div id="train-in-eager-mode" class="section level3">
 <h3 class="hasAnchor">
 <a href="#train-in-eager-mode" class="anchor"></a>Train in Eager mode</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># autograph also works in eager mode</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/train.html">train</a></span>(model, optimizer)</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw">print_tempfile</span>()</a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.79730403 ; accuracy 0.332</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 1.32700348 ; accuracy 0.479</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.884204566 ; accuracy 0.573333323</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.579629183 ; accuracy 0.63875</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.655183077 ; accuracy 0.6782</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.486716688 ; accuracy 0.709666669</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.543603182 ; accuracy 0.733285725</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.477482796 ; accuracy 0.75325</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.347360849 ; accuracy 0.767444432</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Step 100 : loss 0.365992278 ; accuracy 0.7806</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Step 110 : loss 0.393609613 ; accuracy 0.792090893</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; Accuracy over 0.8; breaking early</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Final step 118 : loss 0.251601249 ; accuracy 0.800508499</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># autograph also works in eager mode</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/train.html">train</a></span>(model, optimizer)</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">print_tempfile</span>()</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; Step 10 : loss 1.86312 ; accuracy 0.314</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; Step 20 : loss 1.1978097 ; accuracy 0.4815</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; Step 30 : loss 0.824990511 ; accuracy 0.575333357</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; Step 40 : loss 0.619657457 ; accuracy 0.63925</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; Step 50 : loss 0.49511826 ; accuracy 0.689</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; Step 60 : loss 0.446770579 ; accuracy 0.71966666</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; Step 70 : loss 0.288881 ; accuracy 0.743</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; Step 80 : loss 0.248181045 ; accuracy 0.76175</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; Step 90 : loss 0.427913278 ; accuracy 0.775666654</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; Step 100 : loss 0.424112707 ; accuracy 0.7866</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; Step 110 : loss 0.251858771 ; accuracy 0.795363665</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; Accuracy over 0.8; breaking early</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; Final step 116 : loss 0.230609402 ; accuracy 0.800775886</span></span></code></pre></div>
 </div>
 <div id="train-in-graph-mode" class="section level3">
 <h3 class="hasAnchor">
 <a href="#train-in-graph-mode" class="anchor"></a>Train in Graph mode</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">train_on_graph &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(train)</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">train_on_graph</span>(model, optimizer)</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">print_tempfile</span>()</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Step 10 : loss 1.81814575 ; accuracy 0.764296889</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Step 20 : loss 1.29604721 ; accuracy 0.758333325</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; Step 30 : loss 0.723755598 ; accuracy 0.76</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Step 40 : loss 0.567499876 ; accuracy 0.765189886</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; Step 50 : loss 0.56115526 ; accuracy 0.769821405</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; Step 60 : loss 0.527587533 ; accuracy 0.775168538</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; Step 70 : loss 0.464716882 ; accuracy 0.781489372</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; Step 80 : loss 0.437305212 ; accuracy 0.787626266</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; Step 90 : loss 0.406702638 ; accuracy 0.793028831</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; Step 100 : loss 0.591114104 ; accuracy 0.798073411</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Accuracy over 0.8; breaking early</span></a>
-<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; Final step 104 : loss 0.343499899 ; accuracy 0.800508499</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(model, optimizer) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">new_model_and_optimizer</span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>train_on_graph &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(train)</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(step, loss) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">train_on_graph</span>(model, optimizer)</span>
+<span id="cb7-5"><a href="#cb7-5"></a></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="kw">print_tempfile</span>()</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; Step 10 : loss 1.74957895 ; accuracy 0.771666646</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; Step 20 : loss 1.00505733 ; accuracy 0.767573535</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; Step 30 : loss 0.747767925 ; accuracy 0.76794523</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; Step 40 : loss 0.574736178 ; accuracy 0.771730781</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt; Step 50 : loss 0.439480692 ; accuracy 0.776445806</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co">#&gt; Step 60 : loss 0.487772763 ; accuracy 0.78125</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co">#&gt; Step 70 : loss 0.374138325 ; accuracy 0.786989272</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="co">#&gt; Step 80 : loss 0.317562699 ; accuracy 0.791683674</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="co">#&gt; Step 90 : loss 0.355361551 ; accuracy 0.796747565</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co">#&gt; Accuracy over 0.8; breaking early</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a><span class="co">#&gt; Final step 97 : loss 0.412622094 ; accuracy 0.800775886</span></span></code></pre></div>
 </div>
 </div>
   </div>
