@@ -272,7 +272,9 @@ deregister_cond <- function(cond, registry = cond_registries$peek()) {
 }
 
 reduce_registered_conds <- function(registry = cond_registries$peek()) {
-  conds <- c(as.list(registry$true), lapply(registry$false, `!`))
+  conds <- c(as.list(registry$true, all.names = TRUE),
+             eapply(registry$false, `!`, all.names = TRUE))
+  names(conds) <- NULL
   Reduce(`&`, conds)
 }
 
