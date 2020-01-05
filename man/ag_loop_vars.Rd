@@ -4,8 +4,13 @@
 \alias{ag_loop_vars}
 \title{Specify loop variables}
 \usage{
-ag_loop_vars(..., list = character(), include = character(),
-  exclude = character(), undef = character())
+ag_loop_vars(
+  ...,
+  list = character(),
+  include = character(),
+  exclude = character(),
+  undef = character()
+)
 }
 \arguments{
 \item{...}{Variables as bare symbol names}
@@ -29,8 +34,8 @@ explicitly as \code{loop_vars} when autographing an expression into a
 Use of this is usually not required as the loop variables are automatically
 inferred. Inference is done by statically looking through the loop body and
 finding the symbols that are the targets of the common assignment operators
-from base R (\code{<-}, \code{->}, \code{=}), from package:zeallot (\code{\%<-\%} and \code{\%->\%}) and
-package:magrittr (\code{\%<>\%}).
+from base R (\verb{<-}, \verb{->}, \code{=}), from package:zeallot (\verb{\%<-\%} and \verb{\%->\%}) and
+package:magrittr (\verb{\%<>\%}).
 
 In certain circumstances, this approach may capture variables that are
 intended to be local variables only. In those circumstances it is also

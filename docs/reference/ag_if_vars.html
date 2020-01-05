@@ -72,7 +72,7 @@ automatically built." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -150,8 +150,13 @@ is purely optional. If not supplied, the <code>if</code> output structure is
 automatically built.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ag_if_vars</span>(<span class='no'>...</span>, <span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), <span class='kw'>return</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>undefs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>control_flow</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>ag_if_vars</span>(
+  <span class='no'>...</span>,
+  <span class='kw'>modified</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>return</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>undefs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>control_flow</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

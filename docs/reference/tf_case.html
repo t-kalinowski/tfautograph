@@ -70,7 +70,7 @@ pred_fn_pairs using the ~." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -146,8 +146,13 @@ pred_fn_pairs using the ~." />
 <code>pred_fn_pairs</code> using the <code>~</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tf_case</span>(<span class='no'>...</span>, <span class='kw'>pred_fn_pairs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>), <span class='kw'>default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>exclusive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"case"</span>)</pre>
+    <pre class="usage"><span class='fu'>tf_case</span>(
+  <span class='no'>...</span>,
+  <span class='kw'>pred_fn_pairs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>),
+  <span class='kw'>default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>exclusive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"case"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -4,8 +4,14 @@
 \alias{ag_while_opts}
 \title{specify \code{tf.while_loop} options}
 \usage{
-ag_while_opts(..., shape_invariants = NULL, parallel_iterations = 10L,
-  back_prop = TRUE, swap_memory = FALSE, maximum_iterations = NULL)
+ag_while_opts(
+  ...,
+  shape_invariants = NULL,
+  parallel_iterations = 10L,
+  back_prop = TRUE,
+  swap_memory = FALSE,
+  maximum_iterations = NULL
+)
 }
 \arguments{
 \item{...}{Ignored, used to ensure all arguments supplied are named.}

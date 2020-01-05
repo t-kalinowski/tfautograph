@@ -4,8 +4,13 @@
 \alias{tf_case}
 \title{tf.case}
 \usage{
-tf_case(..., pred_fn_pairs = list(...), default = NULL,
-  exclusive = FALSE, name = "case")
+tf_case(
+  ...,
+  pred_fn_pairs = list(...),
+  default = NULL,
+  exclusive = FALSE,
+  name = "case"
+)
 }
 \arguments{
 \item{..., pred_fn_pairs}{a list \code{pred_fn_pairs} supplied with the \code{~} like
@@ -17,7 +22,7 @@ coercible to a function via \code{as.function()})}
 \item{exclusive}{bool, whether to evaluate all \code{preds} and ensure only one is
 true. If \code{FALSE} (the default), then the \code{preds} are evaluated in the order
 supplied until the first \code{TRUE} value is encountered (effectively, acting
-as an \code{if()... else if() ... else if() ...} chain)}
+as an \verb{if()... else if() ... else if() ...} chain)}
 
 \item{name}{a string, passed on to \code{tf.case()}}
 }

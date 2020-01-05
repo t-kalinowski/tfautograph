@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -144,9 +144,15 @@
     <p>Visualizes the generated graph</p>
     </div>
 
-    <pre class="usage"><span class='fu'>view_function_graph</span>(<span class='no'>fn</span>, <span class='no'>args</span>, <span class='no'>...</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/deparse.html'>deparse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>fn</span>)),
-  <span class='kw'>profiler</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>concrete_fn</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>fn</span>$<span class='no'>get_concrete_fn</span>, <span class='no'>args</span>),
-  <span class='kw'>graph</span> <span class='kw'>=</span> <span class='no'>concrete_fn</span>$<span class='no'>graph</span>)</pre>
+    <pre class="usage"><span class='fu'>view_function_graph</span>(
+  <span class='no'>fn</span>,
+  <span class='no'>args</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/deparse.html'>deparse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>fn</span>)),
+  <span class='kw'>profiler</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>concrete_fn</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>fn</span>$<span class='no'>get_concrete_fn</span>, <span class='no'>args</span>),
+  <span class='kw'>graph</span> <span class='kw'>=</span> <span class='no'>concrete_fn</span>$<span class='no'>graph</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

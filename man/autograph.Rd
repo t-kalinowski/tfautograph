@@ -19,7 +19,7 @@ of handling tensorflow tensors. The parent of the
 if \code{x} is an expression, then that expression is evaluated in a special
 environment with the autograph mask \code{ag_mask} active. If the result of that
 expression included local assignment or modifications of variables, (for
-example, via \code{<-}), those modified variables are then exported into the
+example, via \verb{<-}), those modified variables are then exported into the
 current frame. The return value of the expression is then returned.
 }
 \description{

@@ -4,8 +4,13 @@
 \alias{ag_if_vars}
 \title{Specify \code{tf.cond()} output structure when autographing \code{if}}
 \usage{
-ag_if_vars(..., modified = list(), return = FALSE, undefs = NULL,
-  control_flow = 0)
+ag_if_vars(
+  ...,
+  modified = list(),
+  return = FALSE,
+  undefs = NULL,
+  control_flow = 0
+)
 }
 \arguments{
 \item{...}{Variables modified by the \code{tf.cond()} node supplied as bare
