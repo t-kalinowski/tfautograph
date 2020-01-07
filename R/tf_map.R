@@ -54,10 +54,8 @@ tf_map <- function(elems, fn,
     # return the other
     fn_body <- eval(substitute(substitute(fn_body, alist(. = .x))))
     fn <- as.function(c(alist(.x = ), fn_body), envir = environment(fn))
-  } else if (is.character(fn)) {
-    fn <- get(fn, envir = parent.frame(), mode = "function")
   } else if (!inherits(fn, "python.builtin.object"))
-    fn <- as.function(fn)
+    fn <- as.function(fn, envir = parent.frame())
 
   if(is.double(parallel_iterations))
     storage.mode(parallel_iterations) <- "integer"

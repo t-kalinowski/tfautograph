@@ -45,17 +45,16 @@ tensorflow::tf
 
 
 
-as.function.formula <- function(x) {
+as.function.formula <- function(x, envir = environment(x)) {
   if (length(x) == 3L)
     stop("Lambda functions provided as a formula cannot ",
          "have anything on the left hand side of the `~`")
 
-  as.function.default(list(x[[2L]]), envir = environment(x))
+  as.function.default(list(x[[2L]]), envir = envir)
 }
 
-as.function.character <- function(x, envir = parent.frame(2)) {
+as.function.character <- function(x, envir = parent.frame())
   get(x, envir = envir, mode = "function")
-}
 
 
 # as.function.formula <- function(x) {
