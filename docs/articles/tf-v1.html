@@ -107,14 +107,14 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/use_python.html">use_virtualenv</a></span>(<span class="st">"tf1"</span>, <span class="ot">TRUE</span>)</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="st">"RETICULATE_PYTHON"</span> =<span class="st"> </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_python</a></span>(<span class="st">"tf1"</span>))</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</span>
 <span id="cb1-4"><a href="#cb1-4"></a></span>
 <span id="cb1-5"><a href="#cb1-5"></a>tf<span class="op">$</span>version<span class="op">$</span>VERSION</span>
 <span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; [1] "1.15.0"</span></span>
 <span id="cb1-7"><a href="#cb1-7"></a>tf &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1</span></code></pre></div>
-<p><code><a href="../reference/autograph.html">autograph()</a></code> has complete compatibility with both Tensorflow version 2.0.0+ and 1.15.0+. For the most part, there are no difference between how <code><a href="../reference/autograph.html">autograph()</a></code> work in both version, either in eager mode or graph mode.</p>
+<p><code><a href="../reference/autograph.html">autograph()</a></code> has complete compatibility with both Tensorflow version &gt;= 2.0 and &gt;= 1.15. For the most part, there are no difference between how <code><a href="../reference/autograph.html">autograph()</a></code> work in both version, either in eager mode or graph mode.</p>
 <p>One thing to be aware of however is how control dependencies are registered. In Tensorflow version 2, all ops created inside a traced <code>tf.function()</code> are executed sequentially. That means that simply inlining a call to <code>tf$print()</code> or <code>tf$Assert()</code> is sufficient to ensure that the op is executed, and is executed in the intended order in a sequence of operations.</p>
 <p>However, when tensorflow is not executing eagerly and outside a <code>tf.function()</code> context (that is, the default behavior of Tensorflow version 1, but also possible in version 2 after a call to <code>tf.compat.v1.disable_eager_execution()</code>), then created ops are only typically only evaluated if they are manually registered as control dependencies of other tensors.</p>
 <p>For example, this block of code never throws an error:</p>
@@ -174,8 +174,8 @@
 <span id="cb3-44"><a href="#cb3-44"></a><span class="co"># [&lt;R call 39&gt;: rmarkdown::render(...)] </span></span>
 <span id="cb3-45"><a href="#cb3-45"></a><span class="co"># [&lt;R call 40&gt;: (function (...) ] </span></span>
 <span id="cb3-46"><a href="#cb3-46"></a><span class="co"># [&lt;R call 41&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></span>
-<span id="cb3-47"><a href="#cb3-47"></a><span class="co"># [&lt;R call 42&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
-<span id="cb3-48"><a href="#cb3-48"></a><span class="co"># [&lt;R call 43&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-res-73a558a4f6e3\")] </span></span>
+<span id="cb3-47"><a href="#cb3-47"></a><span class="co"># [&lt;R call 42&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
+<span id="cb3-48"><a href="#cb3-48"></a><span class="co"># [&lt;R call 43&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-res-9bfb7b938517\")] </span></span>
 <span id="cb3-49"><a href="#cb3-49"></a><span class="co"># [&lt;R call 44&gt;: withCallingHandlers({] </span></span>
 <span id="cb3-50"><a href="#cb3-50"></a><span class="co"># [&lt;R call 45&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></span>
 <span id="cb3-51"><a href="#cb3-51"></a><span class="co"># [&lt;R call 46&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></span>
@@ -237,8 +237,8 @@
 <span id="cb4-39"><a href="#cb4-39"></a><span class="co"># [&lt;R call 27&gt;: rmarkdown::render(...)] </span></span>
 <span id="cb4-40"><a href="#cb4-40"></a><span class="co"># [&lt;R call 28&gt;: (function (...) ] </span></span>
 <span id="cb4-41"><a href="#cb4-41"></a><span class="co"># [&lt;R call 29&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></span>
-<span id="cb4-42"><a href="#cb4-42"></a><span class="co"># [&lt;R call 30&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
-<span id="cb4-43"><a href="#cb4-43"></a><span class="co"># [&lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-res-73a558a4f6e3\")] </span></span>
+<span id="cb4-42"><a href="#cb4-42"></a><span class="co"># [&lt;R call 30&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
+<span id="cb4-43"><a href="#cb4-43"></a><span class="co"># [&lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-res-9bfb7b938517\")] </span></span>
 <span id="cb4-44"><a href="#cb4-44"></a><span class="co"># [&lt;R call 32&gt;: withCallingHandlers({] </span></span>
 <span id="cb4-45"><a href="#cb4-45"></a><span class="co"># [&lt;R call 33&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></span>
 <span id="cb4-46"><a href="#cb4-46"></a><span class="co"># [&lt;R call 34&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></span>
@@ -300,8 +300,8 @@
 <span id="cb5-39"><a href="#cb5-39"></a><span class="co"># [&lt;R call 31&gt;: rmarkdown::render(...)] </span></span>
 <span id="cb5-40"><a href="#cb5-40"></a><span class="co"># [&lt;R call 32&gt;: (function (...) ] </span></span>
 <span id="cb5-41"><a href="#cb5-41"></a><span class="co"># [&lt;R call 33&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span></span>
-<span id="cb5-42"><a href="#cb5-42"></a><span class="co"># [&lt;R call 34&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
-<span id="cb5-43"><a href="#cb5-43"></a><span class="co"># [&lt;R call 35&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-fun-73a57e46c6c9\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpG736B4/callr-res-73a558a4f6e3\")] </span></span>
+<span id="cb5-42"><a href="#cb5-42"></a><span class="co"># [&lt;R call 34&gt;: do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span></span>
+<span id="cb5-43"><a href="#cb5-43"></a><span class="co"># [&lt;R call 35&gt;: saveRDS(do.call(do.call, c(readRDS(\"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-fun-9bfb5083c754\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/var/folders/zc/63kn9zds1qs4pk6v8h4q8mwc0000gn/T//RtmpEzuE9T/callr-res-9bfb7b938517\")] </span></span>
 <span id="cb5-44"><a href="#cb5-44"></a><span class="co"># [&lt;R call 36&gt;: withCallingHandlers({] </span></span>
 <span id="cb5-45"><a href="#cb5-45"></a><span class="co"># [&lt;R call 37&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span></span>
 <span id="cb5-46"><a href="#cb5-46"></a><span class="co"># [&lt;R call 38&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span></span>

@@ -33,7 +33,6 @@ library(keras)
 
 library(tfautograph)
 tf$version$VERSION
-tf$print(tf$`__file__`)
 ```
 First, some helpers so we can capture `tf.print()` output in the Rmarkdown vignette.
 ```{r}
