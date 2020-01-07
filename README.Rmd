@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/tfautograph)](https://CRAN.R-project.org/package=tfautograph)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-month/tfautograph?color=blue)](https://r-pkg.org/pkg/tfautograph)
+
 <!-- badges: end -->
 
 This package implements autograph for R. 
