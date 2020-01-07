@@ -47,8 +47,8 @@ library(tfautograph)
 ```
 
 ## Compatibility
-tfautograph works with Tensorflow versions 1.15 and 2.0. This vignette is
-using version 2.0.
+tfautograph works with Tensorflow versions 1.15 and >= 2.0. This vignette is
+using version `r tensorflow::tf_version()`.
 ```{r}
 tf$version$VERSION
 ```

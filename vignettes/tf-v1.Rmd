@@ -26,7 +26,7 @@ if(Sys.info()[["sysname"]] == "Darwin")
 ```
 
 ```{r setup}
-reticulate::use_virtualenv("tf1", TRUE)
+Sys.setenv("RETICULATE_PYTHON" = reticulate::virtualenv_python("tf1"))
 library(tensorflow)
 library(tfautograph)
 
@@ -34,7 +34,7 @@ tf$version$VERSION
 tf <- tf$compat$v1
 ```
 
-`autograph()` has complete compatibility with both Tensorflow version 2.0.0+ and 1.15.0+. For the most part, there are no difference between how `autograph()` work in both version, either in eager mode or graph mode. 
+`autograph()` has complete compatibility with both Tensorflow version >= 2.0 and >= 1.15. For the most part, there are no difference between how `autograph()` work in both version, either in eager mode or graph mode. 
 
 One thing to be aware of however is how control dependencies are registered. In Tensorflow version 2, all ops created inside a traced `tf.function()` are executed sequentially. That means that simply inlining a call to `tf$print()` or `tf$Assert()` is sufficient to ensure that the op is executed, and is executed in the intended order in a sequence of operations.
 
