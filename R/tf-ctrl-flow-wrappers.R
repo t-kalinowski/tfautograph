@@ -27,7 +27,6 @@
 #' tilde <- function(x) tf_cond(x > 0, ~ x * x, ~ x)
 #' }
 tf_cond <- function(pred, true_fn, false_fn, name = NULL) {
-  env <- parent.frame()
 
   if(is_eager_tensor(pred))
     pred <- pred$`__bool__`()
