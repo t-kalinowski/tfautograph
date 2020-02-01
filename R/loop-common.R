@@ -11,6 +11,7 @@ statically_infer_loop_vars <- function(body, env, also_try_include = NULL) {
 
   if(!length(vars)) return(character())
   vars <- vars[vapply(vars, function(v) is_tensor(v) ||
+                        is_tensorarray(v) ||
                         typeof(v) %in% valid_typeofs, TRUE)]
   names(vars) %||% character()
 }

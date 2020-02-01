@@ -9,6 +9,10 @@ is_eager <- function(x) py_has_attr(x, "numpy")
   # z$`__class__`$`__name__` == "EagerTensor"
   #
 
+is_tensorarray <- function(x)
+  inherits(x, "tensorflow.python.ops.tensor_array_ops.TensorArray")
+
+
 `%||%` <- function(x, y)  if (is.null(x)) y else x
 
 is_lazy_tensor <- function(x) is_tensor(x) && !is_eager_tensor(x)
