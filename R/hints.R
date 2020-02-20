@@ -121,9 +121,13 @@ ag_if_vars <- function(..., modified = list(), return = FALSE,
   # capturing more than necessary like ag_while...
 
   if (...length()) {
-    modified <- c(modified,
-                  strsplit(deparse(eval(substitute(alist(...)))),
-                           "$", fixed = TRUE))
+    dots <- eval(substitute(alist(...)))
+    if(!is.null(names(dots)))
+      stop("arguments passed to `...` must not be named")
+    dots <- vapply(dots, deparse, "",
+                   width.cutoff = 500L, backtick = FALSE, nlines = 1L)
+    dots <- strsplit(dots, "$", fixed = TRUE)
+    modified <- c(as.list(modified), dots)
   }
   next_if_vars$set(list(
     modified = as.list(modified),
