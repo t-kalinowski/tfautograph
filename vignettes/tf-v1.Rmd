@@ -26,7 +26,7 @@ if(Sys.info()[["sysname"]] == "Darwin")
 ```
 
 ```{r setup}
-Sys.setenv("RETICULATE_PYTHON" = reticulate::virtualenv_python("tf1"))
+Sys.setenv("RETICULATE_PYTHON" = reticulate::virtualenv_python("tf-1.15"))
 library(tensorflow)
 library(tfautograph)
 

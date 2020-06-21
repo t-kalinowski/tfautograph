@@ -1,19 +1,56 @@
-#! /usr/bin/Rscript
+#!/usr/bin/env Rscript
 
-run_tst_cmd <- function(virtualenv) {
+setup_tf_venv <- function(tf_version) {
+  if (is.null(tf_version))
+    tf_version <- "none"
+  venv <- sprintf("tf-%s", tf_version)
+  py_bin <-
+    if (package_version(tf_version) <= "2.1")
+      Sys.which("python2")
+  else
+    Sys.which("python3")
+  reticulate::virtualenv_create(venv, py_bin)
+  if (tf_version != "none")
+    reticulate::virtualenv_install(venv, sprintf("tensorflow=='%s'", tf_version), ignore_installed = TRUE)
+}
+
+run_tst_cmd <- function(tf_version) {
+  if (is.null(tf_version))
+    tf_version <- "none"
+  venv <- sprintf("tf-%s", tf_version)
+
   paste(
+    # "RETICULATE_PYTHON='' "
     "Rscript --vanilla -e",
     "'",
-    sprintf('reticulate::use_virtualenv("%s", TRUE);', virtualenv),
+    sprintf('reticulate::use_virtualenv("%s", TRUE);', venv),
     'testthat::test_dir("tests/testthat/")',
     "'"
   )
 }
 
-virtualenvs <- intersect(commandArgs(TRUE), c("tf1", "tf2", "no-tf"))
 
-if(length(virtualenvs))
+
+if(FALSE) {
+  Sys.unsetenv("RETICULATE_PYTHON")
+  reticulate::use_virtualenv("tf-2.2", TRUE)
+  testthat::test_dir("tests/testthat/")
+}
+
+
+
+tf_versions <- intersect(commandArgs(TRUE), c("tf-1.15", "tf-2.1", "tf-2.2", "none"))
+
+if(length(tf_versions))
   devtools::install(quick = TRUE)
 
-for(venv in virtualenvs)
-  system(run_tst_cmd(venv))
+
+
+for(ver in tf_versions)
+  system(run_tst_cmd(ver))
+
+
+
+
+# for(ver in tf_versions)
+#   setup_tf_venv(ver)

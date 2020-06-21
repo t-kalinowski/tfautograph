@@ -7,9 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/tfautograph)](https://CRAN.R-project.org/package=tfautograph)
-[![CRAN RStudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/last-month/tfautograph?color=blue)](https://r-pkg.org/pkg/tfautograph)
-
+[![Travis build
+status](https://travis-ci.com/t-kalinowski/tfautograph.svg?branch=master)](https://travis-ci.com/t-kalinowski/tfautograph)
 <!-- badges: end -->
 
 This package implements autograph for R.
@@ -18,8 +17,8 @@ It lets you use tensors in R control flow expressions like `if`, `while`
 and `for` and automatically translates those expressions into tensorflow
 graphs.
 
-It is compatible with and tested against Tensorflow versions 2.1, 2.0,
-and 1.15.
+It is compatible with and tested against all Tensorflow versions \>=
+1.15 (including versions 2.x).
 
 ## Learn More:
 
@@ -30,7 +29,7 @@ and 1.15.
 
   - Full [MNIST training
     loop](https://t-kalinowski.github.io/tfautograph/articles/demo-mnist.html)
-    using `autograph` and Tensorflow 2.1
+    using `autograph` and Tensorflow 2.
 
 ## Additional Articles:
 
