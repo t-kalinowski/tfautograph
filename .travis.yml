@@ -1,5 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
+dist: bionic
+
 language: R
 cache: packages
 
@@ -9,3 +11,4 @@ addons:
       - python3-venv
 
 install: pip install tensorflow
+
