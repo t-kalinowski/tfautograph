@@ -9,10 +9,17 @@ addons:
       - python3-pip
       - python3-setuptools
 
+install:
+  - python3 -m pip -q install --upgrade pip setuptools
+  - python3 -m pip -q install tensorflow
+
+r_binary_packages:
+  - reticulate
+  - tensorflow
+
+git:
+  quiet: true
+  depth: 3
+
 language: R
 cache: packages
-
-
-install:
-  - python3 -m pip -q install --upgrade pip
-  - python3 -m pip -q install tensorflow
