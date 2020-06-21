@@ -2,6 +2,11 @@
 
 dist: bionic
 sudo: true
+addons:
+  apt:
+    packages:
+      - python3-venv
+      - python3-pip
 
 language: R
 cache: packages
