@@ -7,5 +7,6 @@ language: R
 cache: packages
 
 
-install: pip --quiet install tensorflow
-
+install:
+  - python3 -m pip -q install --upgrade pip
+  - python3 -m pip -q install tensorflow
