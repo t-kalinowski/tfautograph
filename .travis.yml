@@ -2,3 +2,6 @@
 
 language: R
 cache: packages
+
+language: python
+install: pip install tensorflow
