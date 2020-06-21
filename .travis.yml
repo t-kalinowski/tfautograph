@@ -3,5 +3,9 @@
 language: R
 cache: packages
 
-language: python
+addons:
+  apt:
+    packages:
+      - python3-venv
+
 install: pip install tensorflow
