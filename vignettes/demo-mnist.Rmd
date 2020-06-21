@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 if(Sys.info()[["sysname"]] == "Darwin")
   Sys.setenv(KMP_DUPLICATE_LIB_OK=TRUE)
 
-reticulate::use_virtualenv("tf2", TRUE)
+# reticulate::use_virtualenv("tf-2.2.0", TRUE)
 ```
 
 # Demo -- MNIST Training Loop using `autograph()`

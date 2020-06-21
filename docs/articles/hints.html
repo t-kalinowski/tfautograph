@@ -6,19 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Giving `autograph` hints • tfautograph</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Giving `autograph` hints">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="tfautograph">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -94,66 +94,66 @@
 
       
 
-      </header><script src="hints_files/jquery-1.11.3/jquery.min.js"></script><script src="hints_files/elevate-section-attrs-2.0/elevate-section-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Giving <code>autograph</code> hints</h1>
+      <h1 data-toc-skip>Giving <code>autograph</code> hints</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/t-kalinowski/tfautograph/blob/master/vignettes/hints.Rmd"><code>vignettes/hints.Rmd</code></a></small>
       <div class="hidden name"><code>hints.Rmd</code></div>
 
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</span>
-<span id="cb1-5"><a href="#cb1-5"></a>tf<span class="op">$</span>version<span class="op">$</span>VERSION</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; [1] "2.1.0-rc2"</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tensorflow</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">keras</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tfautograph</span>)
+<span class="no">tf</span>$<span class="no">version</span>$<span class="no">VERSION</span>
+<span class="co">#&gt; [1] "2.2.0"</span></pre></body></html></div>
 <p><code><a href="../reference/autograph.html">autograph()</a></code> works without needing to provide any hints. It can automatically translate expressions like <code>if</code> and <code>while</code> into <code>tf.cond()</code> and <code>tf.while_loop()</code> calls.</p>
 <p>However, compared to the flexibility of R control flow, the tensorflow control flow functions have much narrower constraints on how the control flow nodes are constructed. The constraints of functions like <code>tf.cond()</code>, <code>tf.while_loop()</code> and <code>dataset.reduct()</code> require that <code><a href="../reference/autograph.html">autograph()</a></code> do some sophisticated inference from the R code to anticipate what the outcome will be from evaluating a block of code, so that it can “fix-up” the outcome to satisfy the constraints tensorflow sets out.</p>
 <p>If you want to bypass these inference routines, (for example, because the inferred outcome is producing a graph that has more nodes than strictly necessary, or for some minor performance benefits), you can provide hints to <code>autograph</code> to let it know what it would otherwise try to infer.</p>
 <p>There are 2 main types of hints, corresponding to the two main control flow functions: <code>if</code> and <code>while</code>.</p>
 <p>Since these hints are only relevant in graph mode we’ll disable eager execution for the rest of the vignette. In your code you’re more likely to enter graph mode only when tracing a <code>tf.function()</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">disable_eager_execution</span>()</span>
-<span id="cb2-2"><a href="#cb2-2"></a>sess &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">Session</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">tf</span>$<span class="no">compat</span>$<span class="no">v1</span>$<span class="fu">disable_eager_execution</span>()
+<span class="no">sess</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="no">compat</span>$<span class="no">v1</span>$<span class="fu">Session</span>()</pre></body></html></div>
 <div id="passing-hints-to-if" class="section level1">
 <h1 class="hasAnchor">
 <a href="#passing-hints-to-if" class="anchor"></a>Passing hints to <code>if</code>
 </h1>
 <p>Take the following expression:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>x &lt;-<span class="st"> </span>tf<span class="op">$</span>compat<span class="op">$</span>v1<span class="op">$</span><span class="kw">placeholder</span>(<span class="st">'float32'</span>)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>y &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">0</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>y</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; Tensor("Const:0", shape=(), dtype=float32)</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="kw"><a href="../reference/autograph.html">autograph</a></span>({</span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="cf">if</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
-<span id="cb4-5"><a href="#cb4-5"></a>    y &lt;-<span class="st"> </span>y <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>})</span>
-<span id="cb4-7"><a href="#cb4-7"></a>y</span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; Tensor("cond/Identity:0", shape=(), dtype=float32)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="no">compat</span>$<span class="no">v1</span>$<span class="fu">placeholder</span>(<span class="st">'float32'</span>)
+<span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">0</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">y</span>
+<span class="co">#&gt; Tensor("Const:0", shape=(), dtype=float32)</span>
+<span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
+  <span class="kw">if</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>)
+    <span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">y</span> + <span class="fl">1</span>
+})
+<span class="no">y</span>
+<span class="co">#&gt; Tensor("cond/Identity:0", shape=(), dtype=float32)</span></pre></body></html></div>
 <p>Notice that <code>y</code> points to a different tensor after the <code><a href="../reference/autograph.html">autograph()</a></code> call. The new tensor has <code>'cond'</code> in the name, which is a big hint that <code><a href="../reference/autograph.html">autograph()</a></code> took that expression and called <code>tf.cond()</code> with it.</p>
 <p>If you were to inspect the graph (e.g, by reading the <code>GraphDef</code> or inspecting it in tensorboard, perhaps by calling <code><a href="../reference/view_function_graph.html">tfautograph::view_function_graph()</a></code>), you would see that in essence, the expression got translated into the equivalent of:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>y &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cond</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, </span>
-<span id="cb5-2"><a href="#cb5-2"></a>             <span class="dt">true_fn =</span> <span class="cf">function</span>() y <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,</span>
-<span id="cb5-3"><a href="#cb5-3"></a>             <span class="dt">false_fn =</span> <span class="cf">function</span>() y)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">cond</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>,
+             <span class="kw">true_fn</span> <span class="kw">=</span> <span class="kw">function</span>() <span class="no">y</span> + <span class="fl">1</span>,
+             <span class="kw">false_fn</span> <span class="kw">=</span> <span class="kw">function</span>() <span class="no">y</span>)</pre></body></html></div>
 <p><code>tf.cond()</code> takes the true and false branches as functions <code>true_fn</code> and <code>false_fn</code>, and requires that the two functions return the same structure of tensors.</p>
 <p>How did <code><a href="../reference/autograph.html">autograph()</a></code> know how to balance the two branches? It traced each branch as a <code>tf.function</code> and then reconciled the differences. Then within the <code>tf.cond()</code> call it recalled the traced function of the branch, along with some routines that “fix-up” the actual outcome from the branch into a balanced final outcome.</p>
 <p>If you wanted to avoid tracing each branch as a separate <code>ConcreteFunction</code> and balancing the output structures, you could supply a hint to autograph about what outcomes you expect from the branches by calling <code><a href="../reference/ag_if_vars.html">ag_if_vars()</a></code> right before the <code>if</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw"><a href="../reference/autograph.html">autograph</a></span>({</span>
-<span id="cb6-2"><a href="#cb6-2"></a>  <span class="kw"><a href="../reference/ag_if_vars.html">ag_if_vars</a></span>(y)</span>
-<span id="cb6-3"><a href="#cb6-3"></a>  <span class="cf">if</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
-<span id="cb6-4"><a href="#cb6-4"></a>    y &lt;-<span class="st"> </span>y <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
+  <span class="fu"><a href="../reference/ag_if_vars.html">ag_if_vars</a></span>(<span class="no">y</span>)
+  <span class="kw">if</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>)
+    <span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">y</span> + <span class="fl">1</span>
+})</pre></body></html></div>
 <p>Here, <code>y</code> is the only variable modified, so it’s the only symbol that we want returned from the <code>tf.cond()</code>.</p>
 <p><code><a href="../reference/ag_if_vars.html">ag_if_vars()</a></code> can help you specify a few different types of outcomes that should be captured by the <code>tf.cond()</code> besides modified symbols, including modified values in nested structures, return values, number of control flow events (e.g., <code>break</code> and/or <code>next</code> statements), and local variables.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="https://rdrr.io/r/base/args.html">args</a></span>(ag_if_vars)</span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; function (..., modified = list(), return = FALSE, undefs = NULL, </span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt;     control_flow = 0) </span></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">ag_if_vars</span>)
+<span class="co">#&gt; function (..., modified = list(), return = FALSE, undefs = NULL, </span>
+<span class="co">#&gt;     control_flow = 0) </span>
+<span class="co">#&gt; NULL</span></pre></body></html></div>
 <p>see <code><a href="../reference/ag_if_vars.html">ag_if_vars()</a></code> for details.</p>
 </div>
 <div id="loops-while-and-for" class="section level1">
@@ -161,64 +161,58 @@
 <a href="#loops-while-and-for" class="anchor"></a>loops: <code>while</code> and <code>for</code>
 </h1>
 <p>Take the expression:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">0</span>)</span>
-<span id="cb8-2"><a href="#cb8-2"></a>n &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">10</span>)</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="kw"><a href="../reference/autograph.html">autograph</a></span>({</span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="cf">while</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</span>
-<span id="cb8-5"><a href="#cb8-5"></a>    x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>    n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>  }</span>
-<span id="cb8-8"><a href="#cb8-8"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">0</span>)
+<span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">10</span>)
+<span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
+  <span class="kw">while</span>(<span class="no">n</span> <span class="kw">&gt;</span> <span class="fl">0</span>) {
+    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">x</span> + <span class="fl">1</span>
+    <span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">n</span> - <span class="fl">1</span>
+  }
+})</pre></body></html></div>
 <p>If you were to build the equivalent with <code>tf.while_loop()</code> call it would look like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, n) <span class="op">%&lt;-%</span><span class="st"> </span>tf<span class="op">$</span><span class="kw">while_loop</span>(</span>
-<span id="cb9-2"><a href="#cb9-2"></a>  <span class="dt">cond =</span> <span class="cf">function</span>(x, n)</span>
-<span id="cb9-3"><a href="#cb9-3"></a>    n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>,</span>
-<span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">body =</span> <span class="cf">function</span>(x, n) {</span>
-<span id="cb9-5"><a href="#cb9-5"></a>    x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a>    n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a>    <span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/reexports.html">tuple</a></span>(x, n)</span>
-<span id="cb9-8"><a href="#cb9-8"></a>  },</span>
-<span id="cb9-9"><a href="#cb9-9"></a>  <span class="dt">loop_vars =</span> <span class="kw"><a href="https://rdrr.io/pkg/tensorflow/man/reexports.html">tuple</a></span>(x, n)</span>
-<span id="cb9-10"><a href="#cb9-10"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">x</span>, <span class="no">n</span>) <span class="kw">%&lt;-%</span> <span class="no">tf</span>$<span class="fu">while_loop</span>(
+  <span class="kw">cond</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">n</span>)
+    <span class="no">n</span> <span class="kw">&gt;</span> <span class="fl">0</span>,
+  <span class="kw">body</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">n</span>) {
+    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">x</span> + <span class="fl">1</span>
+    <span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">n</span> - <span class="fl">1</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/reexports.html">tuple</a></span>(<span class="no">x</span>, <span class="no">n</span>)
+  },
+  <span class="kw">loop_vars</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/reexports.html">tuple</a></span>(<span class="no">x</span>, <span class="no">n</span>)
+)</pre></body></html></div>
 <p>So, as you can see there are a few things that <code>autograph</code> needs to know to be able to translate an R <code>while</code> loop into a <code>tf.while_loop()</code> call. Namely, it needs to know what are the <code>loop_vars</code> that might be modified by the loop body, both so that it can pass them to the <code>loop_vars</code> argument and so that it can construct <code>cond</code> and <code>body</code> functions with the appropriate formals and return values.</p>
 <p>How does <code><a href="../reference/autograph.html">autograph()</a></code> know which symbols belong in <code>loop_vars</code>, which are meant to be local-only variables, and which are only read and never modified? There are a couple different ways to approach solving this, but the way <code><a href="../reference/autograph.html">autograph()</a></code> does it by statically inferring them by examining the R loop body expression. That is, without actually evaluating the code, we inspect which symbols are the targets of common assignment operators like <code>&lt;-</code>, <code>-&gt;</code>, <code>=</code>, <code><a href="https://rdrr.io/pkg/keras/man/multi-assign.html">%&lt;-%</a></code>, <code>%-&gt;%</code> and <code>%&lt;&gt;%</code>. If you are autographing a <code>for</code> loop like <code>for(var in seq)</code> than the symbol <code>var</code> is included in the set of symbols that would be statically inferred as assignment targets.</p>
 <p>After all the assigned symbols are inferred, they are classified as either belonging to <code>loop_vars</code> or <code>undefs</code> based on whether the symbol already exists.</p>
 <p>This approach is quicker and cheaper than tracing, but it can sometimes lead to some symbols to <code>loop_vars</code> that otherwise could have been to be local-only variables.</p>
 <p>You can provide hints to autograph about what are the <code>loop_vars</code> like so:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw"><a href="../reference/autograph.html">autograph</a></span>({</span>
-<span id="cb10-2"><a href="#cb10-2"></a>  <span class="kw"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(x, n)</span>
-<span id="cb10-3"><a href="#cb10-3"></a>  <span class="cf">while</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</span>
-<span id="cb10-4"><a href="#cb10-4"></a>    x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a>    n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a>  }</span>
-<span id="cb10-7"><a href="#cb10-7"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
+  <span class="fu"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(<span class="no">x</span>, <span class="no">n</span>)
+  <span class="kw">while</span>(<span class="no">n</span> <span class="kw">&gt;</span> <span class="fl">0</span>) {
+    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">x</span> + <span class="fl">1</span>
+    <span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">n</span> - <span class="fl">1</span>
+  }
+})</pre></body></html></div>
 <p>Because the most common motivation for providing a loop hint will be to exclude a certain symbol from being captured as a loop var, there is special syntax for that. Prefix the variable with a minus <code><a href="https://rdrr.io/r/base/Arithmetic.html">-</a></code> like so:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>tmp &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">99</span>)</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="kw"><a href="../reference/autograph.html">autograph</a></span>({</span>
-<span id="cb11-3"><a href="#cb11-3"></a>  <span class="kw"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(<span class="op">-</span>tmp)</span>
-<span id="cb11-4"><a href="#cb11-4"></a>  <span class="cf">while</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</span>
-<span id="cb11-5"><a href="#cb11-5"></a>    tmp &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a>    x &lt;-<span class="st"> </span>tmp</span>
-<span id="cb11-7"><a href="#cb11-7"></a>    n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a>  }</span>
-<span id="cb11-9"><a href="#cb11-9"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">99</span>)
+<span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
+  <span class="fu"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(-<span class="no">tmp</span>)
+  <span class="kw">while</span>(<span class="no">n</span> <span class="kw">&gt;</span> <span class="fl">0</span>) {
+    <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="no">x</span> + <span class="fl">1</span>
+    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">tmp</span>
+    <span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">n</span> - <span class="fl">1</span>
+  }
+})</pre></body></html></div>
 <p>Note that by default <code>ag_loop_vars</code> exports excluded variables as <code>undefs</code>, symbols that throw an error (with a helpful error message) if you try to access them. To prevent <code>autograph</code> from creating undefs you can pass NULL like so:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(<span class="op">-</span>tmp, <span class="dt">undefs =</span> <span class="ot">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/ag_loop_vars.html">ag_loop_vars</a></span>(-<span class="no">tmp</span>, <span class="kw">undefs</span> <span class="kw">=</span> <span class="kw">NULL</span>)</pre></body></html></div>
 <p>You can also use <code><a href="../reference/ag_loop_vars.html">ag_loop_vars()</a></code> to specify additional symbols to be included with the statically inferred ones by prefixing them with a <code><a href="https://rdrr.io/r/base/Arithmetic.html">+</a></code>. See <code>?ag_loop_vars()</code> for additional examples.</p>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#passing-hints-to-if">Passing hints to <code>if</code></a></li>
-      <li><a href="#loops-while-and-for">loops: <code>while</code> and <code>for</code></a></li>
-      </ul>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
 
@@ -229,7 +223,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
