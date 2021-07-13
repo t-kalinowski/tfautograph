@@ -21,7 +21,8 @@ ag_while_opts(
 \item{parallel_iterations}{The number of iterations allowed to run in
 parallel. It must be a positive integer.}
 
-\item{back_prop}{Whether backprop is enabled for this while loop.}
+\item{back_prop}{Deprecated (optional). \code{FALSE} disables support for back
+propagation. Prefer using \code{tf$stop_gradient} instead.}
 
 \item{swap_memory}{Whether GPU-CPU memory swap is enabled for this loop.}
 

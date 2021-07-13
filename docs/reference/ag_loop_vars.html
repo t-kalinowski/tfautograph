@@ -75,7 +75,7 @@ dataset.reduce()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ dataset.reduce()." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -120,11 +120,14 @@ dataset.reduce()." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -153,13 +156,13 @@ explicitly as <code>loop_vars</code> when autographing an expression into a
 <code>dataset.reduce()</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ag_loop_vars</span>(
-  <span class='no'>...</span>,
-  <span class='kw'>list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>include</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>undef</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>ag_loop_vars</span><span class='op'>(</span>
+  <span class='va'>...</span>,
+  list <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  include <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  exclude <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  undef <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -188,11 +191,11 @@ semantics).</p></td>
     <p>Use of this is usually not required as the loop variables are automatically
 inferred. Inference is done by statically looking through the loop body and
 finding the symbols that are the targets of the common assignment operators
-from base R (<code>&lt;-</code>, <code>-&gt;</code>, <code>=</code>), from package:zeallot (<code>%&lt;-%</code> and <code>%-&gt;%</code>) and
+from base R (<code>&lt;-</code>, <code>-&gt;</code>, <code><a href='https://rdrr.io/r/base/assignOps.html'>=</a></code>), from package:zeallot (<code>%&lt;-%</code> and <code>%-&gt;%</code>) and
 package:magrittr (<code>%&lt;&gt;%</code>).</p>
 <p>In certain circumstances, this approach may capture variables that are
 intended to be local variables only. In those circumstances it is also
-possible to specify them preceded with a <code>-</code>.</p>
+possible to specify them preceded with a <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>.</p>
 <p>Note, the specified loop vars are expected to exist before the autographed
 expression, and a warning is issued otherwise (usually immediately preceding
 an error thrown when attempting to actually autograph the expression)</p>
@@ -205,43 +208,44 @@ variables that are nested within a more complex structure--passing
     <p>The semantics of this function are inspired by base::rm()</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>0L</span>)
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>i</span> <span class='op'>&lt;-</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>constant</span><span class='op'>(</span><span class='fl'>0L</span><span class='op'>)</span>
 
-<span class='fu'><a href='autograph.html'>autograph</a></span>({
-  <span class='fu'>ag_loop_vars</span>(<span class='no'>x</span>, <span class='no'>i</span>)
-  <span class='kw'>while</span>(<span class='no'>x</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
-    <span class='kw'>if</span>(<span class='no'>x</span> <span class='kw'>%%</span><span class='fl'>2</span> <span class='kw'>==</span> <span class='fl'>0</span>)
-      <span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='no'>i</span> + <span class='fl'>1L</span>
-    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> - <span class='fl'>1</span>
-  }
-})
+<span class='fu'><a href='autograph.html'>autograph</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='fu'>ag_loop_vars</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span><span class='op'>)</span>
+  <span class='kw'>while</span><span class='op'>(</span><span class='va'>x</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='kw'>if</span><span class='op'>(</span><span class='va'>x</span> <span class='op'>%%</span><span class='fl'>2</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span>
+      <span class='va'>i</span> <span class='op'>&lt;-</span> <span class='va'>i</span> <span class='op'>+</span> <span class='fl'>1L</span>
+    <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>x</span> <span class='op'>-</span> <span class='fl'>1</span>
+  <span class='op'>}</span>
+<span class='op'>}</span><span class='op'>)</span>
 
 <span class='co'>## sometimes, a variable is infered to be a loop_var unnecessarily. For example</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>10</span>)
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>constant</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>
 
 <span class='co'># imagine x is left over in the current scope from some previous calculations</span>
 <span class='co'># It's value is not important, but it exists</span>
-<span class='fu'><a href='autograph.html'>autograph</a></span>({
-  <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>6</span>)) {
-    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>i</span> * <span class='no'>i</span>
-    <span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>)
-  }
-})
+<span class='fu'><a href='autograph.html'>autograph</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='kw'>for</span><span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>constant</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>i</span> <span class='op'>*</span> <span class='va'>i</span>
+    <span class='va'>tf</span><span class='op'>$</span><span class='fu'>print</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+  <span class='op'>}</span>
+<span class='op'>}</span><span class='op'>)</span>
 
 <span class='co'># this will throw an error because `x` was infered to be a `loop_var`,</span>
 <span class='co'># but it's shape witin the loop body is different from what it was before.</span>
 <span class='co'># there are two solutions to prevent `x` from being captured as a loop_var</span>
 <span class='co'>## 1) remove `x` from the current scope like so:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>x</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
 <span class='co'>## 2) provide a hint like so:</span>
-<span class='fu'>ag_loop_vars</span>(-<span class='no'>x</span>)
+<span class='fu'>ag_loop_vars</span><span class='op'>(</span><span class='op'>-</span><span class='va'>x</span><span class='op'>)</span>
 
 <span class='co'>## if your variable names are being dynamically generated, there is an</span>
 <span class='co'>## escape hatch for the lazy evaluation semantics of ...</span>
-<span class='fu'>ag_loop_vars</span>(<span class='kw'>exclude</span> <span class='kw'>=</span> <span class='st'>"x"</span>)
-}</div></pre>
+<span class='fu'>ag_loop_vars</span><span class='op'>(</span>exclude <span class='op'>=</span> <span class='st'>"x"</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -257,7 +261,7 @@ variables that are nested within a more complex structure--passing
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

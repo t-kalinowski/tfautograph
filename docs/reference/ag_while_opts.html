@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>specify <code>tf.while_loop</code> options — ag_while_opts • tfautograph</title>
+<title>specify tf.while_loop options — ag_while_opts • tfautograph</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="specify <code>tf.while_loop</code> options — ag_while_opts" />
+<meta property="og:title" content="specify tf.while_loop options — ag_while_opts" />
 <meta property="og:description" content="See https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/while_loop
 for additional details." />
 
@@ -73,7 +73,7 @@ for additional details." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ for additional details." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -118,11 +118,14 @@ for additional details." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -149,14 +152,14 @@ for additional details." />
 for additional details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ag_while_opts</span>(
-  <span class='no'>...</span>,
-  <span class='kw'>shape_invariants</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>parallel_iterations</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
-  <span class='kw'>back_prop</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>swap_memory</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>maximum_iterations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ag_while_opts</span><span class='op'>(</span>
+  <span class='va'>...</span>,
+  shape_invariants <span class='op'>=</span> <span class='cn'>NULL</span>,
+  parallel_iterations <span class='op'>=</span> <span class='fl'>10L</span>,
+  back_prop <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  swap_memory <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  maximum_iterations <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,7 +179,8 @@ parallel. It must be a positive integer.</p></td>
     </tr>
     <tr>
       <th>back_prop</th>
-      <td><p>Whether backprop is enabled for this while loop.</p></td>
+      <td><p>Deprecated (optional). <code>FALSE</code> disables support for back
+propagation. Prefer using <code>tf$stop_gradient</code> instead.</p></td>
     </tr>
     <tr>
       <th>swap_memory</th>
@@ -202,15 +206,16 @@ condition ensuring the number of iterations executed is no greater than
 effect.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'>## use tf_function() to enter graph mode:</span>
-<span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='fu'><a href='autograph.html'>autograph</a></span>(<span class='kw'>function</span>(<span class='no'>n</span>) {
-  <span class='fu'><a href='ag_name.html'>ag_name</a></span>(<span class='st'>"silly-example"</span>)
-  <span class='fu'>ag_while_opts</span>(<span class='kw'>back_prop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-  <span class='kw'>while</span>(<span class='no'>n</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>)
-    <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='no'>n</span> - <span class='fl'>1</span>
-}))
-}</div></pre>
+<span class='fu'>tf_function</span><span class='op'>(</span><span class='fu'><a href='autograph.html'>autograph</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='ag_name.html'>ag_name</a></span><span class='op'>(</span><span class='st'>"silly-example"</span><span class='op'>)</span>
+  <span class='fu'>ag_while_opts</span><span class='op'>(</span>back_prop <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+  <span class='kw'>while</span><span class='op'>(</span><span class='va'>n</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span>
+    <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='va'>n</span> <span class='op'>-</span> <span class='fl'>1</span>
+<span class='op'>}</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -226,7 +231,7 @@ effect.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -3,6 +3,7 @@
 is_true <- function(x) identical(x, TRUE)
 is_bool <- function(x) identical(x, TRUE) || identical(x, FALSE)
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
+# is_tensor_shape <- function(x) inherits(x, "tensorflow.python.framework.tensor_shape.TensorShape")
 is_eager_tensor <- function(x) is_tensor(x) && py_has_attr(x, "numpy")
 is_eager <- function(x) py_has_attr(x, "numpy")
 # TODO: maybe check for actual class here? with base::inherits() or
@@ -65,6 +66,7 @@ tensor_type <- function(x) {
 
 drop_empty <- function(x)
   x[!vapply(x, function(x) !is_tensor(x) && identical(length(x), 0L), FALSE)]
+  # x[!vapply(x, function(x) !is_tensor(x) && !is_tensor_shape && identical(length(x), 0L), FALSE)]
 
 is_empty <- function(x) !is_tensor(x) && identical(length(x), 0L)
 

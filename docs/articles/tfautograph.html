@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -76,11 +76,14 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -94,7 +97,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="tfautograph_files/header-attrs-2.9.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Getting Started with tfautograph</h1>
@@ -114,86 +117,92 @@
 <div id="setup" class="section level1">
 <h1 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h1>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">magrittr</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tensorflow</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tfdatasets</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/tensorflow">tensorflow</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/tfdatasets">tfdatasets</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tfautograph</span>)</pre></body></html></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://t-kalinowski.github.io/tfautograph/">tfautograph</a></span><span class="op">)</span></code></pre></div>
 <div id="compatibility" class="section level2">
 <h2 class="hasAnchor">
 <a href="#compatibility" class="anchor"></a>Compatibility</h2>
-<p>tfautograph works with Tensorflow versions 1.15 and &gt;= 2.0. This vignette is using version 2.2.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">tf</span>$<span class="no">version</span>$<span class="no">VERSION</span>
-<span class="co">#&gt; [1] "2.2.0"</span></pre></body></html></div>
+<p>tfautograph works with Tensorflow versions 1.15 and &gt;= 2.0. This vignette is using version 2.5.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tf</span><span class="op">$</span><span class="va">version</span><span class="op">$</span><span class="va">VERSION</span>
+<span class="co">#&gt; [1] "2.5.0"</span></code></pre></div>
 </div>
 </div>
 <div id="usage" class="section level1">
 <h1 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h1>
 <p>The primary workhorse function of the package is the function <code><a href="../reference/autograph.html">autograph()</a></code>. For most use-cases, this is the only function from the package you will need or want to call. It can either take a function or an expression. The following two uses are equivalent:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># pass a function to autograph()</span>
-<span class="no">fn</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="kw">if</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>) <span class="no">x</span> * <span class="no">x</span> <span class="kw">else</span> <span class="no">x</span>
-<span class="no">square_if_positive</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="no">fn</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># pass a function to autograph()</span>
+<span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">x</span> <span class="op">*</span> <span class="va">x</span> <span class="kw">else</span> <span class="va">x</span>
+<span class="va">square_if_positive</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span>
 
 <span class="co"># pass an expression to autograph()</span>
-<span class="no">square_if_positive</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">if</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>) <span class="no">x</span> * <span class="no">x</span> <span class="kw">else</span> <span class="no">x</span>)</pre></body></html></div>
+<span class="va">square_if_positive</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">x</span> <span class="op">*</span> <span class="va">x</span> <span class="kw">else</span> <span class="va">x</span><span class="op">)</span></code></pre></div>
 <p>Now <code>square_if_positive</code> is a function that can accept a tensor as an argument.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">convert_to_tensor</span>(<span class="fl">5</span>)
-<span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">convert_to_tensor</span>(-<span class="fl">5</span>)
-<span class="fu">square_if_positive</span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">convert_to_tensor</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">convert_to_tensor</span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">)</span>
+<span class="fu">square_if_positive</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-<span class="fu">square_if_positive</span>(<span class="no">y</span>)
-<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="fu">square_if_positive</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></code></pre></div>
 <p>Note that if you’re in a context where tensorflow is executing eagerly, <code><a href="../reference/autograph.html">autograph()</a></code> doesn’t change that–<code>square_if_positive()</code> is still executing eagerly. You can test that by inserting some R <code>print</code> statements to see when a branch is evaluated.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">square_if_positive_verbose</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="kw">if</span> (<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>) {
-    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"Evaluating true branch"</span>)
-    <span class="no">x</span> * <span class="no">x</span>
-  } <span class="kw">else</span> {
-    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"Evaluating false branch"</span>)
-    <span class="no">x</span>
-  }
-})
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">square_if_positive_verbose</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Evaluating true branch"</span><span class="op">)</span>
+    <span class="va">x</span> <span class="op">*</span> <span class="va">x</span>
+  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Evaluating false branch"</span><span class="op">)</span>
+    <span class="va">x</span>
+  <span class="op">}</span>
+<span class="op">}</span><span class="op">)</span>
 
-<span class="fu">square_if_positive_verbose</span>(<span class="no">x</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating true branch</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-<span class="fu">square_if_positive_verbose</span>(<span class="no">x</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating true branch</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-<span class="fu">square_if_positive_verbose</span>(<span class="no">x</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating true branch</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
 
-<span class="fu">square_if_positive_verbose</span>(<span class="no">y</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating false branch</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
-<span class="fu">square_if_positive_verbose</span>(<span class="no">y</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating false branch</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
-<span class="fu">square_if_positive_verbose</span>(<span class="no">y</span>)
+<span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating false branch</span>
-<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></code></pre></div>
 <p>As you can see we’re in eager mode, meaning, the R code of the function body is evaluated every time the function is called.</p>
 <p>The easiest way to enter a context where tensorflow is not executing eagerly anymore and instead is in <strong>graph mode</strong> is to call python’s <code>tf.function()</code>. (Because <code>function</code> is a reserved word for the R parser, there is a convenient wrapper provided by the tensorflow <code>R</code> package: <code><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function()</a></code>)</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">graph_fn</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="no">square_if_positive_verbose</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">graph_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="va">square_if_positive_verbose</span><span class="op">)</span>
 
-<span class="fu">graph_fn</span>(<span class="no">x</span>)
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating true branch</span>
 <span class="co">#&gt; Evaluating false branch</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-<span class="fu">graph_fn</span>(<span class="no">x</span>)
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-<span class="fu">graph_fn</span>(<span class="no">x</span>)
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
 
-<span class="fu">graph_fn</span>(<span class="no">y</span>)
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
-<span class="fu">graph_fn</span>(<span class="no">y</span>)
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
-<span class="fu">graph_fn</span>(<span class="no">y</span>)
-<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="fu">graph_fn</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span></code></pre></div>
 <p>In graph mode, both branches of the <code>if</code> expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by Tensorflow <code>Function</code> object returned from <code>tf.function()</code>. Then on subsequent calls of the <code>Function</code>, only the cached graph is evaluated.</p>
 <p>The key takeaways are that <code><a href="../reference/autograph.html">autograph()</a></code> helps you write natural R code and use tensors in expressions where R wouldn’t otherwise accept them. And that <code><a href="../reference/autograph.html">autograph()</a></code> is smart enough to do the right thing in both eager mode and graph mode.</p>
 </div>
@@ -202,6 +211,11 @@
 <a href="#control-flow" class="anchor"></a>Control Flow</h1>
 <p>tfautograph can translate R control flow statements <code>if</code>, <code>while</code>, <code>for</code>, <code>break</code>, and <code>next</code> to tensorflow. Here is summary table of the translation endpoints (note, these summary code snippets are meant to concisely convey the spirit of the translation, not the actual implementation)</p>
 <table class="table">
+<colgroup>
+<col width="22%">
+<col width="23%">
+<col width="53%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">R expression</th>
 <th align="left">Graph Mode Translation</th>
@@ -237,24 +251,26 @@
 </h2>
 <p>In eager mode, <code>if(eager_tensor)</code> is translated to <code>if(eager_tensor$`__bool__`())</code>. (Essentially, a slightly more robust way to call <code>eager_tensor$numpy()</code>).</p>
 <p>In graph mode, <code>if</code> statements written in R automatically get translated to a <code>tf.cond()</code>. <code>tf.cond()</code> requires that both branches of the conditional are balanced (meaning, both branches return the same output structure). <code><a href="../reference/autograph.html">autograph()</a></code> tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated <code>tf.cond()</code>, while satisfying the requirement for balanced branches.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">tf_sign</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="kw">if</span> (<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tf_sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span>
     <span class="fl">1</span>
-  <span class="kw">else</span> <span class="kw">if</span> (<span class="no">x</span> <span class="kw">&lt;</span> <span class="fl">0</span>)
-    -<span class="fl">1</span>
+  <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">)</span>
+    <span class="op">-</span><span class="fl">1</span>
   <span class="kw">else</span>
     <span class="fl">0</span>
-}))</pre></body></html></div>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Any variables that can’t be balanced between the branches are exported as <strong>undefined</strong> objects (S3 class: <code>undef</code>). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the <code>undef</code> originated from, and suggestions for how to prevent the symbol from being an <code>undef</code>.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">undef_example</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="kw">if</span> (<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>) {
-    <span class="no">branch_local_tmp</span> <span class="kw">&lt;-</span> <span class="no">x</span> + <span class="fl">1</span>
-    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">branch_local_tmp</span> + <span class="fl">1</span>
-    <span class="no">x</span>
-  }
-  <span class="no">branch_local_tmp</span>
-}))
-<span class="fu">undef_example</span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">1</span>))
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">undef_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">branch_local_tmp</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>
+    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">branch_local_tmp</span> <span class="op">+</span> <span class="fl">1</span>
+    <span class="va">x</span>
+  <span class="op">}</span>
+  <span class="va">branch_local_tmp</span>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">undef_example</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error in py_call_impl(callable, dots$args, dots$keywords): RuntimeError: Evaluation error: Symbol `branch_local_tmp` is *undefined* after autographing the expression:</span>
 <span class="co">#&gt;      if (x &gt; 0) {</span>
 <span class="co">#&gt;      branch_local_tmp &lt;- x + 1</span>
@@ -263,26 +279,26 @@
 <span class="co">#&gt;  }</span>
 <span class="co">#&gt; To access this symbol, Tensorflow requires that an object with the same dtype and shape be assigned to the symbol either before the `if` statement, or in all branches of the `if` statement.</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Detailed traceback: </span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/def_function.py", line 580, in __call__</span>
+<span class="co">#&gt; Detailed traceback:</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 889, in __call__</span>
 <span class="co">#&gt;     result = self._call(*args, **kwds)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/def_function.py", line 627, in _call</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 933, in _call</span>
 <span class="co">#&gt;     self._initialize(args, kwds, add_initializers_to=initializers)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/def_function.py", line 505, in _initialize</span>
-<span class="co">#&gt;     self._stateful_fn._get_concrete_function_internal_garbage_collected(  # pylint: disable=protected-access</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/function.py", line 2446, in _get_concrete_function_internal_garbage_collected</span>
-<span class="co">#&gt;     graph_function, _, _ = self._maybe_define_function(args, kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/function.py", line 2777, in _maybe_define_function</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 764, in _initialize</span>
+<span class="co">#&gt;     *args, **kwds))</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3050, in _get_concrete_function_internal_garbage_collected</span>
+<span class="co">#&gt;     graph_function, _ = self._maybe_define_function(args, kwargs)</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3444, in _maybe_define_function</span>
 <span class="co">#&gt;     graph_function = self._create_graph_function(args, kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/function.py", line 2657, in _create_graph_function</span>
-<span class="co">#&gt;     func_graph_module.func_graph_from_py_func(</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/framework/func_graph.py", line 981, in func_graph_from_py_func</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3289, in _create_graph_function</span>
+<span class="co">#&gt;     capture_by_value=self._capture_by_value),</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/framework/func_graph.py", line 999, in func_graph_from_py_func</span>
 <span class="co">#&gt;     func_outputs = python_func(*func_args, **func_kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/python3.8/site-packages/tensorflow/python/eager/def_function.py", line 441, in wrapped_fn</span>
-<span class="co">#&gt;     return weak_wrapped_fn().__wrapped__(*args, **kwds)</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 672, in wrapped_fn</span>
+<span class="co">#&gt;     out = weak_wrapped_fn().__wrapped__(*args, **kwds)</span>
 <span class="co">#&gt;   File "&lt;string&gt;", line 4, in fn</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/lib/R/site-library/reticulate/python/rpytools/call.py", line 21, in python_function</span>
-<span class="co">#&gt;     raise RuntimeError(res[kErrorKey])</span></pre></body></html></div>
+<span class="co">#&gt;   File "/home/tomasz/opt/R-4.1.0/lib/R/site-library/reticulate/python/rpytools/call.py", line 21, in python_function</span>
+<span class="co">#&gt;     raise RuntimeError(res[kErrorKey])</span></code></pre></div>
 </div>
 <div id="while" class="section level2">
 <h2 class="hasAnchor">
@@ -290,55 +306,62 @@
 </h2>
 <p>In eager mode, <code>while(eagor_tensor)</code> is translated to <code>while(as.logical(eager_tensor))</code>. The <code>tensorflow</code> R package provides tensor methods for many S3 generics, including <code><a href="https://rdrr.io/r/base/logical.html">as.logical()</a></code> which coerces an <code>EagerTensor</code> to an R logical atomic, so this works as you would expect.</p>
 <p>Here is an example of an autographed <code>while</code> expression being evaluated eagerly. Remember, <code><a href="../reference/autograph.html">autograph()</a></code> is not just for functions!</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">total</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
-<span class="no">x</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">total</span> <span class="op">&lt;-</span> <span class="fl">1</span>
+<span class="va">x</span>
 <span class="co">#&gt; tf.Tensor(5.0, shape=(), dtype=float32)</span>
-<span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
-  <span class="kw">while</span> (<span class="no">x</span> <span class="kw">!=</span> <span class="fl">0</span>) {
-    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"Evaluating while body R expression"</span>)
-    <span class="no">total</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">multiply_by</a></span>(<span class="no">x</span>)
-    <span class="no">x</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">subtract</a></span>(<span class="fu">tf_sign</span>(<span class="no">x</span>))
-  }
-})
+<span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw">while</span> <span class="op">(</span><span class="va">x</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Evaluating while body R expression"</span><span class="op">)</span>
+    <span class="va">total</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">multiply_by</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+    <span class="va">x</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">subtract</a></span><span class="op">(</span><span class="fu">tf_sign</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
-<span class="no">x</span>
+<span class="va">x</span>
 <span class="co">#&gt; tf.Tensor(0.0, shape=(), dtype=float32)</span>
-<span class="no">total</span>
-<span class="co">#&gt; tf.Tensor(120.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="va">total</span>
+<span class="co">#&gt; tf.Tensor(120.0, shape=(), dtype=float32)</span></code></pre></div>
 <p>In graph mode, <code>while</code> expressions are translated to a <code>tf$while_loop()</code> call.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">tf_factorial</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">total</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
-  <span class="kw">while</span> (<span class="no">x</span> <span class="kw">!=</span> <span class="fl">0</span>) {
-    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"Evaluating while body R expression"</span>)
-    <span class="no">total</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">multiply_by</a></span>(<span class="no">x</span>)
-    <span class="no">x</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">subtract</a></span>(<span class="fu">tf_sign</span>(<span class="no">x</span>))
-  }
-  <span class="no">total</span>
-}))
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tf_factorial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">total</span> <span class="op">&lt;-</span> <span class="fl">1</span>
+  <span class="kw">while</span> <span class="op">(</span><span class="va">x</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Evaluating while body R expression"</span><span class="op">)</span>
+    <span class="va">total</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">multiply_by</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+    <span class="va">x</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">subtract</a></span><span class="op">(</span><span class="fu">tf_sign</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span>
+  <span class="va">total</span>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">tf_factorial</span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">5</span>))
+<span class="fu">tf_factorial</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
 <span class="co">#&gt; tf.Tensor(120.0, shape=(), dtype=float32)</span>
-<span class="fu">tf_factorial</span>(<span class="no">tf</span>$<span class="fu">constant</span>(-<span class="fl">5</span>))
-<span class="co">#&gt; tf.Tensor(-120.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="fu">tf_factorial</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(-120.0, shape=(), dtype=float32)</span></code></pre></div>
 <p><a href="https://www.tensorflow.org/api_docs/python/tf/while_loop"><code>tf.while_loop()</code></a> has many options. In order to pass those through to the call, precede the <code>while</code> expression with <code><a href="../reference/ag_while_opts.html">ag_while_opts()</a></code>.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">tf_factorial_no_backprop</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">total</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
-  <span class="fu"><a href="../reference/ag_while_opts.html">ag_while_opts</a></span>(<span class="kw">back_prop</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-  <span class="kw">while</span> (<span class="no">x</span> <span class="kw">!=</span> <span class="fl">0</span>) {
-    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"Evaluating while body R expression"</span>)
-    <span class="no">total</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">multiply_by</a></span>(<span class="no">x</span>)
-    <span class="no">x</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">subtract</a></span>(<span class="fu">tf_sign</span>(<span class="no">x</span>))
-  }
-  <span class="no">total</span>
-  }))
-<span class="fu">tf_factorial_no_backprop</span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">5</span>))
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tf_factorial_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">total</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/as_tensor.html">as_tensor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+  <span class="fu"><a href="../reference/ag_while_opts.html">ag_while_opts</a></span><span class="op">(</span>
+    shape_invariants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>total <span class="op">=</span> <span class="va">tf</span><span class="op">$</span><span class="fu">TensorShape</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,
+                            x <span class="op">=</span> <span class="va">tf</span><span class="op">$</span><span class="fu">TensorShape</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+    parallel_iterations <span class="op">=</span> <span class="fl">1</span>
+  <span class="op">)</span>
+  <span class="kw">while</span> <span class="op">(</span><span class="va">x</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Evaluating while body R expression"</span><span class="op">)</span>
+    <span class="va">total</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">multiply_by</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+    <span class="va">x</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">subtract</a></span><span class="op">(</span><span class="fu">tf_sign</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span>
+  <span class="va">total</span>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">tf_factorial_v2</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating while body R expression</span>
-<span class="co">#&gt; tf.Tensor(120.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="co">#&gt; tf.Tensor(120.0, shape=(), dtype=float32)</span></code></pre></div>
 </div>
 <div id="for" class="section level2">
 <h2 class="hasAnchor">
@@ -351,51 +374,58 @@
 <li>python iterators (eager mode only).</li>
 </ul>
 <p>In eager mode, both datasets and tensors are coerced to iterators (via <code>iterable$`__iter__`()</code>, through the ergonomic wrapper <code><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">reticulate::as_iterator()</a></code>). The arguments are then iterated over until the iterable is finished. Essentially, a call like</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="kw">for</span>(<span class="no">elem</span> <span class="kw">in</span> <span class="no">iterable</span>) {<span class="no">...</span>}</pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">for</span><span class="op">(</span><span class="va">elem</span> <span class="kw">in</span> <span class="va">iterable</span><span class="op">)</span> <span class="op">{</span><span class="va">...</span><span class="op">}</span></code></pre></div>
 <p>gets translated to</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">iterator</span> <span class="kw">&lt;-</span> <span class="fu">as_iterator</span>(<span class="no">iterable</span>)
-<span class="kw">while</span>(!<span class="fu">iter_is_done</span>(<span class="no">iterator</span>)) {<span class="no">elem</span> <span class="kw">&lt;-</span> <span class="fu">iter_next</span>(<span class="no">iterator</span>); <span class="no">...</span>}</pre></body></html></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">iterator</span> <span class="op">&lt;-</span> <span class="fu">as_iterator</span><span class="op">(</span><span class="va">iterable</span><span class="op">)</span>
+<span class="kw">while</span><span class="op">(</span><span class="op">!</span><span class="fu">iter_is_done</span><span class="op">(</span><span class="va">iterator</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span><span class="va">elem</span> <span class="op">&lt;-</span> <span class="fu">iter_next</span><span class="op">(</span><span class="va">iterator</span><span class="op">)</span>; <span class="va">...</span><span class="op">}</span></code></pre></div>
 <p>Note, that tensors are iterated over their first dimension.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">convert_to_tensor</span>(<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span>:<span class="fl">12</span>, <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">byrow</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
-<span class="no">m</span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">convert_to_tensor</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, nrow <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="va">m</span>
 <span class="co">#&gt; tf.Tensor(</span>
 <span class="co">#&gt; [[ 1  2  3  4]</span>
 <span class="co">#&gt;  [ 5  6  7  8]</span>
 <span class="co">#&gt;  [ 9 10 11 12]], shape=(3, 4), dtype=int32)</span>
-<span class="fu"><a href="../reference/autograph.html">autograph</a></span>({
-  <span class="kw">for</span> (<span class="no">row</span> <span class="kw">in</span> <span class="no">m</span>)
-    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">row</span>)
-})
+<span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="va">m</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">row</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor([1 2 3 4], shape=(4,), dtype=int32)</span>
 <span class="co">#&gt; tf.Tensor([5 6 7 8], shape=(4,), dtype=int32)</span>
-<span class="co">#&gt; tf.Tensor([ 9 10 11 12], shape=(4,), dtype=int32)</span></pre></body></html></div>
+<span class="co">#&gt; tf.Tensor([ 9 10 11 12], shape=(4,), dtype=int32)</span></code></pre></div>
 <p>In graph mode, <code>for</code> can accept a tensor or a dataset.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">niave_reduce_sum</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>, <span class="no">dtype</span> <span class="kw">=</span> <span class="st">"int64"</span>) {
-  <span class="no">running_total</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">zeros</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(), <span class="no">dtype</span>)
-  <span class="kw">for</span> (<span class="no">elem</span> <span class="kw">in</span> <span class="no">x</span>)
-    <span class="no">running_total</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(<span class="no">elem</span>)
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">niave_reduce_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">dtype</span> <span class="op">=</span> <span class="st">"int64"</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">running_total</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">zeros</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">dtype</span><span class="op">)</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">elem</span> <span class="kw">in</span> <span class="va">x</span><span class="op">)</span>
+    <span class="va">running_total</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">add</a></span><span class="op">(</span><span class="va">elem</span><span class="op">)</span>
 
-  <span class="no">running_total</span>
-}))</pre></body></html></div>
+  <span class="va">running_total</span>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Works with a tensor:</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu">niave_reduce_sum</span>(<span class="no">tf</span>$<span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span>(<span class="fl">10L</span>, <span class="kw">dtype</span> <span class="kw">=</span> <span class="st">"int64"</span>))
-<span class="co">#&gt; tf.Tensor(45, shape=(), dtype=int64)</span></pre></body></html></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">niave_reduce_sum</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">range</span><span class="op">(</span><span class="fl">10L</span>, dtype <span class="op">=</span> <span class="st">"int64"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(45, shape=(), dtype=int64)</span></code></pre></div>
 <p>and with a dataset:</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu">niave_reduce_sum</span>(<span class="no">tf</span>$<span class="no">data</span>$<span class="no">Dataset</span>$<span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span>(<span class="fl">10L</span>))
-<span class="co">#&gt; tf.Tensor(45, shape=(), dtype=int64)</span></pre></body></html></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">niave_reduce_sum</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">Dataset</span><span class="op">$</span><span class="fu">range</span><span class="op">(</span><span class="fl">10L</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(45, shape=(), dtype=int64)</span></code></pre></div>
 <p>Since <code>for(var in tensor)</code> loops are powered by <code>tf$while_loop()</code>, you can pass additional options via <code><a href="../reference/ag_while_opts.html">ag_while_opts()</a></code> just as you would to an autographed <code>while()</code> expression.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">niave_reduce_sum_with_opts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">running_total</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">zeros</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(), <span class="no">x</span>$<span class="no">dtype</span>)
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">niave_reduce_sum_with_opts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">running_total</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">zeros</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">x</span><span class="op">$</span><span class="va">dtype</span><span class="op">)</span>
 
-  <span class="fu"><a href="../reference/ag_while_opts.html">ag_while_opts</a></span>(<span class="kw">parallel_iterations</span> <span class="kw">=</span> <span class="fl">1</span>)
-  <span class="kw">for</span> (<span class="no">elem</span> <span class="kw">in</span> <span class="no">x</span>)
-    <span class="no">running_total</span> <span class="kw">%&lt;&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/magrittr/man/aliases.html">add</a></span>(<span class="no">elem</span>)
+  <span class="fu"><a href="../reference/ag_while_opts.html">ag_while_opts</a></span><span class="op">(</span>parallel_iterations <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">elem</span> <span class="kw">in</span> <span class="va">x</span><span class="op">)</span>
+    <span class="va">running_total</span> <span class="op">%&lt;&gt;%</span> <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">add</a></span><span class="op">(</span><span class="va">elem</span><span class="op">)</span>
 
-  <span class="no">running_total</span>
-}))
+  <span class="va">running_total</span>
+<span class="op">}</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">niave_reduce_sum_with_opts</span>(<span class="no">tf</span>$<span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span>(<span class="fl">10</span>))
-<span class="co">#&gt; tf.Tensor(45.0, shape=(), dtype=float32)</span></pre></body></html></div>
+<span class="fu">niave_reduce_sum_with_opts</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">range</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; tf.Tensor(45.0, shape=(), dtype=float32)</span></code></pre></div>
 </div>
 <div id="break-next" class="section level2">
 <h2 class="hasAnchor">
@@ -408,47 +438,57 @@
 <h1 class="hasAnchor">
 <a href="#fizzbuzz" class="anchor"></a>FizzBuzz!</h1>
 <p>Lets tie some concepts together to write <a href="https://en.wikipedia.org/wiki/Fizz_buzz">fizzbuzz</a>! Before we do that, we’ll write a helper <code>tf_print()</code> that writes to a temporary file by default. This will help us capture the output in this Rmarkdown vignette. (If we don’t redirect output to a file, then it would show up in the rendering console and not in this vignette)</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">TEMPFILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span>(<span class="st">"tf-print-out"</span>, <span class="kw">fileext</span> <span class="kw">=</span> <span class="st">".txt"</span>)
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TEMPFILE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="st">"tf-print-out"</span>, fileext <span class="op">=</span> <span class="st">".txt"</span><span class="op">)</span>
 
-<span class="no">print_tempfile</span> <span class="kw">&lt;-</span>
-  <span class="kw">function</span>(<span class="no">clear_after_read</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="no">rewrap_lines</span> <span class="kw">=</span> <span class="fl">TRUE</span>) {
-    <span class="no">output</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(<span class="no">TEMPFILE</span>, <span class="kw">warn</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-    <span class="kw">if</span> (<span class="no">clear_after_read</span>) <span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(<span class="no">TEMPFILE</span>)
-    <span class="kw">if</span> (<span class="no">rewrap_lines</span>) <span class="no">output</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strwrap.html">strwrap</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">output</span>, <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
-    <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span>(<span class="no">output</span>)
-  }
+<span class="va">print_tempfile</span> <span class="op">&lt;-</span>
+  <span class="kw">function</span><span class="op">(</span><span class="va">clear_after_read</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">rewrap_lines</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="va">TEMPFILE</span>, warn <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="va">clear_after_read</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span><span class="op">(</span><span class="va">TEMPFILE</span><span class="op">)</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="va">rewrap_lines</span><span class="op">)</span> <span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strwrap.html">strwrap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">output</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span>
+  <span class="op">}</span>
 
-<span class="no">tf_print</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>)
-  <span class="no">tf</span>$<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">...</span>, <span class="kw">output_stream</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"file://%s"</span>, <span class="no">TEMPFILE</span>))</pre></body></html></div>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">fizzbuzz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="kw">function</span>(<span class="no">n</span>) {
-  <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/pkg/tfdatasets/man/range_dataset.html">range_dataset</a></span>(<span class="kw">from</span> <span class="kw">=</span> <span class="fl">1L</span>, <span class="kw">to</span> <span class="kw">=</span> <span class="no">n</span>)) {
-    <span class="kw">if</span> (<span class="no">i</span> <span class="kw">%%</span> <span class="fl">15L</span> <span class="kw">==</span> <span class="fl">0L</span>)
-      <span class="fu">tf_print</span>(<span class="st">"FizzBuzz"</span>)
-    <span class="kw">else</span> <span class="kw">if</span> (<span class="no">i</span> <span class="kw">%%</span> <span class="fl">3L</span> <span class="kw">==</span> <span class="fl">0L</span>)
-      <span class="fu">tf_print</span>(<span class="st">"Fizz"</span>)
-    <span class="kw">else</span> <span class="kw">if</span> (<span class="no">i</span> <span class="kw">%%</span> <span class="fl">5L</span> <span class="kw">==</span> <span class="fl">0L</span>)
-     <span class="fu">tf_print</span>(<span class="st">"Buzz"</span>)
+<span class="va">tf_print</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+  <span class="va">tf</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span>, output_stream <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"file://%s"</span>, <span class="va">TEMPFILE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fizzbuzz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/pkg/tfdatasets/man/range_dataset.html">range_dataset</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1L</span>, to <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">%%</span> <span class="fl">15L</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span>
+      <span class="fu">tf_print</span><span class="op">(</span><span class="st">"FizzBuzz"</span><span class="op">)</span>
+    <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">%%</span> <span class="fl">3L</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span>
+      <span class="fu">tf_print</span><span class="op">(</span><span class="st">"Fizz"</span><span class="op">)</span>
+    <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">%%</span> <span class="fl">5L</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span>
+     <span class="fu">tf_print</span><span class="op">(</span><span class="st">"Buzz"</span><span class="op">)</span>
     <span class="kw">else</span>
-      <span class="fu">tf_print</span>(<span class="no">i</span>)
-  }
-})</pre></body></html></div>
+      <span class="fu">tf_print</span><span class="op">(</span><span class="va">i</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>First, lets run it in eager mode.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu">fizzbuzz</span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">25L</span>))
-<span class="fu">print_tempfile</span>()
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">fizzbuzz</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">25L</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">print_tempfile</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz 16 17 Fizz 19</span>
-<span class="co">#&gt; Buzz Fizz 22 23 Fizz</span></pre></body></html></div>
+<span class="co">#&gt; Buzz Fizz 22 23 Fizz</span></code></pre></div>
 <p>And now in graph mode.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">fizzbuzz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="no">fizzbuzz</span>)
-<span class="fu">fizzbuzz</span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">25L</span>))
-<span class="fu">print_tempfile</span>()
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tf_fizzbuzz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="va">fizzbuzz</span><span class="op">)</span>
+<span class="fu">tf_fizzbuzz</span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">25L</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">print_tempfile</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz 16 17 Fizz 19</span>
-<span class="co">#&gt; Buzz Fizz 22 23 Fizz</span></pre></body></html></div>
+<span class="co">#&gt; Buzz Fizz 22 23 Fizz</span></code></pre></div>
 </div>
 <div id="visualize-function-graphs" class="section level1">
 <h1 class="hasAnchor">
 <a href="#visualize-function-graphs" class="anchor"></a>Visualize Function Graphs</h1>
-<p>As you are writing <code>tf.function()</code>s, it’s helpful to visualize what the produced graph from a particular autographed function looks like. Use <code><a href="../reference/view_function_graph.html">tfautograph::view_function_graph()</a></code> to launch a tensorboard instance with the produced function graph from a temporary directory.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/view_function_graph.html">view_function_graph</a></span>(<span class="no">fizzbuzz</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">tf</span>$<span class="fu">constant</span>(<span class="fl">25L</span>)))</pre></body></html></div>
+<p>As you are writing <code>tf.function()</code>s, it’s helpful to visualize what the produced graph from a particular autographed function looks like. Use <code><a href="../reference/view_function_graph.html">tfautograph::view_function_graph()</a></code> to launch a tensorboard instance with the produced function graph from a temporary directory. Note, the function must be being traced for the first time for <code>view_function_graph</code> to succeed.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/view_function_graph.html">view_function_graph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="va">fizzbuzz</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="fl">25L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="images/fizzbuzz-graph-in-tensorboard.png" alt="FizzBuzz Graph in Tensorboard" width="100%"><p class="caption">
+FizzBuzz Graph in Tensorboard
+</p>
+</div>
 <div id="control-dependencies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#control-dependencies" class="anchor"></a>Control Dependencies</h2>
@@ -460,7 +500,7 @@
 <div id="growing-objects-tensorarrays" class="section level1">
 <h1 class="hasAnchor">
 <a href="#growing-objects-tensorarrays" class="anchor"></a>Growing Objects / TensorArrays</h1>
-<p>The package provides a <code>[[&lt;-</code> method for TensorArrays. That’s the recommended way to grow objects on the graph. See <code><a href="../reference/sub-subset-.tensorflow.python.ops.tensor_array_ops.TensorArray.html">?`[[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray`</a></code> for usage examples.</p>
+<p>The package provides a <code>[[&lt;-</code> method for TensorArrays. That’s the recommended way to grow objects on the graph. See <code><a href="../reference/%5B%5B&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray.html">?`[[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray`</a></code> for usage examples.</p>
 </div>
 <div id="other-helpers" class="section level1">
 <h1 class="hasAnchor">
@@ -502,7 +542,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

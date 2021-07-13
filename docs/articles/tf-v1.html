@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -76,11 +76,14 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -94,7 +97,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="tf-v1_files/header-attrs-2.9.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Autographing Tensorflow version 1.15</h1>
@@ -107,29 +110,32 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="st">"RETICULATE_PYTHON"</span> <span class="kw">=</span> <span class="kw pkg">reticulate</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_python</a></span>(<span class="st">"tf-1.15"</span>))
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tensorflow</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tfautograph</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/use_python.html">use_condaenv</a></span><span class="op">(</span><span class="st">"tf-1.15"</span>, required <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/tensorflow">tensorflow</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://t-kalinowski.github.io/tfautograph/">tfautograph</a></span><span class="op">)</span>
 
-<span class="no">tf</span>$<span class="no">version</span>$<span class="no">VERSION</span>
-<span class="co">#&gt; [1] "1.15.0"</span>
-<span class="no">tf</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="no">compat</span>$<span class="no">v1</span></pre></body></html></div>
+<span class="va">tf</span><span class="op">$</span><span class="va">version</span><span class="op">$</span><span class="va">VERSION</span>
+<span class="co">#&gt; [1] "1.15.5"</span>
+<span class="va">tf</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="va">compat</span><span class="op">$</span><span class="va">v1</span></code></pre></div>
 <p><code><a href="../reference/autograph.html">autograph()</a></code> has complete compatibility with both Tensorflow version &gt;= 2.0 and &gt;= 1.15. For the most part, there are no difference between how <code><a href="../reference/autograph.html">autograph()</a></code> work in both version, either in eager mode or graph mode.</p>
 <p>One thing to be aware of however is how control dependencies are registered. In Tensorflow version 2, all ops created inside a traced <code>tf.function()</code> are executed sequentially. That means that simply inlining a call to <code>tf$print()</code> or <code>tf$Assert()</code> is sufficient to ensure that the op is executed, and is executed in the intended order in a sequence of operations.</p>
 <p>However, when tensorflow is not executing eagerly and outside a <code>tf.function()</code> context (that is, the default behavior of Tensorflow version 1, but also possible in version 2 after a call to <code>tf.compat.v1.disable_eager_execution()</code>), then created ops are only typically only evaluated if they are manually registered as control dependencies of other tensors.</p>
 <p>For example, this block of code never throws an error:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">sess</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">Session</span>()
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu">constant</span>(-<span class="fl">1</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sess</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">Session</span><span class="op">(</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">constant</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
 
-<span class="no">stop_if_negative</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="../reference/tf_assert.html">tf_assert</a></span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>, <span class="st">"x is positive"</span>)
-  <span class="no">x</span>
-}
-<span class="no">sess</span>$<span class="fu">run</span>(<span class="fu">stop_if_negative</span>(<span class="no">x</span>))
-<span class="co">#&gt; [1] -1</span></pre></body></html></div>
+<span class="va">stop_if_negative</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="../reference/tf_assert.html">tf_assert</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="st">"x is positive"</span><span class="op">)</span>
+  <span class="va">x</span>
+<span class="op">}</span>
+<span class="va">sess</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="fu">stop_if_negative</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] -1</span></code></pre></div>
 <p>There are two straight forward solutions to this. One is to wrap the block of code in an <code>tf.function()</code></p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">stop_if_negative2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span>(<span class="no">stop_if_negative</span>)
-<span class="no">sess</span>$<span class="fu">run</span>(<span class="fu">stop_if_negative2</span>(<span class="no">x</span>))
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">stop_if_negative2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/tf_function.html">tf_function</a></span><span class="op">(</span><span class="va">stop_if_negative</span><span class="op">)</span>
+<span class="va">sess</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="fu">stop_if_negative2</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># [&lt;#&gt; Error in py_call_impl(callable, dots$args, dots$keywords): InvalidArgumentError: assertion failed: </span>
 <span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [x is positive] [`x` value:] [-1] </span>
 <span class="co"># [&lt;R call stack&gt;:] </span>
@@ -162,49 +168,51 @@
 <span class="co"># [&lt;R call 27&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span>
 <span class="co"># [&lt;R call 28&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span>
 <span class="co"># [&lt;R call 29&gt;: evaluate::evaluate(...)] </span>
-<span class="co"># [&lt;R call 30&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span>
-<span class="co"># [&lt;R call 31&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span>
-<span class="co"># [&lt;R call 32&gt;: block_exec(params)] </span>
-<span class="co"># [&lt;R call 33&gt;: call_block(x)] </span>
-<span class="co"># [&lt;R call 34&gt;: process_group.block(group)] </span>
-<span class="co"># [&lt;R call 35&gt;: process_group(group)] </span>
-<span class="co"># [&lt;R call 36&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
-<span class="co"># [&lt;R call 37&gt;: process_file(text, output)] </span>
-<span class="co"># [&lt;R call 38&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
-<span class="co"># [&lt;R call 39&gt;: rmarkdown::render(...)] </span>
-<span class="co"># [&lt;R call 40&gt;: (function (...) ] </span>
-<span class="co"># [&lt;R call 41&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
-<span class="co"># [&lt;R call 42&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span>
-<span class="co"># [&lt;R call 43&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/Rtmpg6kweR/callr-res-2492e3b5c9c3d\")] </span>
-<span class="co"># [&lt;R call 44&gt;: withCallingHandlers({] </span>
-<span class="co"># [&lt;R call 45&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 46&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
-<span class="co"># [&lt;R call 47&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
-<span class="co"># [&lt;R call 48&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 49&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
-<span class="co"># [&lt;R call 50&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
-<span class="co"># [&lt;R call 51&gt;: tryCatch(withCallingHandlers({]</span>
+<span class="co"># [&lt;R call 30&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 31&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 32&gt;: eng_r(options)] </span>
+<span class="co"># [&lt;R call 33&gt;: block_exec(params)] </span>
+<span class="co"># [&lt;R call 34&gt;: call_block(x)] </span>
+<span class="co"># [&lt;R call 35&gt;: process_group.block(group)] </span>
+<span class="co"># [&lt;R call 36&gt;: process_group(group)] </span>
+<span class="co"># [&lt;R call 37&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
+<span class="co"># [&lt;R call 38&gt;: process_file(text, output)] </span>
+<span class="co"># [&lt;R call 39&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
+<span class="co"># [&lt;R call 40&gt;: rmarkdown::render(...)] </span>
+<span class="co"># [&lt;R call 41&gt;: (function (...) ] </span>
+<span class="co"># [&lt;R call 42&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
+<span class="co"># [&lt;R call 43&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE)] </span>
+<span class="co"># [&lt;R call 44&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE), file = \"/tmp/Rtmpj4zvS8/callr-res-2ffd3626d811\")] </span>
+<span class="co"># [&lt;R call 45&gt;: withCallingHandlers({] </span>
+<span class="co"># [&lt;R call 46&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 47&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
+<span class="co"># [&lt;R call 48&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
+<span class="co"># [&lt;R call 49&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 50&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
+<span class="co"># [&lt;R call 51&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
+<span class="co"># [&lt;R call 52&gt;: tryCatch(withCallingHandlers({]</span>
 <span class="co">#&gt;   [[{{node Assert}}]]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Detailed traceback: </span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
+<span class="co">#&gt; Detailed traceback:</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
 <span class="co">#&gt;     run_metadata_ptr)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
 <span class="co">#&gt;     feed_dict_tensor, options, run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
 <span class="co">#&gt;     run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
-<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></pre></body></html></div>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
+<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></code></pre></div>
 <p>The other is to capture the assert operation as a control dependency of the evaluated tensor.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">stop_if_negative3</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">assert_op</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/tf_assert.html">tf_assert</a></span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>, <span class="st">"x is positive"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">tf</span>$<span class="fu">control_dependencies</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">assert_op</span>)), {
-    <span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">tf</span>$<span class="fu"><a href="https://rdrr.io/r/base/identity.html">identity</a></span>(<span class="no">x</span>)
-  })
-  <span class="no">y</span>
-}
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">stop_if_negative3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">assert_op</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tf_assert.html">tf_assert</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="st">"x is positive"</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">tf</span><span class="op">$</span><span class="fu">control_dependencies</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">assert_op</span><span class="op">)</span><span class="op">)</span>, <span class="op">{</span>
+    <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">tf</span><span class="op">$</span><span class="fu">identity</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="va">y</span>
+<span class="op">}</span>
 
-<span class="no">sess</span>$<span class="fu">run</span>(<span class="fu">stop_if_negative3</span>(<span class="no">x</span>))
+<span class="va">sess</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="fu">stop_if_negative3</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># [&lt;#&gt; Error in py_call_impl(callable, dots$args, dots$keywords): InvalidArgumentError: assertion failed: </span>
 <span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [x is positive] [`x` value:] [-1] </span>
 <span class="co"># [&lt;R call stack&gt;:] </span>
@@ -225,45 +233,47 @@
 <span class="co"># [&lt;R call 15&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span>
 <span class="co"># [&lt;R call 16&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span>
 <span class="co"># [&lt;R call 17&gt;: evaluate::evaluate(...)] </span>
-<span class="co"># [&lt;R call 18&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span>
-<span class="co"># [&lt;R call 19&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span>
-<span class="co"># [&lt;R call 20&gt;: block_exec(params)] </span>
-<span class="co"># [&lt;R call 21&gt;: call_block(x)] </span>
-<span class="co"># [&lt;R call 22&gt;: process_group.block(group)] </span>
-<span class="co"># [&lt;R call 23&gt;: process_group(group)] </span>
-<span class="co"># [&lt;R call 24&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
-<span class="co"># [&lt;R call 25&gt;: process_file(text, output)] </span>
-<span class="co"># [&lt;R call 26&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
-<span class="co"># [&lt;R call 27&gt;: rmarkdown::render(...)] </span>
-<span class="co"># [&lt;R call 28&gt;: (function (...) ] </span>
-<span class="co"># [&lt;R call 29&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
-<span class="co"># [&lt;R call 30&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span>
-<span class="co"># [&lt;R call 31&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/Rtmpg6kweR/callr-res-2492e3b5c9c3d\")] </span>
-<span class="co"># [&lt;R call 32&gt;: withCallingHandlers({] </span>
-<span class="co"># [&lt;R call 33&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 34&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
-<span class="co"># [&lt;R call 35&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
-<span class="co"># [&lt;R call 36&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 37&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
-<span class="co"># [&lt;R call 38&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
-<span class="co"># [&lt;R call 39&gt;: tryCatch(withCallingHandlers({]</span>
+<span class="co"># [&lt;R call 18&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 19&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 20&gt;: eng_r(options)] </span>
+<span class="co"># [&lt;R call 21&gt;: block_exec(params)] </span>
+<span class="co"># [&lt;R call 22&gt;: call_block(x)] </span>
+<span class="co"># [&lt;R call 23&gt;: process_group.block(group)] </span>
+<span class="co"># [&lt;R call 24&gt;: process_group(group)] </span>
+<span class="co"># [&lt;R call 25&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
+<span class="co"># [&lt;R call 26&gt;: process_file(text, output)] </span>
+<span class="co"># [&lt;R call 27&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
+<span class="co"># [&lt;R call 28&gt;: rmarkdown::render(...)] </span>
+<span class="co"># [&lt;R call 29&gt;: (function (...) ] </span>
+<span class="co"># [&lt;R call 30&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
+<span class="co"># [&lt;R call 31&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE)] </span>
+<span class="co"># [&lt;R call 32&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE), file = \"/tmp/Rtmpj4zvS8/callr-res-2ffd3626d811\")] </span>
+<span class="co"># [&lt;R call 33&gt;: withCallingHandlers({] </span>
+<span class="co"># [&lt;R call 34&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 35&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
+<span class="co"># [&lt;R call 36&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
+<span class="co"># [&lt;R call 37&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 38&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
+<span class="co"># [&lt;R call 39&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
+<span class="co"># [&lt;R call 40&gt;: tryCatch(withCallingHandlers({]</span>
 <span class="co">#&gt;   [[node Assert_1/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Detailed traceback: </span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
+<span class="co">#&gt; Detailed traceback:</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
 <span class="co">#&gt;     run_metadata_ptr)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
 <span class="co">#&gt;     feed_dict_tensor, options, run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
 <span class="co">#&gt;     run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
-<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></pre></body></html></div>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
+<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></code></pre></div>
 <p>Because the latter approach in <code>stop_if_negative3</code> is so common and so cumbersome, <code>autograph</code> takes care of it for you when autographing <code><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot()</a></code> calls.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">stop_if_negative4</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="../reference/autograph.html">autograph</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">0</span>))
-  <span class="no">x</span>
-}
-<span class="no">sess</span>$<span class="fu">run</span>(<span class="fu">stop_if_negative4</span>(<span class="no">x</span>))
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">stop_if_negative4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="../reference/autograph.html">autograph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">x</span>
+<span class="op">}</span>
+<span class="va">sess</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="fu">stop_if_negative4</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># [&lt;#&gt; Error in py_call_impl(callable, dots$args, dots$keywords): InvalidArgumentError: assertion failed: </span>
 <span class="co"># [&lt;Assert condition R expression&gt;: `x &gt; 0`] [`x` value:] [-1] </span>
 <span class="co"># [&lt;R call stack&gt;:] </span>
@@ -288,39 +298,40 @@
 <span class="co"># [&lt;R call 19&gt;: timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval(expr, envir, enclos)), warning = wHandler, error = eHandler, message = mHandler)))] </span>
 <span class="co"># [&lt;R call 20&gt;: evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2L, keep_warning = keep_warning, keep_message = keep_message, output_handler = output_handler, include_timing = include_timing)] </span>
 <span class="co"># [&lt;R call 21&gt;: evaluate::evaluate(...)] </span>
-<span class="co"># [&lt;R call 22&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options))] </span>
-<span class="co"># [&lt;R call 23&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (options$error &amp;&amp; options$include) 0L else 2L, output_handler = knit_handlers(options$render, options)))] </span>
-<span class="co"># [&lt;R call 24&gt;: block_exec(params)] </span>
-<span class="co"># [&lt;R call 25&gt;: call_block(x)] </span>
-<span class="co"># [&lt;R call 26&gt;: process_group.block(group)] </span>
-<span class="co"># [&lt;R call 27&gt;: process_group(group)] </span>
-<span class="co"># [&lt;R call 28&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
-<span class="co"># [&lt;R call 29&gt;: process_file(text, output)] </span>
-<span class="co"># [&lt;R call 30&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
-<span class="co"># [&lt;R call 31&gt;: rmarkdown::render(...)] </span>
-<span class="co"># [&lt;R call 32&gt;: (function (...) ] </span>
-<span class="co"># [&lt;R call 33&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
-<span class="co"># [&lt;R call 34&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv)] </span>
-<span class="co"># [&lt;R call 35&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpg6kweR/callr-fun-2492e7514a3eb\"), list(envir = .GlobalEnv)), envir = .GlobalEnv), file = \"/tmp/Rtmpg6kweR/callr-res-2492e3b5c9c3d\")] </span>
-<span class="co"># [&lt;R call 36&gt;: withCallingHandlers({] </span>
-<span class="co"># [&lt;R call 37&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 38&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
-<span class="co"># [&lt;R call 39&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
-<span class="co"># [&lt;R call 40&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
-<span class="co"># [&lt;R call 41&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
-<span class="co"># [&lt;R call 42&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
-<span class="co"># [&lt;R call 43&gt;: tryCatch(withCallingHandlers({]</span>
+<span class="co"># [&lt;R call 22&gt;: evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 23&gt;: in_dir(input_dir(), evaluate(code, envir = env, new_device = FALSE, keep_warning = !isFALSE(options$warning), keep_message = !isFALSE(options$message), stop_on_error = if (is.numeric(options$error)) options$error else {] </span>
+<span class="co"># [&lt;R call 24&gt;: eng_r(options)] </span>
+<span class="co"># [&lt;R call 25&gt;: block_exec(params)] </span>
+<span class="co"># [&lt;R call 26&gt;: call_block(x)] </span>
+<span class="co"># [&lt;R call 27&gt;: process_group.block(group)] </span>
+<span class="co"># [&lt;R call 28&gt;: process_group(group)] </span>
+<span class="co"># [&lt;R call 29&gt;: withCallingHandlers(if (tangle) process_tangle(group) else process_group(group), error = function(e) {] </span>
+<span class="co"># [&lt;R call 30&gt;: process_file(text, output)] </span>
+<span class="co"># [&lt;R call 31&gt;: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)] </span>
+<span class="co"># [&lt;R call 32&gt;: rmarkdown::render(...)] </span>
+<span class="co"># [&lt;R call 33&gt;: (function (...) ] </span>
+<span class="co"># [&lt;R call 34&gt;: (function (what, args, quote = FALSE, envir = parent.frame()) ] </span>
+<span class="co"># [&lt;R call 35&gt;: do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE)] </span>
+<span class="co"># [&lt;R call 36&gt;: saveRDS(do.call(do.call, c(readRDS(\"/tmp/Rtmpj4zvS8/callr-fun-2ffd54a69f0a\"), list(envir = .GlobalEnv, quote = TRUE)), envir = .GlobalEnv, quote = TRUE), file = \"/tmp/Rtmpj4zvS8/callr-res-2ffd3626d811\")] </span>
+<span class="co"># [&lt;R call 37&gt;: withCallingHandlers({] </span>
+<span class="co"># [&lt;R call 38&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 39&gt;: tryCatchOne(expr, names, parentenv, handlers[[1L]])] </span>
+<span class="co"># [&lt;R call 40&gt;: tryCatchList(expr, names[-nh], parentenv, handlers[-nh])] </span>
+<span class="co"># [&lt;R call 41&gt;: doTryCatch(return(expr), name, parentenv, handler)] </span>
+<span class="co"># [&lt;R call 42&gt;: tryCatchOne(tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, handlers[[nh]])] </span>
+<span class="co"># [&lt;R call 43&gt;: tryCatchList(expr, classes, parentenv, handlers)] </span>
+<span class="co"># [&lt;R call 44&gt;: tryCatch(withCallingHandlers({]</span>
 <span class="co">#&gt;   [[node Assert_2/AssertGuard/Assert (defined at /framework/ops.py:1748) ]]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Detailed traceback: </span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
+<span class="co">#&gt; Detailed traceback:</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 956, in run</span>
 <span class="co">#&gt;     run_metadata_ptr)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1180, in _run</span>
 <span class="co">#&gt;     feed_dict_tensor, options, run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1359, in _do_run</span>
 <span class="co">#&gt;     run_metadata)</span>
-<span class="co">#&gt;   File "/home/tomasz/.virtualenvs/tf-1.15/lib/python2.7/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
-<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></pre></body></html></div>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/tf-1.15/lib/python3.6/site-packages/tensorflow_core/python/client/session.py", line 1384, in _do_call</span>
+<span class="co">#&gt;     raise type(e)(node_def, op, message)</span></code></pre></div>
 <p>Note that the error was thrown even though we are not using <code>tf.function()</code>. How does <code><a href="../reference/autograph.html">autograph(stopifnot(...))</a></code> guarantee that the created <code>tf$Assert()</code> Op is evaluated? With a multi-pronged, belt-and-suspenders approach:</p>
 <ul>
 <li>it calls <code>tf$identity()</code> on every symbol involved in the assert expression and then replaces those symbols in the current scope.</li>
@@ -343,7 +354,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
