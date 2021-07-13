@@ -277,5 +277,3 @@ reduce_registered_conds <- function(registry = cond_registries$peek()) {
   names(conds) <- NULL
   Reduce(`&`, conds)
 }
-
-

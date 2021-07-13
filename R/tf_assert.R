@@ -61,5 +61,3 @@ pretty_tf_assert_data <- function(expr, vars, call_stack = NULL, ...) {
   dim(data) <- NULL
   drop_empty(c(expr, ..., data, call_stack))
 }
-
-

@@ -49,4 +49,3 @@ view_function_graph <- function(fn, args, ...,
 
   tensorflow::tensorboard(log_dir = logdir, ..., reload_interval = 0L)
 }
-

@@ -218,4 +218,3 @@ tf_switch <- function(branch_index, ...,
     name = name
   )
 }
-

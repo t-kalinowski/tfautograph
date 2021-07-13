@@ -67,8 +67,3 @@ ag_for_impl.python.builtin.iterator <-
 #
 # # it <- peek_active_iterator()
 # # it$`__next__`()
-
-
-
-
-

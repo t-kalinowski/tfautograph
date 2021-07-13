@@ -38,7 +38,6 @@
 
 
 
-
 as.function.formula <- function(x, envir = environment(x)) {
   if (length(x) == 3L)
     stop("Lambda functions provided as a formula cannot ",

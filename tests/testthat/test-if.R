@@ -361,4 +361,3 @@ test_that("can call from another functions", {
 #   expect_result(fn, as_tensor(1L), 1)
 #   expect_result(fn, as_tensor(-1L), 0)
 # })
-
