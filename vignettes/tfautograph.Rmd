@@ -2,7 +2,7 @@
 title: "Getting Started with tfautograph"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{getting-started}
+  %\VignetteIndexEntry{Getting Started with tfautograph}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,13 +12,13 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-if(Sys.info()[["sysname"]] == "Darwin")
-  Sys.setenv(KMP_DUPLICATE_LIB_OK=TRUE)
+# if(Sys.info()[["sysname"]] == "Darwin")
+  # Sys.setenv(KMP_DUPLICATE_LIB_OK=TRUE)
 
-reticulate::use_virtualenv("tf-2.2", TRUE)
+# reticulate::use_virtualenv("tf-2.2", TRUE)
 ```
 
-The R package `tfautograph` helps you write tensorflow code using R control flow. 
+The R package `tfautograph` helps you write tensorflow code using R control flow.
 
 It allows you to use tensors in R control flow expressions like `if`, `while`,
 and `for`, which can automatically be translated to build a tensorflow graph
@@ -62,13 +62,13 @@ are equivalent:
 ```{r}
 # pass a function to autograph()
 fn <- function(x) if(x > 0) x * x else x
-square_if_positive <- autograph(fn) 
+square_if_positive <- autograph(fn)
 
 # pass an expression to autograph()
 square_if_positive <- function(x) autograph(if(x > 0) x * x else x)
 ```
 
-Now `square_if_positive` is a function that can accept a tensor as an argument. 
+Now `square_if_positive` is a function that can accept a tensor as an argument.
 
 ```{r}
 x <- tf$convert_to_tensor(5)
@@ -80,7 +80,7 @@ square_if_positive(y)
 Note that if you're in a context where tensorflow is executing eagerly,
 `autograph()` doesn't change that--`square_if_positive()` is still executing
 eagerly. You can test that by inserting some R `print` statements to see when a
-branch is evaluated. 
+branch is evaluated.
 
 ```{r}
 square_if_positive_verbose <- autograph(function(x) {
@@ -120,10 +120,10 @@ graph_fn(y)
 
 In graph mode, both branches of the `if` expression are traced into a tensorflow graph the first time the function is called and the resultant graph is cached by Tensorflow `Function` object returned from `tf.function()`. Then on subsequent calls of the `Function`, only the cached graph is evaluated.
 
-The key takeaways are that `autograph()` helps you write natural R code and use tensors in expressions where R wouldn't otherwise accept them. And that `autograph()` is smart enough to do the right thing in both eager mode and graph mode. 
+The key takeaways are that `autograph()` helps you write natural R code and use tensors in expressions where R wouldn't otherwise accept them. And that `autograph()` is smart enough to do the right thing in both eager mode and graph mode.
 
 
-# Control Flow 
+# Control Flow
 
 tfautograph can translate R control flow statements `if`, `while`, `for`, `break`, and
 `next` to tensorflow. Here is summary table of the translation endpoints (note,
@@ -132,23 +132,23 @@ translation, not the actual implementation)
 
 ```{r, echo = FALSE, results = 'asis'}
 knitr::kable(matrix(
-  ncol = 3, byrow = TRUE, dimnames = list(c(),  
+  ncol = 3, byrow = TRUE, dimnames = list(c(),
    c("R expression", "Graph Mode Translation", "Eager Mode Translation")),
   c("`if(x)`", "`tf$cond(x, ...)`", "```if(x$`__bool__`())```",
     "`while(x)`"        , "`tf$while_loop(...)`", "`while(as.logical(x))`",
     "`for(x in tensor)`", "`tf$while_loop(...)`" , "`while(!is.null(x <- iter_next(tensor_iterator)))`",
-    "`for(x in tfdataset)`", "`Dataset$reduce()`", "`while(!is.null(x <- iter_next(dataset_iterator)))`" 
+    "`for(x in tfdataset)`", "`Dataset$reduce()`", "`while(!is.null(x <- iter_next(dataset_iterator)))`"
   ),
 ))
 ```
 
-Lets go through them one at a time. 
+Lets go through them one at a time.
 
 
 ## `if`
 
 
-In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`). 
+In eager mode, `if(eager_tensor)` is translated to ```if(eager_tensor$`__bool__`())```. (Essentially, a slightly more robust way to call `eager_tensor$numpy()`).
 
 In graph mode, `if` statements written in R automatically get translated to a `tf.cond()`. `tf.cond()` requires that both branches of the conditional are balanced (meaning, both branches return the same output structure). `autograph()` tries to capture all locally modified variables, newly created variables, as well as the return value of the overall expression in the translated  `tf.cond()`, while satisfying the requirement for balanced branches.
 
@@ -164,7 +164,7 @@ tf_sign <- tf_function(autograph(function(x) {
 }))
 ```
 
-Any variables that can't be balanced between the branches are exported as **undefined** objects (S3 class: `undef`). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the `undef` originated from, and suggestions for how to prevent the symbol from being an `undef`. 
+Any variables that can't be balanced between the branches are exported as **undefined** objects (S3 class: `undef`). Undefined objects throw an informative error if you attempt to access them. The error message indicates which expression the `undef` originated from, and suggestions for how to prevent the symbol from being an `undef`.
 ```{r, error = TRUE}
 undef_example <- tf_function(autograph(function(x) {
   if (x > 0) {
@@ -243,9 +243,9 @@ tf_factorial_v2(tf$constant(5))
 
 
 ## `for`
-Autographed `for` loops build on top of while loops. `autograph` adds support for three new types of values passed to `for`: 
+Autographed `for` loops build on top of while loops. `autograph` adds support for three new types of values passed to `for`:
 
-+  tfdatasets 
++  tfdatasets
 +  tensors
 +  python iterators (eager mode only).
 
@@ -272,18 +272,18 @@ autograph({
 })
 ```
 
-In graph mode, `for` can accept a tensor or a dataset. 
+In graph mode, `for` can accept a tensor or a dataset.
 ```{r}
 niave_reduce_sum <- tf_function(autograph(function(x, dtype = "int64") {
   running_total <- tf$zeros(list(), dtype)
   for (elem in x)
     running_total %<>% add(elem)
-  
+
   running_total
 }))
 ```
 
-Works with a tensor: 
+Works with a tensor:
 ```{r}
 niave_reduce_sum(tf$range(10L, dtype = "int64"))
 ```
@@ -292,17 +292,17 @@ and with a dataset:
 niave_reduce_sum(tf$data$Dataset$range(10L))
 ```
 
-Since `for(var in tensor)` loops are powered by `tf$while_loop()`, 
+Since `for(var in tensor)` loops are powered by `tf$while_loop()`,
 you can pass additional options via `ag_while_opts()` just as you would to an
 autographed `while()` expression.
 ```{r}
 niave_reduce_sum_with_opts <- tf_function(autograph(function(x) {
   running_total <- tf$zeros(list(), x$dtype)
-  
+
   ag_while_opts(parallel_iterations = 1)
   for (elem in x)
     running_total %<>% add(elem)
-  
+
   running_total
 }))
 
@@ -363,8 +363,8 @@ print_tempfile()
 ```
 And now in graph mode.
 ```{r}
-fizzbuzz <- tf_function(fizzbuzz)
-fizzbuzz(tf$constant(25L))
+tf_fizzbuzz <- tf_function(fizzbuzz)
+tf_fizzbuzz(tf$constant(25L))
 print_tempfile()
 ```
 
@@ -375,11 +375,22 @@ print_tempfile()
 As you are writing `tf.function()`s, it's helpful to visualize what the produced
 graph from a particular autographed function looks like. Use
 `tfautograph::view_function_graph()` to launch a tensorboard instance with the
-produced function graph from a temporary directory.
+produced function graph from a temporary directory. Note, the function must be being traced for the first time for `view_function_graph` to succeed.
 
 ```{r, eval = FALSE}
-view_function_graph(fizzbuzz, list(tf$constant(25L)))
+view_function_graph(tf_function(fizzbuzz), list(tf$constant(25L)))
 ```
+```{r, echo=FALSE, fig.cap="FizzBuzz Graph in Tensorboard", out.width = '100%'}
+knitr::include_graphics("images/fizzbuzz-graph-in-tensorboard.png")
+```
+
+```{r, eval = FALSE, echo=FALSE}
+# x <- view_function_graph(tf_function(fizzbuzz), list(tf$constant(25L)),
+#                          launch_browser=FALSE)
+# webshot doesn't work with tensorboard
+# webshot::webshot(x, png <- tempfile(fileext='.png'), delay = 1)
+```
+
 
 ## Control Dependencies
 Side effects Ops `tf$print()` and `tf$Assert()` created within a `tf.function` are executed in-line and in the correct order when the function is evaluated. (If you're used to working Tensorflow version 1, you read that right!)
@@ -392,7 +403,7 @@ If you're still working in Tensorflow version 1, check out the vignette on TF v1
 # Growing Objects / TensorArrays
 
 The package provides a `[[<-` method for TensorArrays. That's the recommended way
-to grow objects on the graph. 
+to grow objects on the graph.
 See ``` ?`[[<-.tensorflow.python.ops.tensor_array_ops.TensorArray` ``` for usage examples.
 
 # Other helpers
