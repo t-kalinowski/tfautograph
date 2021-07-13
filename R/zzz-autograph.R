@@ -36,9 +36,6 @@ ag_mask_list <- list(
 #'   example, via `<-`), those modified variables are then exported into the
 #'   current frame. The return value of the expression is then returned.
 #' @export
-#'
-#' @importFrom tensorflow tf
-#' @export
 autograph <- function(x) {
   xe <- substitute(x)
   env <- parent.frame()
@@ -103,3 +100,9 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
   get("attach")(ag_mask_list, pos = pos, name = "tfautograph:ag_mask",
          warn.conflicts = warn.conflicts)
 
+
+tf <- NULL
+.onLoad <- function(libname, pkgname) {
+  if(requireNamespace("tensorflow"))
+    tf <<- tensorflow::tf
+}

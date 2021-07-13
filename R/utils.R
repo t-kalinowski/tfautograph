@@ -122,8 +122,7 @@ tf_group_ops <- function(x) {
 }
 
 
-#' @importFrom tensorflow tf_version
-tf_v2 <- function() package_version(tf_version()) >= "2"
-tf_v1 <- function() package_version(tf_version()) < "2"
+tf_v2 <- function() package_version(tensorflow::tf_version()) >= "2"
+tf_v1 <- function() package_version(tensorflow::tf_version()) < "2"
 
 

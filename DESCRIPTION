@@ -8,7 +8,6 @@ URL: https://t-kalinowski.github.io/tfautograph/
 BugReports: https://github.com/t-kalinowski/tfautograph/issues
 Depends: R (>= 3.5.0)
 Imports:
-    tensorflow,
     reticulate
 License: GPL-3
 Encoding: UTF-8
@@ -16,6 +15,7 @@ LazyData: true
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 Suggests:
+    tensorflow,
     rlang,
     testthat (>= 2.1.0),
     knitr,

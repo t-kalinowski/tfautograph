@@ -32,14 +32,8 @@
 
 
 
-#' @importFrom tensorflow tf_function
-#' @export
-tensorflow::tf_function
 
 
-#' @importFrom tensorflow tf
-#' @export
-tensorflow::tf
 
 
 
