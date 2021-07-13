@@ -1,5 +1,5 @@
 ---
-title: "MNIST"
+title: "mnist"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{mnist}
