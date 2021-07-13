@@ -34,7 +34,7 @@ ag_while <- function(cond, body) {
   loop_vars <- setdiff(loop_vars, hint$exclude)
 
   # TODO: the loop vars selector should work the same as ag_if. it should handle
-  # nested structures similarily, and the user-specificaiton function should
+  # nested structures similarly, and the user-specification function should
   # have the same mechanics.
 
   cond_fn <- as_loop_cond_fn(cond, loop_vars, env)
@@ -42,11 +42,26 @@ ag_while <- function(cond, body) {
 
   loop_vars <- dict(mget(loop_vars, envir = env, inherits = TRUE))
 
+  opts <- next_while_loop_opts$pop()
+  shps <- opts$shape_invariants
+
+  if(!is.null(shps) && !inherits(shps, "python.builtin.dict"))
+    shps <- dict(shps)
+
   if (can_break) {
     did_break <- FALSE
     loop_vars <- tuple(loop_vars, did_break)
-  } else
+    if (!is.null(shps))
+      shps <- tuple(shps, list())
+
+  } else {
     loop_vars <- tuple(loop_vars)
+    if (!is.null(shps))
+      shps <- tuple(shps)
+
+  }
+
+  opts$shape_invariants <- shps
 
   while_loop_args <- c(
     list(
@@ -56,7 +71,7 @@ ag_while <- function(cond, body) {
       return_same_structure = TRUE
     ),
     name = next_ag_name$pop(),
-    next_while_loop_opts$pop()
+    opts
   )
   if(tf_v2())
     while_loop_args$return_same_structure <- NULL
@@ -71,5 +86,3 @@ ag_while <- function(cond, body) {
 
   invisible()
 }
-
-

@@ -224,17 +224,21 @@ has many options. In order to pass those through to the call, precede the
 `while` expression with `ag_while_opts()`.
 
 ```{r}
-tf_factorial_no_backprop <- tf_function(autograph(function(x) {
-  total <- 1
-  ag_while_opts(back_prop = FALSE)
+tf_factorial_v2 <- tf_function(autograph(function(x) {
+  total <- as_tensor(1)
+  ag_while_opts(
+    shape_invariants = list(total = tf$TensorShape(list()),
+                            x = tf$TensorShape(list())),
+    parallel_iterations = 1
+  )
   while (x != 0) {
     message("Evaluating while body R expression")
     total %<>% multiply_by(x)
     x %<>% subtract(tf_sign(x))
   }
   total
-  }))
-tf_factorial_no_backprop(tf$constant(5))
+}))
+tf_factorial_v2(tf$constant(5))
 ```
 
 

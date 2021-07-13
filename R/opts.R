@@ -30,7 +30,8 @@ ag_name <- function(x) next_ag_name$set(x)
 #' @param shape_invariants The shape invariants for the loop variables.
 #' @param parallel_iterations The number of iterations allowed to run in
 #'   parallel. It must be a positive integer.
-#' @param back_prop  Whether backprop is enabled for this while loop.
+#' @param back_prop Deprecated (optional). `FALSE` disables support for back
+#'   propagation. Prefer using `tf$stop_gradient` instead.
 #' @param swap_memory Whether GPU-CPU memory swap is enabled for this loop.
 #' @param maximum_iterations Optional maximum number of iterations of the while
 #'   loop to run. If provided, the `cond` output is AND-ed with an additional
@@ -81,4 +82,3 @@ ag_while_opts <- function(...,
 
 next_ag_name         <- Variable()
 next_while_loop_opts <- Variable()
-
