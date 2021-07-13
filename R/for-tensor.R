@@ -60,9 +60,16 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   }
 
   can_break <- any(c("break", "return") %in% all.names(body, unique = TRUE))
-  did_break <- if(can_break) FALSE else NULL
+  did_break <- if(can_break) tf$constant(FALSE) else NULL
+  index <- tf$constant(0L)
 
-  index <- 0L
+  opts <- next_while_loop_opts$pop()
+  if(!is.null(opts$shape_invariants -> shps)) {
+    shps <- list(index$shape, shps)
+    shps[[3]] <- did_break$shape
+    opts$shape_invariants <- shps
+  }
+
 
   loop_vars <- mget(loop_vars, env, inherits = TRUE)
 
@@ -74,7 +81,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
       return_same_structure = TRUE
     ),
     name = next_ag_name$pop(),
-    next_while_loop_opts$pop()
+    opts
   )
 
   if(tf_v2())
