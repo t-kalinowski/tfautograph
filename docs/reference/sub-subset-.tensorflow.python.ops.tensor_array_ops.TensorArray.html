@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><code>TensorArray.write()</code> — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray • tfautograph</title>
+<title>TensorArray.write() — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray • tfautograph</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="<code>TensorArray.write()</code> — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray" />
+<meta property="og:title" content="TensorArray.write() — [[&lt;-.tensorflow.python.ops.tensor_array_ops.TensorArray" />
 <meta property="og:description" content="TensorArray.write()" />
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -117,11 +117,14 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -177,19 +180,20 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>ta</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>TensorArray</span>(<span class='no'>tf</span>$<span class='no'>float32</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5L</span>)
-<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='fl'>4</span>)
-  <span class='no'>ta</span><span class='kw'>[[</span><span class='no'>i</span>]] <span class='kw'>&lt;-</span> <span class='no'>i</span>
-<span class='no'>ta</span>$<span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span>()
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>ta</span> <span class='op'>&lt;-</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>TensorArray</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='va'>float32</span>, size <span class='op'>=</span> <span class='fl'>5L</span><span class='op'>)</span>
+<span class='kw'>for</span><span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>0</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>)</span>
+  <span class='va'>ta</span><span class='op'>[[</span><span class='va'>i</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>i</span>
+<span class='va'>ta</span><span class='op'>$</span><span class='fu'>stack</span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='co'># You can use this to grow objects in graph mode</span>
-<span class='no'>accuracies_log</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>TensorArray</span>(<span class='no'>tf</span>$<span class='no'>float32</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>0L</span>, <span class='kw'>dynamic_size</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='kw'>for</span>(<span class='no'>epoch</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='fl'>4</span>)
-  <span class='no'>accuracies_log</span><span class='kw'>[[</span><span class='no'>epoch</span>]] <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>)
-<span class='no'>acc</span> <span class='kw'>&lt;-</span> <span class='no'>accuracies_log</span>$<span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span>()
-<span class='no'>acc</span>
-}</div></pre>
+<span class='va'>accuracies_log</span> <span class='op'>&lt;-</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>TensorArray</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='va'>float32</span>, size <span class='op'>=</span> <span class='fl'>0L</span>, dynamic_size<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='kw'>for</span><span class='op'>(</span><span class='va'>epoch</span> <span class='kw'>in</span> <span class='fl'>0</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>)</span>
+  <span class='va'>accuracies_log</span><span class='op'>[[</span><span class='va'>epoch</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>acc</span> <span class='op'>&lt;-</span> <span class='va'>accuracies_log</span><span class='op'>$</span><span class='fu'>stack</span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>acc</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -205,7 +209,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -117,11 +117,14 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/t-kalinowski/tfautograph">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -147,13 +150,13 @@
     <p>tf.switch_case</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tf_switch</span>(
-  <span class='no'>branch_index</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>branch_fns</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>),
-  <span class='kw'>default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"switch_case"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>tf_switch</span><span class='op'>(</span>
+  <span class='va'>branch_index</span>,
+  <span class='va'>...</span>,
+  branch_fns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>,
+  default <span class='op'>=</span> <span class='cn'>NULL</span>,
+  name <span class='op'>=</span> <span class='st'>"switch_case"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,12 +167,12 @@
     </tr>
     <tr>
       <th>..., branch_fns</th>
-      <td><p>a list of function bodies specified with a <code>~</code>,
+      <td><p>a list of function bodies specified with a <code><a href='https://rdrr.io/r/base/tilde.html'>~</a></code>,
 optionally supplied with a branch index on the left hand side. See examples</p></td>
     </tr>
     <tr>
       <th>default</th>
-      <td><p>A function defined with a <code>~</code>, or something coercible via
+      <td><p>A function defined with a <code><a href='https://rdrr.io/r/base/tilde.html'>~</a></code>, or something coercible via
 `as.function()``</p></td>
     </tr>
     <tr>
@@ -183,46 +186,47 @@ optionally supplied with a branch index on the left hand side. See examples</p><
     <p>The result from <code>tf.switch_case()</code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-   <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-   <span class='fl'>0</span> ~ <span class='fl'>1</span>,
-   <span class='fl'>1</span> ~ <span class='no'>x</span>,
-   <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
-   <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-   <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-})
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>tf_pow</span> <span class='op'>&lt;-</span> <span class='fu'>tf_function</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>pow</span><span class='op'>)</span> <span class='op'>{</span>
+   <span class='fu'>tf_switch</span><span class='op'>(</span><span class='va'>pow</span>,
+   <span class='fl'>0</span> <span class='op'>~</span> <span class='fl'>1</span>,
+   <span class='fl'>1</span> <span class='op'>~</span> <span class='va'>x</span>,
+   <span class='fl'>2</span> <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+   <span class='fl'>3</span> <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+   default <span class='op'>=</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>}</span><span class='op'>)</span>
 
 <span class='co'># can optionally also omit the left hand side int, in which case the order of</span>
 <span class='co'># the functions is used.</span>
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-            ~ <span class='fl'>1</span>,
-            ~ <span class='no'>x</span>,
-            ~ <span class='no'>x</span> * <span class='no'>x</span>,
-            ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-}
+<span class='va'>tf_pow</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>pow</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>tf_switch</span><span class='op'>(</span><span class='va'>pow</span>,
+            <span class='op'>~</span> <span class='fl'>1</span>,
+            <span class='op'>~</span> <span class='va'>x</span>,
+            <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+            <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+            default <span class='op'>=</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># supply just some of the ints to override the default order</span>
-<span class='no'>tf_pow</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>pow</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>pow</span>,
-            <span class='fl'>3</span> ~ <span class='no'>x</span> * <span class='no'>x</span> * <span class='no'>x</span>,
-            <span class='fl'>2</span> ~ <span class='no'>x</span> * <span class='no'>x</span>,
-            ~ <span class='fl'>1</span>,
-            ~ <span class='no'>x</span>,
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ -<span class='fl'>1</span>)
-}
+<span class='va'>tf_pow</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>pow</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>tf_switch</span><span class='op'>(</span><span class='va'>pow</span>,
+            <span class='fl'>3</span> <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+            <span class='fl'>2</span> <span class='op'>~</span> <span class='va'>x</span> <span class='op'>*</span> <span class='va'>x</span>,
+            <span class='op'>~</span> <span class='fl'>1</span>,
+            <span class='op'>~</span> <span class='va'>x</span>,
+            default <span class='op'>=</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># A slightly less contrived example:</span>
-<span class='no'>tf_norm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/tf_function.html'>tf_function</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>l</span>) {
-  <span class='fu'>tf_switch</span>(<span class='no'>l</span>,
-            <span class='fl'>0</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>cast</span>(<span class='no'>x</span> <span class='kw'>!=</span> <span class='fl'>0</span>, <span class='no'>tf</span>$<span class='no'>float32</span>)), <span class='co'># L0 norm</span>
-            <span class='fl'>1</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)),                   <span class='co'># L1 norm</span>
-            <span class='fl'>2</span> ~ <span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='no'>tf</span>$<span class='fu'>reduce_sum</span>(<span class='no'>tf</span>$<span class='fu'>square</span>(<span class='no'>x</span>))),       <span class='co'># L2 norm</span>
-            <span class='kw'>default</span> <span class='kw'>=</span> ~ <span class='no'>tf</span>$<span class='fu'>reduce_max</span>(<span class='no'>tf</span>$<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)))         <span class='co'># L-infinity norm</span>
-})
-}</div></pre>
+<span class='va'>tf_norm</span> <span class='op'>&lt;-</span> <span class='fu'>tf_function</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>tf_switch</span><span class='op'>(</span><span class='va'>l</span>,
+            <span class='fl'>0</span> <span class='op'>~</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>reduce_sum</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='fu'>cast</span><span class='op'>(</span><span class='va'>x</span> <span class='op'>!=</span> <span class='fl'>0</span>, <span class='va'>tf</span><span class='op'>$</span><span class='va'>float32</span><span class='op'>)</span><span class='op'>)</span>, <span class='co'># L0 norm</span>
+            <span class='fl'>1</span> <span class='op'>~</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>reduce_sum</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='fu'>abs</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,                   <span class='co'># L1 norm</span>
+            <span class='fl'>2</span> <span class='op'>~</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>sqrt</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='fu'>reduce_sum</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='fu'>square</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,       <span class='co'># L2 norm</span>
+            default <span class='op'>=</span> <span class='op'>~</span> <span class='va'>tf</span><span class='op'>$</span><span class='fu'>reduce_max</span><span class='op'>(</span><span class='va'>tf</span><span class='op'>$</span><span class='fu'>abs</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>         <span class='co'># L-infinity norm</span>
+<span class='op'>}</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -238,7 +242,7 @@ optionally supplied with a branch index on the left hand side. See examples</p><
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
