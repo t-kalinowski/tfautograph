@@ -18,6 +18,3 @@ ag_print <- function(x) {
   # do? At least this way works with ag_if(), but it'll break relatively
   # esoteric uses of local()
 }
-
-
-

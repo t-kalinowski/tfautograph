@@ -50,4 +50,3 @@ test_that("stopifnot compound", {
   # anywhere else that as_outcome_fn() is used
 
 })
-

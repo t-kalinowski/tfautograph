@@ -72,5 +72,3 @@ access_undefined_condition <- function(sym, call) {
   structure(class = c("access_undefined", "error", "condition"),
             list(message = msg, call = call))
 }
-
-
