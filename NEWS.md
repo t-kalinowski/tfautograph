@@ -1,4 +1,6 @@
-# tfautograph 0.2.0.9000
+# tfautograph (development version)
+
+# tfautograph 0.3.0
 
 * Improved handling of `shape_invariants` supplied to `ag_while_opts`. A named list of user variable shapes can be passed directly now, without requiring users to manually specify shapes of internal loop tracking tensors.
 * Deprecated `back_prop` arg in `ag_while_opts()`
