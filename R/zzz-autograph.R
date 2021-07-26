@@ -101,8 +101,25 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
          warn.conflicts = warn.conflicts)
 
 
+
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
-  if(requireNamespace("tensorflow"))
+  if (requireNamespace("tensorflow")) {
+    if (".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
+      # ugly hack around devtools::load_all() forcing this namespace to load
+      # before the tensorflow namespace is finished loading
+      # https://github.com/r-lib/pkgload/issues/76
+      tf <<- new.env(parent = emptyenv())
+      attr(tf, "class") <- c("python.builtin.module", "python.builtin.object")
+      setHook(packageEvent("tensorflow", "onLoad"),
+              function(...) {
+                list2env(as.list.environment(as.environment(asNamespace("tensorflow")$tf),
+                                             all.names = TRUE),
+                         as.environment(tf))
+              })
+      return()
+    }
+
     tf <<- tensorflow::tf
+  }
 }
