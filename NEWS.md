@@ -1,5 +1,9 @@
 # tfautograph (development version)
 
+# tfautograph 0.3.1
+
+* Fixed issue that prevented the package from being loaded by `devtools::load_all()`
+
 # tfautograph 0.3.0
 
 * Improved handling of `shape_invariants` supplied to `ag_while_opts`. A named list of user variable shapes can be passed directly now, without requiring users to manually specify shapes of internal loop tracking tensors.
