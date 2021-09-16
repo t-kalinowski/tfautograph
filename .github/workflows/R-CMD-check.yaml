@@ -20,34 +20,34 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'release'}
-          - {os: 'windows-latest', tf: 'default', r: 'release'}
-          - {os: 'macOS-latest'  , tf: 'default', r: 'release'}
+          - {os: 'ubuntu-20.04'  , tf: 'tensorflow-cpu', r: 'release'}
+          - {os: 'windows-latest', tf: 'tensorflow-cpu', r: 'release'}
+          - {os: 'macOS-latest'  , tf: 'tensorflow-cpu', r: 'release'}
 
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'oldrel'}
-          - {os: 'windows-latest', tf: 'default', r: 'oldrel'}
-          - {os: 'macOS-latest'  , tf: 'default', r: 'oldrel'}
+          - {os: 'ubuntu-20.04'  , tf: 'tensorflow-cpu', r: 'oldrel'}
+          - {os: 'windows-latest', tf: 'tensorflow-cpu', r: 'oldrel'}
+          - {os: 'macOS-latest'  , tf: 'tensorflow-cpu', r: 'oldrel'}
 
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.5'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.4'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.3'} # Oldest R available in Rstudio Marketplace offerings
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.2'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.1'} #
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.6'} # default R in ubuntu-20.04
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.5'} #
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.4'} #
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.3'} # Oldest R available in Rstudio Marketplace offerings
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.2'} #
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.1'} #
 
           # - {os: 'ubuntu-20.04'  , tf: 'release', r: 'release'}
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
-          - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.4', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.3', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.2', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.1', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu==2.5.*', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu==2.4.*', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu==2.3.*', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu==2.2.*', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu==2.1.*', r: 'release'}
 
           # these are allowed to fail
-          - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
-          - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: 'devel'}
+          - {os: 'ubuntu-20.04', tf: 'tf-nightly-cpu', r: 'release'}
           # - {os: 'ubuntu-20.04', tf: '2.6.0rc1', r: 'release'}
 
     runs-on: ${{ matrix.os }}
@@ -112,7 +112,7 @@ jobs:
 
       - name: Install TensorFlow
         run: |
-          reticulate::py_install(packages = '${{ matrix.tf }}-cpu',
+          reticulate::py_install(packages = '${{ matrix.tf }}',
                                  python_version = "3.7",
                                  pip = TRUE)
 
