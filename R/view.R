@@ -47,5 +47,8 @@ view_function_graph <- function(fn, args, ...,
     names(logdir) <- name
   }
 
-  tensorflow::tensorboard(log_dir = logdir, ..., reload_interval = 0L)
+  # don't list tensorflow in Suggests so CI can test independently.
+  # TODO: consider moving this function to tensorflow
+  tensorboard <- get("tensorboard", envir = asNamespace("tensorflow"))
+  tensorboard(log_dir = logdir, ..., reload_interval = 0L)
 }
