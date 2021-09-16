@@ -104,16 +104,23 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
 
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
-  if(requireNamespace("tensorflow", quietly = TRUE) &&
-     !".__DEVTOOLS__" %in% names(asNamespace("tensorflow")))
+
+  requireNamespace_ <- get("requireNamespace") #  R CMD check
+  if(requireNamespace_("tensorflow", quietly = TRUE) &&
+     !".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
+
     tf <<- tensorflow::tf
-  else {
-    packageStartupMessage("'tfautograph' loaded withough R package 'tensorflow'")
+
+  } else {
+
     tf <<- reticulate::import("tensorflow", delay_load = list(
       on_load = function() {
-        packageStartupMessage("Loaded Tensorflow version ", tf$version$VERSION)
+        packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
+        packageStartupMessage_("'tfautograph' loaded withough R package 'tensorflow'\n",
+                               "Loaded Tensorflow version ", tf$version$VERSION)
       }
     ))
+
   }
 
   # if (requireNamespace("tensorflow", quietly = TRUE)) {

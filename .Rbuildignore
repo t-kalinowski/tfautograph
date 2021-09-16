@@ -10,3 +10,4 @@ vignettes
 ^\.travis\.yml$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
+^\.github.*$
