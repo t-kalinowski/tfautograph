@@ -124,7 +124,7 @@ test_that("next in for", {
   }
   ag_fn <- autograph(fn)
   # if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
-  if(tensorflow::tf_version() >= "1.15")
+  # if(tensorflow::tf_version() >= "1.15")
     tf_function <- function(...)
       tf$`function`(..., autograph = FALSE, experimental_relax_shapes = TRUE)
 
@@ -191,7 +191,7 @@ test_that("break and next in simple for", {
 
   ag_fn <- autograph(fn)
   # if("experimental_relax_shapes" %in% names(as.list(args(tf$`function`))))
-  if(tensorflow::tf_version() >= "1.15")
+  # if(tensorflow::tf_version() >= "1.15")
     tf_function <- function(...)
       tf$`function`(..., autograph = FALSE, experimental_relax_shapes = TRUE)
 

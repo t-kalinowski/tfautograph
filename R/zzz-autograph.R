@@ -104,25 +104,38 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
 
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
-  if (requireNamespace("tensorflow", quietly = TRUE)) {
-    if (".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
-      # ugly hack around devtools::load_all() forcing this namespace to load
-      # before the tensorflow namespace is finished loading
-      # https://github.com/r-lib/pkgload/issues/76
-      tf <<- new.env(parent = emptyenv())
-      attr(tf, "class") <- c("python.builtin.module", "python.builtin.object")
-      setHook(packageEvent("tensorflow", "onLoad"),
-              function(...) {
-                list2env(as.list.environment(as.environment(asNamespace("tensorflow")$tf),
-                                             all.names = TRUE),
-                         as.environment(tf))
-              })
-      return()
-    }
-
+  if(requireNamespace("tensorflow", quietly = TRUE) &&
+     !".__DEVTOOLS__" %in% names(asNamespace("tensorflow")))
     tf <<- tensorflow::tf
-  } else
-    packageStartupMessage("R package 'tensorflow' required but not found")
+  else {
+    packageStartupMessage("'tfautograph' loaded withough R package 'tensorflow'")
+    tf <<- reticulate::import("tensorflow", delay_load = list(
+      on_load = function() {
+        packageStartupMessage("Loaded Tensorflow version ", tf$version$VERSION)
+      }
+    ))
+  }
+
+  # if (requireNamespace("tensorflow", quietly = TRUE)) {
+  #   if (".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
+  #     # ugly hack around devtools::load_all() forcing this namespace to load
+  #     # before the tensorflow namespace is finished loading
+  #     # https://github.com/r-lib/pkgload/issues/76
+  #     tf <<- new.env(parent = emptyenv())
+  #     attr(tf, "class") <- c("python.builtin.module", "python.builtin.object")
+  #     setHook(packageEvent("tensorflow", "onLoad"),
+  #             function(...) {
+  #               list2env(as.list.environment(as.environment(asNamespace("tensorflow")$tf),
+  #                                            all.names = TRUE),
+  #                        as.environment(tf))
+  #             })
+  #     return()
+  #   }
+  #
+  #   tf <<- tensorflow::tf
+  # } else {
+  #   packageStartupMessage("R package 'tensorflow' required but not found")
+  # }
 
   backports::import(pkgname, c("isFALSE", "...length"))
 }

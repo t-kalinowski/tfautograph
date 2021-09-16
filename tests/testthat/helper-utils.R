@@ -1,19 +1,10 @@
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 2)
 # Sys.setenv(CUDA_VISIBLE_DEVICES = 0)
-Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
+# Sys.setenv(TF_XLA_FLAGS='--tf_xla_cpu_global_jit')
 library(testthat)
 library(tfautograph)
 
-delayedAssign("tf", tensorflow::tf)
 
-if (!exists(".DID_EMIT_TF_VERSION")) {
-  if(reticulate::py_module_available("tensorflow"))
-    cat(sprintf("Testing Against Tensorflow Version: %s\n",
-              tensorflow::tf$version$VERSION))
-  else
-    cat("Tensorflow not available for testing\n")
-  .DID_EMIT_TF_VERSION <- TRUE
-}
 
 tf_function <- function(fn, ...)
   tf$`function`(reticulate::py_func(fn), ..., autograph = FALSE)
