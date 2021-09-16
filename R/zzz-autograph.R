@@ -104,7 +104,7 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
 
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
-  if (requireNamespace("tensorflow")) {
+  if (requireNamespace("tensorflow", quietly = TRUE)) {
     if (".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
       # ugly hack around devtools::load_all() forcing this namespace to load
       # before the tensorflow namespace is finished loading
@@ -121,5 +121,8 @@ tf <- NULL
     }
 
     tf <<- tensorflow::tf
-  }
+  } else
+    packageStartupMessage("R package 'tensorflow' required but not found")
+
+  backports::import(pkgname, c("isFALSE", "...length"))
 }
