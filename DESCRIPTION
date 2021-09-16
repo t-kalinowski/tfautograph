@@ -16,12 +16,6 @@ LazyData: true
 RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests:
-    tensorflow,
     rlang,
-    testthat (>= 2.1.0),
-    knitr,
-    tfdatasets,
-    magrittr,
-    rmarkdown,
-    keras
+    testthat (>= 2.1.0)
 Language: en-US
