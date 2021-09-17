@@ -1,5 +1,7 @@
 # tfautograph (development version)
 
+* Added back compatibility with R-3.3 and R-3.4
+
 # tfautograph 0.3.1
 
 * Fixed issue that prevented the package from being loaded by `devtools::load_all()`
