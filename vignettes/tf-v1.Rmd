@@ -24,7 +24,9 @@ knit_hooks$set(error = function(x, options) {
 ```
 
 ```{r setup}
-reticulate::use_condaenv("tf-1.15", required = TRUE)
+# reticulate::install_miniconda()
+# tensorflow::install_tensorflow("conda", envname = "tf-v1", version = "1-cpu")
+reticulate::use_condaenv("tf-v1", required = TRUE)
 library(tensorflow)
 library(tfautograph)
 
