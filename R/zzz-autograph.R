@@ -105,27 +105,36 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
 
-  backports::import(pkgname, c("isFALSE", "...length"))
+  backports::import(pkgname, c("isFALSE", "...length", "get0"))
 
-  # delaying evaluation to hack around devtools::load_all() forcing this
-  # namespace to load before the tensorflow namespace is finished loading.
-  # # https://github.com/r-lib/pkgload/issues/76
-  ns <- asNamespace("tfautograph")
-  delayedAssign("tf", tryCatch(
-    tensorflow::tf,
-    error = function(e) {
-      reticulate::import("tensorflow", delay_load = list(
-        on_load = function() {
-          packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
-          packageStartupMessage_(
-            "'tfautograph' loaded withough R package 'tensorflow'\n",
-            "Loaded Tensorflow version ", tf$version$VERSION)
-        }
-      ))
-    }),
-    assign.env = ns,
-    eval.env = ns
-  )
+
+  if(isNamespaceLoaded("tensorflow") &&
+     !is.null(get0("tf", asNamespace("tensorflow")))) {
+
+    tf <<- tensorflow::tf
+
+  } else {
+
+    # delaying evaluation to hack around devtools::load_all() forcing this
+    # namespace to load before the tensorflow namespace is finished loading.
+    # # https://github.com/r-lib/pkgload/issues/76
+    ns <- asNamespace("tfautograph")
+    delayedAssign("tf", tryCatch(
+      tensorflow::tf,
+      error = function(e) {
+        reticulate::import("tensorflow", delay_load = list(
+          on_load = function() {
+            packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
+            packageStartupMessage_(
+              "'tfautograph' loaded Tensorflow withough R package 'tensorflow'. ",
+              "Not everything may work properly.\n",
+              "Loaded Tensorflow version ", tf$version$VERSION)
+          }
+        ))
+      }
+    ),
+    assign.env = ns, eval.env = ns)
+  }
 
 
   ## we need tensorflow for tests for all the tensor S3 generics
