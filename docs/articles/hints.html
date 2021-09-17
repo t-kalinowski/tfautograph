@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="hints_files/header-attrs-2.9.2/header-attrs.js"></script><div class="row">
+      </header><script src="hints_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Giving <code>autograph</code> hints</h1>
@@ -116,7 +116,7 @@
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://t-kalinowski.github.io/tfautograph/">tfautograph</a></span><span class="op">)</span>
 <span class="va">tf</span><span class="op">$</span><span class="va">version</span><span class="op">$</span><span class="va">VERSION</span>
-<span class="co">#&gt; [1] "2.5.0"</span></code></pre></div>
+<span class="co">#&gt; [1] "2.6.0"</span></code></pre></div>
 <p><code><a href="../reference/autograph.html">autograph()</a></code> works without needing to provide any hints. It can automatically translate expressions like <code>if</code> and <code>while</code> into <code>tf.cond()</code> and <code>tf.while_loop()</code> calls.</p>
 <p>However, compared to the flexibility of R control flow, the tensorflow control flow functions have much narrower constraints on how the control flow nodes are constructed. The constraints of functions like <code>tf.cond()</code>, <code>tf.while_loop()</code> and <code>dataset.reduct()</code> require that <code><a href="../reference/autograph.html">autograph()</a></code> do some sophisticated inference from the R code to anticipate what the outcome will be from evaluating a block of code, so that it can “fix-up” the outcome to satisfy the constraints tensorflow sets out.</p>
 <p>If you want to bypass these inference routines, (for example, because the inferred outcome is producing a graph that has more nodes than strictly necessary, or for some minor performance benefits), you can provide hints to <code>autograph</code> to let it know what it would otherwise try to infer.</p>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tfautograph</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="tfautograph_files/header-attrs-2.9.2/header-attrs.js"></script><div class="row">
+      </header><script src="tfautograph_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Getting Started with tfautograph</h1>
@@ -127,10 +127,10 @@
 <div id="compatibility" class="section level2">
 <h2 class="hasAnchor">
 <a href="#compatibility" class="anchor"></a>Compatibility</h2>
-<p>tfautograph works with Tensorflow versions 1.15 and &gt;= 2.0. This vignette is using version 2.5.</p>
+<p>tfautograph works with Tensorflow versions 1.15 and &gt;= 2.0. This vignette is using version 2.6.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tf</span><span class="op">$</span><span class="va">version</span><span class="op">$</span><span class="va">VERSION</span>
-<span class="co">#&gt; [1] "2.5.0"</span></code></pre></div>
+<span class="co">#&gt; [1] "2.6.0"</span></code></pre></div>
 </div>
 </div>
 <div id="usage" class="section level1">
@@ -173,7 +173,6 @@
 <span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating true branch</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-
 <span class="fu">square_if_positive_verbose</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; Evaluating false branch</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
@@ -196,7 +195,6 @@
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
 <span class="fu">graph_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(25.0, shape=(), dtype=float32)</span>
-
 <span class="fu">graph_fn</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; tf.Tensor(-5.0, shape=(), dtype=float32)</span>
 <span class="fu">graph_fn</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
@@ -280,24 +278,24 @@
 <span class="co">#&gt; To access this symbol, Tensorflow requires that an object with the same dtype and shape be assigned to the symbol either before the `if` statement, or in all branches of the `if` statement.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Detailed traceback:</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 889, in __call__</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 885, in __call__</span>
 <span class="co">#&gt;     result = self._call(*args, **kwds)</span>
 <span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 933, in _call</span>
 <span class="co">#&gt;     self._initialize(args, kwds, add_initializers_to=initializers)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 764, in _initialize</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 760, in _initialize</span>
 <span class="co">#&gt;     *args, **kwds))</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3050, in _get_concrete_function_internal_garbage_collected</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3066, in _get_concrete_function_internal_garbage_collected</span>
 <span class="co">#&gt;     graph_function, _ = self._maybe_define_function(args, kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3444, in _maybe_define_function</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3463, in _maybe_define_function</span>
 <span class="co">#&gt;     graph_function = self._create_graph_function(args, kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3289, in _create_graph_function</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/function.py", line 3308, in _create_graph_function</span>
 <span class="co">#&gt;     capture_by_value=self._capture_by_value),</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/framework/func_graph.py", line 999, in func_graph_from_py_func</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/framework/func_graph.py", line 1007, in func_graph_from_py_func</span>
 <span class="co">#&gt;     func_outputs = python_func(*func_args, **func_kwargs)</span>
-<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 672, in wrapped_fn</span>
+<span class="co">#&gt;   File "/home/tomasz/.local/share/r-miniconda/envs/r-reticulate/lib/python3.7/site-packages/tensorflow/python/eager/def_function.py", line 668, in wrapped_fn</span>
 <span class="co">#&gt;     out = weak_wrapped_fn().__wrapped__(*args, **kwds)</span>
 <span class="co">#&gt;   File "&lt;string&gt;", line 4, in fn</span>
-<span class="co">#&gt;   File "/home/tomasz/opt/R-4.1.0/lib/R/site-library/reticulate/python/rpytools/call.py", line 21, in python_function</span>
+<span class="co">#&gt;   File "/home/tomasz/opt/R-4.1.1/lib/R/site-library/reticulate/python/rpytools/call.py", line 21, in python_function</span>
 <span class="co">#&gt;     raise RuntimeError(res[kErrorKey])</span></code></pre></div>
 </div>
 <div id="while" class="section level2">
