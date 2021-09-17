@@ -105,23 +105,67 @@ attach_ag_mask <- function(pos = 2L, warn.conflicts = TRUE)
 tf <- NULL
 .onLoad <- function(libname, pkgname) {
 
-  requireNamespace_ <- get("requireNamespace") #  R CMD check
-  if(requireNamespace_("tensorflow", quietly = TRUE) &&
-     !".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
+  backports::import(pkgname, c("isFALSE", "...length"))
 
-    tf <<- tensorflow::tf
+  # delaying evaluation to hack around devtools::load_all() forcing this
+  # namespace to load before the tensorflow namespace is finished loading.
+  # # https://github.com/r-lib/pkgload/issues/76
+  ns <- asNamespace("tfautograph")
+  delayedAssign("tf", tryCatch(
+    tensorflow::tf,
+    error = function(e) {
+      reticulate::import("tensorflow", delay_load = list(
+        on_load = function() {
+          packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
+          packageStartupMessage_(
+            "'tfautograph' loaded withough R package 'tensorflow'\n",
+            "Loaded Tensorflow version ", tf$version$VERSION)
+        }
+      ))
+    }),
+    assign.env = ns,
+    eval.env = ns
+  )
 
-  } else {
 
-    tf <<- reticulate::import("tensorflow", delay_load = list(
-      on_load = function() {
-        packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
-        packageStartupMessage_("'tfautograph' loaded withough R package 'tensorflow'\n",
-                               "Loaded Tensorflow version ", tf$version$VERSION)
-      }
-    ))
+  ## we need tensorflow for tests for all the tensor S3 generics
+  # if(isNamespaceLoaded("tensorflow")) {
+  #
+  #   tf <<- get("tf", envir = asNamespace("tensorflow"))
+  #
+  # } else {
+  #
+  #   tf <<- reticulate::import("tensorflow", delay_load = list(
+  #     on_load = function() {
+  #       packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
+  #       packageStartupMessage_("'tfautograph' loaded withough R package 'tensorflow'\n",
+  #                              "Loaded Tensorflow version ", tf$version$VERSION)
+  #     }
+  #   ))
+  #
+  # }
 
-  }
+
+
+  # requireNamespace_ <- get("requireNamespace") #  R CMD check
+  # if(requireNamespace_("tensorflow", quietly = TRUE) &&
+  #    !".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
+  #
+  #   tf <<- tensorflow::tf
+  #
+  # } else {
+  #
+  #   tf <<- reticulate::import("tensorflow", delay_load = list(
+  #     on_load = function() {
+  #       packageStartupMessage_ <- get("packageStartupMessage") # R CMD check
+  #       packageStartupMessage_("'tfautograph' loaded withough R package 'tensorflow'\n",
+  #                              "Loaded Tensorflow version ", tf$version$VERSION)
+  #     }
+  #   ))
+  #
+  # }
+
+
 
   # if (requireNamespace("tensorflow", quietly = TRUE)) {
   #   if (".__DEVTOOLS__" %in% names(asNamespace("tensorflow"))) {
@@ -144,5 +188,4 @@ tf <- NULL
   #   packageStartupMessage("R package 'tensorflow' required but not found")
   # }
 
-  backports::import(pkgname, c("isFALSE", "...length"))
 }

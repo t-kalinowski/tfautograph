@@ -17,5 +17,6 @@ RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests:
     rlang,
+    tensorflow,
     testthat (>= 2.1.0)
 Language: en-US
