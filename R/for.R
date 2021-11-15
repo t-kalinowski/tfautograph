@@ -45,6 +45,15 @@ ag_for_impl.python.builtin.iterator <-
     eval(expr, env)
   }
 
+# Assume python object is iterable, will raise error otherwise
+# sadly, there is no best way to test if a python object is iterable
+# without actually trying to call __iter__ and then __next__ directly.
+# testing for class collections.abc.Iterable is unreliable.
+ag_for_impl.python.builtin.object <-
+  ag_for_impl.python.builtin.iterator
+
+
+
 
 ## Think about more directly catching the StopIteraion exception.
 ## pro: would be slightly more robust
