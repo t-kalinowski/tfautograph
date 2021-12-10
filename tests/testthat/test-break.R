@@ -212,3 +212,32 @@ test_that("break and next in simple for", {
   }
 
 })
+
+
+
+test_that("r-for ag-for ag-break", {
+  skip_if_no_tensorflow()
+
+  fn <- function(x, lower, upper) {
+    i <- 0L
+    while (i <= lower) {
+      if(i >= upper)
+        break
+      add(i) <- add(x) <- 1L
+    }
+    x
+  }
+
+  # test that calling autograph() in a for loop works
+  ag_fn <- autograph(fn)
+  res <- ag_res <- vector("list", 3L)
+
+  for(lower in 1:3) {
+    ag_res[[lower]] <- ag_fn(as_tensor(10L), lower, 5L)
+       res[[lower]] <-    fn(10L, lower, 5L)
+  }
+
+  expect_identical(res, lapply(ag_res, function(t) drop_dim(as.array(t))))
+
+})
+
