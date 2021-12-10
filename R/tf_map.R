@@ -46,7 +46,7 @@ tf_map <- function(elems, fn,
   if (inherits(fn, "formula")) {
     # compat purrr::as_mapper() but without `.y` and a positional first match
     if (length(fn) > 2L)
-      stop("Left hand side in `~`` not allowed")
+      stop("Left hand side in `~` not allowed")
 
     fn_body <- fn[[2L]]
     # replace all `.` symbols with `.x`. More robust than having multiple
