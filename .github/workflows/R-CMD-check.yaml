@@ -110,7 +110,8 @@ jobs:
         run: reticulate::install_miniconda()
 
       - name: Install TensorFlow
-        run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
+        run: reticulate::py_install('${{ matrix.tf }}', pip = TRUE)
+        # run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
 
       - name: Install rcmdcheck
         run: remotes::install_cran("rcmdcheck")
