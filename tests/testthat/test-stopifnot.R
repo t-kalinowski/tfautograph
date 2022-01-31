@@ -12,8 +12,8 @@ test_that("stopifnot simple", {
   expect_error(ag_fn(0), 'x > 0', fixed = TRUE)
 
   expect_equal(grab(ag_fn(as_tensor(1))), 1)
-  expect_error(grab(ag_fn(as_tensor(0))), "stopifnot(x > 0)", fixed = TRUE)
-  expect_error(grab(ag_fn(as_tensor(0))), "ag_fn(", fixed = TRUE)
+  expect_error(grab(ag_fn(as_tensor(0))), "x > 0", fixed = TRUE)
+  expect_match(reticulate::py_last_error()$message, "ag_fn(", fixed = TRUE)
 })
 
 test_that("stopifnot compound", {
