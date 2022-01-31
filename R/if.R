@@ -124,7 +124,7 @@ build_target_outcome <- function(true, false, env) {
         return(FALSE)
 
       # make sure that the `val` is the right dtype and shape before pulling it
-      # from the outerscop to balance the branches
+      # from the outerscope to balance the branches
       val_mold <- pluck_structure(list(x), true$modified, false$modified)
       is_same_structure(val, val_mold)
     },

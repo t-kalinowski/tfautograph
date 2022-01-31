@@ -16,6 +16,9 @@ ag_while <- function(cond, body) {
     cond_tensor_types <- "none"
   }
 
+  # TODO: if returning early, still need to add loop to control-flow-registry
+  # so we know how to handle any break/next calls
+
   if (cond_tensor_types == "none")
     return(invisible(eval(as.call(list(quote(.Primitive("while")), cond, body)), env)))
 

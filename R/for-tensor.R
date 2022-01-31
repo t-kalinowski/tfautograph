@@ -31,7 +31,7 @@ ag_for_impl.tensorflow.tensor <- function(iterable, var, body, env) {
   if(!var_is_loop_var)
     hint$undef <- c(hint$undef, var)
 
-  .body_fn <- as_loop_body_fn(body,  unique(c(loop_vars, var)), env,
+  .body_fn <- as_loop_body_fn(body, unique(c(loop_vars, var)), env,
                               dont_check = var,
                               additional_undefs = hint$undef,
                               call = sys.call(-2))
