@@ -237,7 +237,10 @@ test_that("r-for ag-for ag-break", {
        res[[lower]] <-    fn(10L, lower, 5L)
   }
 
-  expect_identical(res, lapply(ag_res, function(t) drop_dim(as.array(t))))
+  # currently fails with `expect_identical()` on windows because
+  # reticulate converts np arrays with int dtype to R doubles.
+  # Reenable once https://github.com/rstudio/reticulate/issues/1071 is closed.
+  expect_equal(res, lapply(ag_res, function(t) drop_dim(as.array(t))))
 
 })
 
