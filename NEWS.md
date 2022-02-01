@@ -1,5 +1,7 @@
 # tfautograph (development version)
 
+* `for` in an `autograph()` context gains the ability to accept any Python iterable.
+
 # tfautograph 0.3.2
 
 * Added back compatibility with R-3.3 and R-3.4
