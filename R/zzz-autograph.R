@@ -13,6 +13,16 @@ ag_mask_list <- list(
 )
 
 
+ag_mask_subtitution_list <- alist(
+  `if` = tfautograph::ag_if,
+  `for` = tfautograph::ag_for,
+  `while` = tfautograph::ag_while,
+  `break` = tfautograph::ag_break,
+  `next` = tfautograph::ag_next,
+  `stopifnot` = tfautograph::ag_stopifnot,
+  `on.exit` = tfautograph::ag_on.exit
+)
+
 
 
 #' Autograph R code
@@ -40,15 +50,35 @@ autograph <- function(x) {
   xe <- substitute(x)
   env <- parent.frame()
 
+
   if (is.symbol(xe)) {
-    # function, formula, or something with `environment<-` method
-    environment(x) <- new_ag_mask(parent = environment(x))
+    # function, language, or something with `environment<-` method
+
+    if (inherits(xe, "python.builtin.object"))
+      stop("Only R objects can be autographed")
+
+    if (is.function(x))
+      body(x) <- eval(call("substitute", body(x), ag_mask_subtitution_list))
+    else if (is.language(x)) # formula, expression(), or call() (probably to `{`)
+      x <- eval(call("substitute", x, ag_mask_subtitution_list))
+    else
+      environment(x) <- new_ag_mask(parent = environment(x))
+
+    class(x) <- unique(c("tfautographed", class(x)))
     return(x)
   }
 
   # in line expression
-  fn <- as_outcome_fn(xe, new_ag_mask(parent = env))
+  # fn <- as_outcome_fn(xe, new_ag_mask(parent = env))
+
+  xe <- eval(call("substitute", xe, ag_mask_subtitution_list))
+  fn <- as_outcome_fn(xe, env)
   outcome <- fn()
+
+  outcome <- rapply(list(outcome), function(x) {
+    class(x) <- unique(c("tfautographed", class(x)))
+    x
+  }, how = "replace", classes = c("function", "language"))[[1L]]
 
   export_modified(outcome$modified, env)
 
@@ -58,6 +88,7 @@ autograph <- function(x) {
   else
     outcome$returned
 }
+
 
 
 new_ag_mask <- function(parent = parent.frame()) {
