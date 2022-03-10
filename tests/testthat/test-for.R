@@ -174,3 +174,26 @@ test_that("for captures nested `for` vars as a loop var", {
 })
 
 
+test_that("`break` is caught by the correct `for`", {
+
+  # This test currently fails
+  # ag_for() and ag_while() need to setup condition handlers even
+  # if they dispatch to the primative.
+  skip_if_no_tensorflow()
+
+  fn <- function(x) {
+    i <- x[1]
+    r <- 10L
+    for(i in x) {
+      for(r in 10:13)
+        if(i >= 1)
+          break
+    }
+    list(i, r)
+  }
+  ag_fn <- autograph(fn)
+  tf_ag_fn <- tf_function(ag_fn)
+
+  expect_error(ag_fn(as_tensor(1:3)))
+  expect_error(tf_ag_fn(as_tensor(1:3)))
+})
