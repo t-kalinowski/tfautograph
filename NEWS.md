@@ -1,5 +1,8 @@
 # tfautograph (development version)
 
+* `ag_if()` and related autographing control-flow functions are now exported,
+  allowing for precise control of which expressions produce graph nodes.
+
 * `for` in an eager `autograph()` context gains the ability to process
   arbitrary python iterables, including `tf.distribute.DistributedDataset`.
 

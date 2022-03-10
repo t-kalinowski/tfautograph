@@ -24,7 +24,7 @@ uncaught_loop_control_flow_condition <-
   }
 
 
-
+#' @export
 ag_break <- function() {
   env <- parent.frame()
   tryCatch(
@@ -37,6 +37,7 @@ ag_break <- function() {
   )
 }
 
+#' @export
 ag_next <- function() {
   env <- parent.frame()
   tryCatch(

@@ -1,5 +1,5 @@
 
-
+#' @export
 ag_on.exit <- function(expr = NULL, add = TRUE, after = FALSE) {
 
   env <- parent.frame()

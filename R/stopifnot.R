@@ -1,4 +1,5 @@
 
+#' @export
 ag_stopifnot <- function(..., exprs, local = TRUE) {
   if(missing(exprs)) {
     dots <- eval(substitute(alist(...)))
