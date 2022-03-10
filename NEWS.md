@@ -1,5 +1,15 @@
 # tfautograph (development version)
 
+* `ag_if()` and related autographing control-flow functions are now exported,
+  allowing for precise control of which expressions produce graph nodes.
+
+* `autograph()` now works by substituting symbols in language objects rather than
+  masking them by splicing in an environment. This will make it easier to discover
+  what `autograph()` is doing in interactive contexts.
+
+* `autograph()` now returns functions and language objects like expressions,
+  calls, and formulas, with an S3 class attribute "tfautographed".
+
 * `for` in an eager `autograph()` context gains the ability to process
   arbitrary python iterables, including `tf.distribute.DistributedDataset`.
 

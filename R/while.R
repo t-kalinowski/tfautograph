@@ -1,5 +1,5 @@
 
-
+#' @export
 ag_while <- function(cond, body) {
   cond <- substitute(cond)
   body <- substitute(body)

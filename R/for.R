@@ -1,5 +1,5 @@
 
-
+#' @export
 ag_for <- function(var, iterable, body) {
   var  <- substitute(var)
   body <- substitute(body)

@@ -1,6 +1,6 @@
 
 
-
+#' @export
 #' @importFrom reticulate dict
 ag_if <- function(cond, true, false = NULL) {
   true <- substitute(true)
