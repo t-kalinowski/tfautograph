@@ -23,7 +23,8 @@ find_assiged_syms <-  function(expr) {
   fn <- expr[[1]]
   expr[[1]] <- NULL
 
-  if (fn == quote(`<-`) || fn == quote(`=`) || fn == quote(`%<>%`)) {
+  if (fn == quote(`<-`) || fn == quote(`=`) || fn == quote(`%<>%`) ||
+      fn == quote(`for`) || fn == quote(ag_for) || fn == quote(tfautograph::ag_for)) {
     nms <- all.vars(expr[[1]])[1]
     # take the first one in case the left hand side is a complex assignment
     # (e.g., from a [<-, $<-, or foo<- call)

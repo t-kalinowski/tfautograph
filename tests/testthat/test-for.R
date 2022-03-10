@@ -154,3 +154,23 @@ test_that("for with tf Dataset", {
   expect_result(tf_ag_fn, ds, list(21, 21, 21))
 
 })
+
+
+test_that("for captures nested `for` vars as a loop var", {
+  skip_if_no_tensorflow()
+
+  fn <- function(x, y) {
+    i <- x[1]
+    j <- y[1]
+    for(i in x) {
+      for(j in y)
+        if(i >= 2)
+          break
+    }
+    list(i, j)
+  }
+
+  expect_ag_equivalent(fn, list(1:3, 10:13))
+})
+
+
