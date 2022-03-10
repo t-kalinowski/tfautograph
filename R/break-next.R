@@ -3,6 +3,10 @@
 uncaught_loop_control_flow_condition <-
   function(type, env) {
     registry <- control_flow_registries$peek()
+    if(is.null(registry))
+      stop("uncaught loop control flow condition: ", type,
+           "\nThe parent loop is evaluating eagerly, but the control flow condition is emmited from an autograph `if` context.",
+           "\nSupply a tensor to the `for` or `while` loop to ensure the loop is place on the graph and can register the `", type, "`.")
     structure(
       class = c(type, "uncaught_loop_control_flow", "error", "condition"),
       drop_empty(

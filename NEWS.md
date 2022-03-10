@@ -1,6 +1,10 @@
 # tfautograph (development version)
 
-* `for` in an `autograph()` context gains the ability to accept any Python iterable.
+* `for` in an eager `autograph()` context gains the ability to process
+  arbitrary python iterables, including `tf.distribute.DistributedDataset`.
+
+* Improved error message when a `break` or `next` is signaled as a graph node
+  but the intended loop is being evaluated eagerly.
 
 # tfautograph 0.3.2
 
