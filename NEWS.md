@@ -3,7 +3,7 @@
 * `for` in an eager `autograph()` context gains the ability to process
   arbitrary python iterables, including `tf.distribute.DistributedDataset`.
 
-* `for` now automatically infers the variables of nest `for` loops as loop vars.
+* `for` now automatically infers the variables of nested `for` loops as loop vars.
 
 * Improved error message when a `break` or `next` is signaled as a graph node
   but the intended loop is being evaluated eagerly.
