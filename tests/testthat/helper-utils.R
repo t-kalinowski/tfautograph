@@ -6,8 +6,8 @@ library(tfautograph)
 
 
 
-tf_function <- function(fn, ...)
-  tf$`function`(reticulate::py_func(fn), ..., autograph = FALSE)
+.tf_function <- tf_function <- function(fn, ...)
+  tf$`function`(fn, ..., autograph = FALSE)
 
 tuple <- reticulate::tuple
 

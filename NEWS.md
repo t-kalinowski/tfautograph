@@ -1,5 +1,8 @@
 # tfautograph (development version)
 
+* Fixed an error where `autograph({expr})` would error when exporting undef
+  active binding symbols.
+  
 * `for` in an eager `autograph()` context gains the ability to process
   arbitrary python iterables, including `tf.distribute.DistributedDataset`.
 

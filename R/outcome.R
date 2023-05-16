@@ -2,6 +2,17 @@
 
 outcome_frames <- Stack()
 
+env2list <- function(env) {
+  nms <- names(env)
+  names(nms) <- nms
+  lapply(nms, function(nm) {
+    if(bindingIsActive(nm, env))
+      activeBindingFunction(nm, env)
+    else
+      env[[nm]]
+  })
+}
+
 push_outcome_frame <- function(env = parent.frame())
   outcome_frames$push(env)
 
@@ -19,14 +30,14 @@ as_outcome_fn <- function(expr, env, args = NULL) {
     returned <- withVisible(fn(...))
     outcome_env <- outcome_frames$pop()
 
-    modified <- as.list(outcome_env, all.names = TRUE)
+    modified <- env2list(outcome_env)
     modified <- prune_nested_unmodified(modified, env)
 
     out <- drop_empty(list(
       modified = modified,
       returned = returned$value,
       visible = returned$visible
-      ))
+    ))
 
     # splice out outcome_env from closures
     out <- rapply(list(out), function(x) {
